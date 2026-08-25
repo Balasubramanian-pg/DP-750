@@ -9,7 +9,8 @@
 
 ## Prerequisite Knowledge
 
-> [!PREREQUISITES]
+> [!Note]
+> ### Prerequisite
 > Engagement with this material assumes prior familiarity with the following domains:
 > - Foundational comprehension of data analytics methodologies and lifecycle stages.
 > - Working knowledge of cloud storage paradigms, including object and file system hierarchies.
@@ -37,5 +38,6 @@ Selecting the appropriate computational infrastructure demands a balance between
 ### 5. Data Governance and Organization
 Effective data management relies on the implementation of Unity Catalog. Candidates must understand its hierarchical structure—encompassing metastores, catalogs, schemas, and tables—to enforce centralized access controls, maintain data lineage, and ensure regulatory compliance across the enterprise.
 
-> [!OUTCOME]
+> [!Note]
+> ### Outcome
 > Completion of this foundational path provides the structural knowledge necessary to architect, configure, and deploy scalable, production-grade data solutions within the Azure Databricks environment.
