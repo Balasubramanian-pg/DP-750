@@ -3,7 +3,7 @@
 **Duration:** 6 hr 49 min | **XP:** 5100 | **Modules:** 5
 ## Azure Databricks Fundamentals: Architectural and Operational Foundations
 
-> [!CONTEXT]
+> [!Note]Context
 > Azure Databricks operates as a unified computational environment designed to consolidate data engineering, advanced analytics, and artificial intelligence workloads. Establishing proficiency in this platform requires a systematic understanding of its underlying architecture, integration vectors, and resource management paradigms within the modern data ecosystem.
 
 ## Prerequisite Knowledge
