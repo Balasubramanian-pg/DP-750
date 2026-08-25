@@ -13,6 +13,9 @@
 The construction of scalable data engineering solutions within Azure Databricks requires a rigorous approach to data modeling, ingestion, and transformation. Unity Catalog serves as the central governance mechanism, ensuring that data quality and structural integrity are maintained throughout the lakehouse architecture.
 
 ### Data Modeling and Schema Design
+
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/01f45786-9712-446a-94de-d23e3b4a011d" />
+
 The performance ceiling of downstream analytics is dictated directly by the physical layout and structural design of the underlying tables. Engineers define partitioning strategies and schema structures that align with specific query patterns, thereby minimizing compute overhead during read operations. Deliberate modeling ensures that the storage layer supports high-throughput analytical workloads without requiring excessive computational scaling.
 
 ### Ingestion Architectures
