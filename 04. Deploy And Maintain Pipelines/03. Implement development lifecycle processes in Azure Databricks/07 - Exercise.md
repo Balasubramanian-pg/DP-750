@@ -1,1 +1,0 @@
-\n_Failed to fetch content._\n\n---\n\n## Navigation\n\n- Previous: [[06 - Deploy bundles with the Databricks CLI]]\n- Next: [[08 - Knowledge check]]\n\n## Source\n\nMicrosoft Learn: [Exercise](https://learn.microsoft.com/en-us/training/modules/implement-development-lifecycle-processes-in-azure-databricks/7-exercise)\n

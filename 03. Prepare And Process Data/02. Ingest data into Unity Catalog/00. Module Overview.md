@@ -1,0 +1,26 @@
+# Ingest data into Unity Catalog
+
+**Duration:** 101 min
+**Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/training/modules/ingest-data-into-unity-catalog/)
+
+## Learning Objectives
+- Configure Lakeflow Connect to ingest data from external sources using managed connectors
+- Ingest batch and streaming data using notebooks with DataFrames and Structured Streaming
+- Use SQL commands like COPY INTO and CREATE TABLE AS SELECT for file-based ingestion
+- Process change data capture feeds with the AUTO CDC API
+- Configure Spark Structured Streaming for real-time data ingestion from Kafka and Event Hubs
+- Set up Auto Loader to automatically detect and process new files with schema evolution
+- Orchestrate data ingestion workflows using Lakeflow Spark Declarative Pipelines
+
+## Topics
+- [01. Introduction](01.%20Introduction.md)
+- [02. Ingest data with Lakeflow Connect](02.%20Ingest%20data%20with%20Lakeflow%20Connect.md)
+- [03. Ingest data with notebooks](03.%20Ingest%20data%20with%20notebooks.md)
+- [04. Ingest data with SQL methods](04.%20Ingest%20data%20with%20SQL%20methods.md)
+- [05. Ingest data from CDC feed](05.%20Ingest%20data%20from%20CDC%20feed.md)
+- [06. Ingest data with Spark Structured Streaming](06.%20Ingest%20data%20with%20Spark%20Structured%20Streaming.md)
+- [07. Ingest data with Auto Loader](07.%20Ingest%20data%20with%20Auto%20Loader.md)
+- [08. Ingest data with Lakeflow Declarative Pipelines](08.%20Ingest%20data%20with%20Lakeflow%20Declarative%20Pipelines.md)
+- [09. Exercise](09.%20Exercise.md)
+- [10. Knowledge check](10.%20Knowledge%20check.md)
+- [11. Summary](11.%20Summary.md)
