@@ -1,19 +1,3 @@
----
-title: "Get started with Azure Databricks"
-course: "DP-750"
-learning_path: "Set up and configure an Azure Databricks environment"
-module: "Explore Azure Databricks"
-topic_number: 2
-source: "Microsoft Learn"
-source_url: "https://learn.microsoft.com/en-us/training/modules/explore-azure-databricks/02-azure-databricks"
-tags:
-  - dp-750
-  - azure-databricks
-  - microsoft-learn
-  - data-engineering
-  - study
----
-
 To use Azure Databricks, you must create an Azure Databricks workspace in your Azure subscription. A workspace is an Azure Databricks deployment in a cloud service account. It provides a unified environment for working with Azure Databricks assets for a specified set of users.
 You can create an Azure Databricks workspace by:
 - Using the Azure portal user interface.
@@ -101,3 +85,11 @@ It can assist with a wide range of tasks, including identifying and correcting e
 Genie Code also includes Agent mode, which is generally available for data science, data engineering, and dashboard authoring. Agent mode extends Genie Code with agentic capabilities so it can autonomously plan and complete multi-step data tasks on your behalf.
 By using Unity Catalog metadata, it personalizes its responses based on your organization’s data assets—tables, columns, and descriptions—making it easier to explore and work with your data.
 
+## Navigation
+
+- Previous: [[01 - Introduction]]
+- Next: [[03 - Workloads]]
+
+## Source
+
+Microsoft Learn: [Get started with Azure Databricks](https://learn.microsoft.com/en-us/training/modules/explore-azure-databricks/02-azure-databricks)

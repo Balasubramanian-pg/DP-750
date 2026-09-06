@@ -1,0 +1,1 @@
+\n_Failed to fetch content._\n\n---\n\n## Navigation\n\n- Previous: [[06 - Implement log streaming with Azure Log Analytics]]\n- Next: [[08 - Knowledge check]]\n\n## Source\n\nMicrosoft Learn: [Exercise](https://learn.microsoft.com/en-us/training/modules/monitor-troubleshoot-optimize-workloads-azure-databricks/7-exercise)\n

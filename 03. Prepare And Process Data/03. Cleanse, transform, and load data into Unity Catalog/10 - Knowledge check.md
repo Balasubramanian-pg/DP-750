@@ -1,0 +1,85 @@
+# Module assessment
+
+Completed
+
+* 5 minutes
+
+## Check your knowledge
+
+1.
+
+What is the purpose of running the ANALYZE TABLE command in Azure Databricks?
+
+To create a backup of the table before making changes
+
+To compute statistics that help the query optimizer choose efficient execution plans
+
+To validate that all data types in the table are correctly defined
+
+2.
+
+Which data type should be used when storing financial amounts that require exact precision in calculations?
+
+DOUBLE
+
+DECIMAL(p,s)
+
+FLOAT
+
+3.
+
+Which SQL clause filters duplicate rows directly from a window function result without requiring a subquery?
+
+WHERE
+
+HAVING
+
+QUALIFY
+
+4.
+
+What is the difference between a LEFT SEMI JOIN and a LEFT JOIN?
+
+LEFT SEMI JOIN returns all columns from both tables while LEFT JOIN returns only left table columns
+
+LEFT SEMI JOIN returns only left table rows that have matches in the right table, without including right table columns
+
+LEFT SEMI JOIN includes NULL values for non-matching rows while LEFT JOIN excludes them
+
+5.
+
+When should a data engineer use the UNPIVOT transformation?
+
+To convert multiple columns into rows for analysis or normalization
+
+To create a summary table with row values displayed as column headers
+
+To merge two tables based on matching key columns
+
+6.
+
+Which loading operation should be used to update existing records while inserting new ones in a single statement?
+
+INSERT INTO with append mode
+
+INSERT OVERWRITE
+
+MERGE INTO
+
+You must answer all questions before checking your work.
+
+
+
+
+You must answer all questions before checking your work.
+
+---
+
+## Navigation
+
+- Previous: [[09 - Exercise]]
+- Next: [[11 - Summary]]
+
+## Source
+
+Microsoft Learn: [Knowledge check](https://learn.microsoft.com/en-us/training/modules/cleanse-transform-load-data-into-unity-catalog/10-knowledge-check)

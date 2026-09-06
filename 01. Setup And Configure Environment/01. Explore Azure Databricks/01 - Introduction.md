@@ -1,19 +1,3 @@
----
-title: "Introduction"
-course: "DP-750"
-learning_path: "Set up and configure an Azure Databricks environment"
-module: "Explore Azure Databricks"
-topic_number: 1
-source: "Microsoft Learn"
-source_url: "https://learn.microsoft.com/en-us/training/modules/explore-azure-databricks/01-introduction"
-tags:
-  - dp-750
-  - azure-databricks
-  - microsoft-learn
-  - data-engineering
-  - study
----
-
 Azure Databricks is a cloud-based data platform that brings together the best of data engineering, data science, and machine learning in a single, unified workspace. Built on top of Apache Spark, it allows organizations to easily process, analyze, and visualize massive amounts of data in real time.
 By connecting to a wide range of data sources—from cloud providers like Azure SQL Database, Amazon S3 and Google Cloud Storage, to enterprise systems such as SAP and Oracle—Azure Databricks makes it easy to integrate and transform data from anywhere.
 Once data is ingested, teams across sales, marketing, operations, finance, HR, and sustainability can use Databricks for advanced analytics, machine learning, business intelligence, and AI-driven insights.
@@ -30,3 +14,12 @@ Many lakehouses follow a layered design pattern where data is gradually improved
 The Databricks lakehouse uses two key technologies:
 - Delta Lake: an optimized storage layer that supports ACID transactions and schema enforcement.
 - Unity Catalog: a unified, fine-grained governance solution for data and AI.
+
+## Navigation
+
+- Previous: None
+- Next: [[02 - Get started]]
+
+## Source
+
+Microsoft Learn: [Introduction](https://learn.microsoft.com/en-us/training/modules/explore-azure-databricks/01-introduction)

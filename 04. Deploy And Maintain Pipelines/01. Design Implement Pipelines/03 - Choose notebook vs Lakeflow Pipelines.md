@@ -1,0 +1,1 @@
+\n_Failed to fetch content._\n\n---\n\n## Navigation\n\n- Previous: [[02 - Design order of operations for a pipeline]]\n- Next: [[04 - Design task logic for Lakeflow Jobs]]\n\n## Source\n\nMicrosoft Learn: [Choose notebook vs Lakeflow Pipelines](https://learn.microsoft.com/en-us/training/modules/design-implement-data-pipelines/3-choose-notebook-vs-lakeflow-pipelines)\n

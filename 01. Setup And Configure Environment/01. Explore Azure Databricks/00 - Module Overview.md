@@ -1,18 +1,3 @@
----
-title: "Explore Azure Databricks"
-course: "DP-750"
-learning_path: "Set up and configure an Azure Databricks environment"
-module: "Explore Azure Databricks"
-source: "Microsoft Learn"
-source_url: "https://learn.microsoft.com/en-us/training/modules/explore-azure-databricks/"
-tags:
-  - dp-750
-  - azure-databricks
-  - microsoft-learn
-  - data-engineering
-  - study
----
-
 # Module 1: Explore Azure Databricks
 
 ## Description
