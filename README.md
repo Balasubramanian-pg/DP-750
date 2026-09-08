@@ -1,4 +1,7 @@
 # DP-750
+
+<img width="1280" height="720" alt="image" src="https://github.com/user-attachments/assets/2d0b7b7a-f094-49e8-9c7a-05892e7348aa" />
+
 ## Azure Databricks Data Engineering: Certification Scope and Operational Mandate
 
 > [!NOTE]
