@@ -1,14 +1,34 @@
 # Introduction
 
-**Data quality** issues can derail analytics projects, corrupt business reports, and erode confidence in your data platform. When invalid data enters your tablesâwhether through type mismatches, missing required values, or unexpected schema changesâproblems compound as that data flows through pipelines and reaches downstream consumers. Implementing robust **data quality constraints** at the point of ingestion creates a foundation of trust in your data assets.
+> [!IMPORTANT]
+> The Cost of Silent Failures
+> 
+> Data quality issues do not merely cause technical errors. They derail analytics projects and corrupt business reports. When invalid data enters tables through type mismatches or missing values the problems compound as that data flows downstream. This erosion of confidence in the data platform is often harder to repair than the data itself. Implementing robust constraints at ingestion creates the necessary foundation of trust.
 
-Azure Databricks provides multiple mechanisms for enforcing data quality within **Unity Catalog**. **Schema enforcement** validates data types automatically when writing to Delta Lake tables. **Table constraints** define rules that reject invalid records at write time. **Pipeline expectations** in Lakeflow Spark Declarative Pipelines enable real-time quality checks on streaming data with configurable actions for violations. Together, these capabilities form a comprehensive approach to maintaining data integrity.
+Azure Databricks offers a layered approach to enforcing data quality within Unity Catalog. These mechanisms work together to validate structure content and behavior.
 
-Throughout this module, you explore practical techniques for implementing data quality constraints. You learn how to enforce data type checks using **schema validation**, **explicit casting**, and **CHECK constraints**. You discover strategies for managing **schema drift** when source systems evolve over time. You implement validation checks for **nullability**, **uniqueness**, and **value ranges**. Finally, you master pipeline expectations that monitor data quality metrics and take automated actions when violations occur.
+> [!NOTE]
+> Core Enforcement Mechanisms
+> 
+> *   **Schema Enforcement**: Delta Lake automatically validates data types when writing to tables. This prevents structural mismatches from persisting.
+> *   **Table Constraints**: You can define explicit rules that reject invalid records at write time. This ensures only compliant data enters your curated layers.
+> *   **Pipeline Expectations**: Lakeflow Spark Declarative Pipelines enable real-time quality checks on streaming data. These allow for configurable actions when violations occur such as dropping records or failing the pipeline.
 
-By combining these approaches, you build pipelines that catch quality issues early, prevent invalid data from reaching production tables, and provide visibility into the health of your data. These skills are essential for data engineers working with Unity Catalog who need to maintain high data quality standards across their organization's data estate.
+### Practical Implementation Techniques
 
----
+The module focuses on moving from theory to practice. You will apply specific techniques to maintain integrity across evolving systems.
+
+> [!TIP]
+> Key Skills to Master
+> 
+> *   **Type Validation**: Enforce data type checks using schema validation explicit casting and CHECK constraints.
+> *   **Schema Drift Management**: Develop strategies for handling source system evolution without breaking downstream consumers.
+> *   **Value Integrity**: Implement validation checks for nullability uniqueness and acceptable value ranges.
+> *   **Automated Monitoring**: Use pipeline expectations to monitor data quality metrics continuously. Configure automated responses to violations rather than relying on manual inspection.
+
+### Strategic Outcome
+
+Combining these approaches allows you to build pipelines that catch quality issues early. This prevents invalid data from reaching production tables. It also provides continuous visibility into the health of your data assets. For data engineers working with Unity Catalog these skills are essential for maintaining high standards across the organization's data estate.
 
 ## Navigation
 
