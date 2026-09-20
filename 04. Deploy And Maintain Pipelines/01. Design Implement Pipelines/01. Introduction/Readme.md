@@ -14,7 +14,8 @@ Decisions made during pipeline design affect every downstream consumer of your d
 
 Error handling separates production-ready pipelines from fragile prototypes. Without it, invalid records corrupt downstream analytics, unnoticed failures accumulate technical debt, and problems surface long after ingestion.
 
-> **Note:** Azure Databricks provides built-in mechanisms to prevent silent failures. Leveraging **data quality expectations**, **retry policies**, and **conditional task flows** is essential for building resilient data workflows that protect analytical integrity.
+>[!Note]
+> Azure Databricks provides built-in mechanisms to prevent silent failures. Leveraging **data quality expectations**, **retry policies**, and **conditional task flows** is essential for building resilient data workflows that protect analytical integrity.
 
 ### Module Overview
 
