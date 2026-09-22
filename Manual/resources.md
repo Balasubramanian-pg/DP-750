@@ -1,4 +1,5 @@
 # Azure Resources per Lab
+The set of instructions
 
 | Lab | ADB Workspace | Managed Resources | Serverless Compute | Classic Cluster E-series VMs (multi-node) | Classic Cluster D-series VM (single-node) | Azure Key Vault |
 | --- | :-----------: | :---------------: | :----------------: | :---------------------------------------: | :---------------------------------------: | :-------------: |
