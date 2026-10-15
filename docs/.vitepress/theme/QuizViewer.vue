@@ -86,262 +86,403 @@ const stats = computed(() => {
 </script>
 
 <template>
-  <div class="quiz-container">
-    <div class="quiz-header">
-      <div class="stats-banner">
-        <div class="stat-box">
-          <span class="stat-num">{{ stats.total }}</span>
-          <span class="stat-lbl">Total Questions</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-num">{{ stats.answered }}</span>
-          <span class="stat-lbl">Answered</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-num green">{{ stats.correct }}</span>
-          <span class="stat-lbl">Correct</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-num blue">{{ stats.score }}%</span>
-          <span class="stat-lbl">Accuracy</span>
-        </div>
+  <div class="sim-wrapper">
+    <!-- Telemetry Control Bar -->
+    <div class="sim-matrix">
+      <div class="matrix-cell">
+        <span class="cell-label">TOTAL SCENARIOS</span>
+        <span class="cell-value">{{ stats.total }}</span>
       </div>
+      <div class="matrix-cell">
+        <span class="cell-label">EVALUATED</span>
+        <span class="cell-value">{{ stats.answered }}</span>
+      </div>
+      <div class="matrix-cell">
+        <span class="cell-label">CORRECT</span>
+        <span class="cell-value green-val">{{ stats.correct }}</span>
+      </div>
+      <div class="matrix-cell">
+        <span class="cell-label">ACCURACY RATE</span>
+        <span class="cell-value cyan-val">{{ stats.score }}%</span>
+      </div>
+    </div>
 
-      <div class="controls-bar">
+    <!-- Search & Filter Controls -->
+    <div class="sim-filter-row">
+      <div class="search-wrap">
+        <span class="search-prefix">&gt;</span>
         <input 
           v-model="searchQuery" 
-          placeholder="🔍 Search questions, topics, keywords..." 
-          class="search-input"
+          placeholder="Filter scenarios by keyword (e.g. catalyst, spill, lineage, lakeflow)..." 
+          class="sim-search"
         />
-        <select v-model="filterMode" class="filter-select">
-          <option value="all">All Questions</option>
-          <option value="unanswered">Unanswered</option>
-          <option value="incorrect">Incorrect</option>
+      </div>
+      <div class="filter-actions">
+        <select v-model="filterMode" class="sim-select">
+          <option value="all">ALL SCENARIOS</option>
+          <option value="unanswered">UNANSWERED ONLY</option>
+          <option value="incorrect">INCORRECT ONLY</option>
         </select>
-        <button @click="resetQuiz" class="btn-reset">Reset Progress</button>
+        <button @click="resetQuiz" class="btn-terminal-inline">RESET RIG</button>
       </div>
     </div>
 
-    <div v-if="!currentQuestion" class="empty-state">
-      <p>No questions match your current search/filter.</p>
+    <!-- Empty State -->
+    <div v-if="!currentQuestion" class="sim-empty">
+      <p class="mono-label">// NO MATCHING SPECIFICATIONS LOCATED FOR GIVEN QUERY</p>
     </div>
 
-    <div v-else class="question-card">
-      <div class="card-top">
-        <span class="badge-idx">Question {{ currentIndex + 1 }} of {{ filteredQuestions.length }} (ID: #{{ currentQuestion.id }})</span>
-        <span v-if="currentQuestion.objective" class="badge-obj">{{ currentQuestion.objective }}</span>
+    <!-- Question Box -->
+    <div v-else class="sim-card">
+      <div class="card-meta">
+        <div class="meta-tag">
+          <span class="mono-code">INDEX: {{ currentIndex + 1 }} / {{ filteredQuestions.length }}</span>
+          <span class="pipe-sep">|</span>
+          <span class="mono-code">ID: #{{ currentQuestion.id }}</span>
+        </div>
+        <div v-if="currentQuestion.objective" class="meta-obj">
+          <span class="mono-label">{{ currentQuestion.objective }}</span>
+        </div>
       </div>
 
-      <h3 class="q-title">{{ currentQuestion.title }}</h3>
-      <p v-if="currentQuestion.subtitle" class="q-sub">{{ currentQuestion.subtitle }}</p>
+      <h3 class="scenario-prompt">{{ currentQuestion.title }}</h3>
+      <p v-if="currentQuestion.subtitle" class="scenario-sub">{{ currentQuestion.subtitle }}</p>
 
-      <div class="options-list">
+      <div class="options-container">
         <div 
           v-for="opt in currentQuestion.options" 
           :key="opt.key"
-          class="option-item"
+          class="option-row"
           :class="{
-            selected: selectedAnswers[currentQuestion.id] === opt.key,
-            correct: showExplanation[currentQuestion.id] && opt.key === currentQuestion.correct,
-            incorrect: showExplanation[currentQuestion.id] && selectedAnswers[currentQuestion.id] === opt.key && opt.key !== currentQuestion.correct
+            chosen: selectedAnswers[currentQuestion.id] === opt.key,
+            valid: showExplanation[currentQuestion.id] && opt.key === currentQuestion.correct,
+            invalid: showExplanation[currentQuestion.id] && selectedAnswers[currentQuestion.id] === opt.key && opt.key !== currentQuestion.correct
           }"
           @click="selectOption(currentQuestion.id, opt.key)"
         >
-          <span class="opt-letter">{{ opt.key }}</span>
-          <span class="opt-text">{{ opt.text }}</span>
+          <div class="opt-key-col">
+            <span class="opt-bracket">[</span>
+            <span class="opt-letter">{{ opt.key }}</span>
+            <span class="opt-bracket">]</span>
+          </div>
+          <div class="opt-text-col">{{ opt.text }}</div>
         </div>
       </div>
 
-      <div v-if="showExplanation[currentQuestion.id]" class="explanation-box">
-        <h4>💡 Answer & Explanation</h4>
-        <p><strong>Correct Answer: Option {{ currentQuestion.correct }}</strong></p>
-        <p class="expl-body">{{ currentQuestion.explanation }}</p>
+      <div v-if="showExplanation[currentQuestion.id]" class="explanation-pane">
+        <div class="expl-header">
+          <span class="mono-label">VERIFIED SPECIFICATION // OPTION {{ currentQuestion.correct }}</span>
+        </div>
+        <p class="expl-content">{{ currentQuestion.explanation }}</p>
       </div>
 
-      <div class="card-actions">
-        <button :disabled="currentIndex === 0" @click="prevQ" class="btn-nav">← Previous</button>
-        <button :disabled="currentIndex === filteredQuestions.length - 1" @click="nextQ" class="btn-nav primary">Next Question →</button>
+      <div class="sim-nav-row">
+        <button :disabled="currentIndex === 0" @click="prevQ" class="btn-sim-nav">
+          &larr; PREVIOUS SPEC
+        </button>
+        <button :disabled="currentIndex === filteredQuestions.length - 1" @click="nextQ" class="btn-sim-nav active">
+          NEXT SPEC &rarr;
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.quiz-container {
+.sim-wrapper {
   margin-top: 1.5rem;
 }
-.stats-banner {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
-.stat-box {
-  flex: 1;
-  min-width: 120px;
-  background: var(--vp-c-bg-soft);
+
+/* Telemetry Grid */
+.sim-matrix {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   border: 1px solid var(--vp-c-border);
-  border-radius: 8px;
-  padding: 1rem;
-  text-align: center;
+  background: var(--vp-c-bg-elv);
+  margin-bottom: 1.25rem;
 }
-.stat-num {
-  font-size: 1.6rem;
+
+@media (max-width: 640px) {
+  .sim-matrix {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.matrix-cell {
+  padding: 0.9rem 1.1rem;
+  border-right: 1px solid var(--vp-c-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.matrix-cell:last-child {
+  border-right: none;
+}
+
+.cell-label {
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--vp-c-text-3);
+}
+
+.cell-value {
+  font-family: var(--vp-font-family-mono);
+  font-size: 1.3rem;
   font-weight: 700;
-  display: block;
+  color: var(--vp-c-text-1);
 }
-.stat-num.green { color: #107c41; }
-.stat-num.blue { color: #0078d4; }
-.stat-lbl {
-  font-size: 0.85rem;
-  color: var(--vp-c-text-2);
-}
-.controls-bar {
+
+.green-val { color: #10B981; }
+.cyan-val { color: var(--vp-c-brand-1); }
+
+/* Filter Row */
+.sim-filter-row {
   display: flex;
   gap: 0.75rem;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
 }
-.search-input {
-  flex: 2;
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
+
+.search-wrap {
+  flex: 1;
+  min-width: 280px;
+  display: flex;
+  align-items: center;
+  background: var(--vp-c-bg-elv);
   border: 1px solid var(--vp-c-border);
-  background: var(--vp-c-bg);
-  color: var(--vp-c-text-1);
+  padding: 0 0.85rem;
 }
-.filter-select {
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
-  border: 1px solid var(--vp-c-border);
-  background: var(--vp-c-bg);
-  color: var(--vp-c-text-1);
+
+.search-prefix {
+  font-family: var(--vp-font-family-mono);
+  color: var(--vp-c-brand-1);
+  font-weight: bold;
+  margin-right: 0.5rem;
 }
-.btn-reset {
-  padding: 0.6rem 1rem;
-  border-radius: 6px;
+
+.sim-search {
+  flex: 1;
+  padding: 0.65rem 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--vp-c-text-1);
+  font-size: 0.88rem;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.sim-select {
+  background: var(--vp-c-bg-elv);
   border: 1px solid var(--vp-c-border);
+  color: var(--vp-c-text-1);
+  padding: 0.65rem 0.9rem;
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  outline: none;
+}
+
+.btn-terminal-inline {
   background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-border);
+  color: var(--vp-c-text-2);
+  padding: 0.65rem 1rem;
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.75rem;
   cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all 0.15s ease;
 }
-.question-card {
+
+.btn-terminal-inline:hover {
+  color: var(--vp-c-text-1);
+  border-color: var(--vp-c-text-1);
+}
+
+/* Card */
+.sim-card {
   border: 1px solid var(--vp-c-border);
-  border-radius: 12px;
-  padding: 1.5rem;
-  background: var(--vp-c-bg-soft);
+  background: var(--vp-c-bg-elv);
+  padding: 1.75rem;
 }
-.card-top {
+
+.card-meta {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
-.badge-idx {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #0078d4;
+
+.meta-tag {
+  display: flex;
+  gap: 0.5rem;
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.75rem;
+  color: var(--vp-c-text-3);
 }
-.badge-obj {
-  font-size: 0.8rem;
-  background: var(--vp-c-brand-soft);
-  color: var(--vp-c-brand-1);
-  padding: 2px 8px;
-  border-radius: 4px;
+
+.pipe-sep {
+  color: var(--vp-c-border);
 }
-.q-title {
-  margin-top: 0;
-  font-size: 1.25rem;
-  line-height: 1.4;
-}
-.q-sub {
+
+.meta-obj {
+  padding: 0.2rem 0.5rem;
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-border);
   color: var(--vp-c-text-2);
-  font-style: italic;
-  font-size: 0.95rem;
-  margin-bottom: 1.25rem;
 }
-.options-list {
+
+.scenario-prompt {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--vp-c-text-1);
+  margin: 0 0 0.5rem;
+}
+
+.scenario-sub {
+  font-size: 0.9rem;
+  color: var(--vp-c-text-2);
+  margin: 0 0 1.5rem;
+  line-height: 1.5;
+}
+
+/* Options */
+.options-container {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin: 1.25rem 0;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
 }
-.option-item {
+
+.option-row {
   display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.85rem 1.1rem;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 0.85rem 1rem;
   border: 1px solid var(--vp-c-border);
-  border-radius: 8px;
   background: var(--vp-c-bg);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.12s ease;
 }
-.option-item:hover {
-  border-color: #0078d4;
+
+.option-row:hover {
+  border-color: var(--vp-c-text-1);
 }
-.opt-letter {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--vp-c-bg-soft);
-  font-weight: bold;
+
+.opt-key-col {
+  font-family: var(--vp-font-family-mono);
+  font-weight: 700;
+  color: var(--vp-c-text-3);
+  display: flex;
+  font-size: 0.85rem;
+  user-select: none;
 }
-.opt-text {
-  flex: 1;
+
+.option-row.chosen .opt-key-col {
+  color: var(--vp-c-brand-1);
 }
-.option-item.correct {
-  border-color: #107c41;
-  background: rgba(16, 124, 65, 0.1);
-}
-.option-item.incorrect {
-  border-color: #d13438;
-  background: rgba(209, 52, 56, 0.1);
-}
-.explanation-box {
-  margin-top: 1.25rem;
-  padding: 1rem 1.25rem;
-  border-left: 4px solid #0078d4;
-  background: var(--vp-c-bg);
-  border-radius: 0 8px 8px 0;
-}
-.explanation-box h4 {
-  margin: 0 0 0.5rem 0;
-  color: #0078d4;
-}
-.expl-body {
-  font-size: 0.95rem;
+
+.opt-text-col {
+  font-size: 0.92rem;
   line-height: 1.5;
-  color: var(--vp-c-text-2);
+  color: var(--vp-c-text-1);
 }
-.card-actions {
+
+.option-row.valid {
+  border-color: #10B981 !important;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.option-row.valid .opt-key-col {
+  color: #10B981;
+}
+
+.option-row.invalid {
+  border-color: #EF4444 !important;
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.option-row.invalid .opt-key-col {
+  color: #EF4444;
+}
+
+/* Explanation */
+.explanation-pane {
+  border: 1px solid var(--vp-c-border);
+  border-left: 2px solid var(--vp-c-brand-1);
+  background: var(--vp-c-bg-soft);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.expl-header {
+  color: var(--vp-c-brand-1);
+  margin-bottom: 0.5rem;
+}
+
+.expl-content {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--vp-c-text-2);
+  margin: 0;
+}
+
+/* Actions */
+.sim-nav-row {
   display: flex;
   justify-content: space-between;
-  margin-top: 1.5rem;
+  border-top: 1px solid var(--vp-c-border);
+  padding-top: 1.25rem;
 }
-.btn-nav {
-  padding: 0.6rem 1.2rem;
-  border-radius: 6px;
-  border: 1px solid var(--vp-c-border);
-  background: var(--vp-c-bg);
+
+.btn-sim-nav {
+  padding: 0.65rem 1.2rem;
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
   font-weight: 600;
+  background: var(--vp-c-bg);
+  border: 1px solid var(--vp-c-border);
+  color: var(--vp-c-text-2);
   cursor: pointer;
+  transition: all 0.15s ease;
 }
-.btn-nav.primary {
-  background: #0078d4;
-  color: #fff;
-  border-color: #0078d4;
+
+.btn-sim-nav:hover:not(:disabled) {
+  border-color: var(--vp-c-text-1);
+  color: var(--vp-c-text-1);
 }
-.btn-nav:disabled {
-  opacity: 0.5;
+
+.btn-sim-nav.active {
+  background: var(--vp-c-text-1);
+  color: var(--vp-c-bg);
+  border-color: var(--vp-c-text-1);
+}
+
+.btn-sim-nav.active:hover:not(:disabled) {
+  background: var(--vp-c-brand-1);
+  border-color: var(--vp-c-brand-1);
+  color: #FFFFFF;
+}
+
+.btn-sim-nav:disabled {
+  opacity: 0.4;
   cursor: not-allowed;
 }
-.empty-state {
-  padding: 3rem;
+
+.sim-empty {
+  padding: 4rem 2rem;
   text-align: center;
-  color: var(--vp-c-text-2);
+  border: 1px solid var(--vp-c-border);
+  background: var(--vp-c-bg-elv);
 }
 </style>

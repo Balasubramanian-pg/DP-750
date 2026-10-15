@@ -821,54 +821,54 @@ const sidebar = {
   ],
   "/labs/": [
     {
-      "text": "DP-750 Hands-on Labs",
+      "text": "Engineering Labs",
       "items": [
         {
-          "text": "00. Setup",
-          "link": "/labs/setup"
+          "text": "00 // Workspace Setup & Config",
+          "link": "/labs/"
         },
         {
-          "text": "01. Explore Azure Databricks",
+          "text": "01 // Explore Azure Databricks",
           "link": "/labs/explore-azure-databricks"
         },
         {
-          "text": "02. Select and Configure Compute",
+          "text": "02 // Select & Configure Compute",
           "link": "/labs/select-and-configure-compute"
         },
         {
-          "text": "03. Create and Organize Objects in Unity Catalog",
+          "text": "03 // Objects in Unity Catalog",
           "link": "/labs/create-and-organize-objects-in-unity-catalog"
         },
         {
-          "text": "04. Secure Unity Catalog Objects",
+          "text": "04 // Secure Unity Catalog Objects",
           "link": "/labs/secure-unity-catalog-objects"
         },
         {
-          "text": "05. Govern Unity Catalog Objects",
+          "text": "05 // Govern Unity Catalog Objects",
           "link": "/labs/govern-unity-catalog-objects"
         },
         {
-          "text": "06. Design Implement Data Modeling Unity Catalog",
+          "text": "06 // Data Modeling in Unity Catalog",
           "link": "/labs/design-implement-data-modeling-unity-catalog"
         },
         {
-          "text": "07. Ingest Data into Unity Catalog",
+          "text": "07 // Ingest Data into Unity Catalog",
           "link": "/labs/ingest-data-into-unity-catalog"
         },
         {
-          "text": "08. Cleanse Transform Load Data into Unity Catalog",
+          "text": "08 // Cleanse, Transform & Load",
           "link": "/labs/cleanse-transform-load-data-into-unity-catalog"
         },
         {
-          "text": "10. Design Implement Data Pipelines",
+          "text": "10 // Design Implement Data Pipelines",
           "link": "/labs/design-implement-data-pipelines"
         },
         {
-          "text": "11. Implement Lakeflow Jobs",
+          "text": "11 // Implement Lakeflow Jobs",
           "link": "/labs/implement-lakeflow-jobs"
         },
         {
-          "text": "99. Cleanup",
+          "text": "99 // Environment Cleanup",
           "link": "/labs/cleanup"
         }
       ]
@@ -876,10 +876,10 @@ const sidebar = {
   ],
   "/question-bank/": [
     {
-      "text": "DP-750 Exam Practice",
+      "text": "Exam Simulation",
       "items": [
         {
-          "text": "Interactive Question Bank",
+          "text": "Interactive 181-Q Simulator",
           "link": "/question-bank/"
         }
       ]
@@ -888,29 +888,30 @@ const sidebar = {
 }
 
 export default defineConfig({
-  title: 'DP-750 Azure Databricks',
-  description: 'Comprehensive Study Guide, Interactive Quizzes, and Labs for Microsoft DP-750',
+  title: 'DP-750 PROTOCOL',
+  description: 'Enterprise Azure Databricks Data Engineering Architecture & Practice',
   base: '/DP-750/',
   ignoreDeadLinks: true,
   cleanUrls: true,
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/DP-750/icon.svg' }]
+  ],
   themeConfig: {
-    logo: {
-      light: 'https://azure.microsoft.com/svghandler/databricks/?width=40&height=40',
-      dark: 'https://azure.microsoft.com/svghandler/databricks/?width=40&height=40'
-    },
+    logo: '/icon.svg',
+    siteTitle: 'DP-750 // CORE',
     nav: [
-      { text: 'Home', link: '/' },
+      { text: 'Core Architecture', link: '/01-setup-and-configure/' },
       {
-        text: 'Modules',
+        text: 'Curriculum Specs',
         items: [
-          { text: '1. Setup & Configure', link: '/01-setup-and-configure/' },
-          { text: '2. Secure & Govern', link: '/02-secure-and-govern/' },
-          { text: '3. Prepare & Process', link: '/03-prepare-and-process/' },
-          { text: '4. Deploy & Maintain', link: '/04-deploy-and-maintain/' }
+          { text: '01 // Setup & Runtime Engine', link: '/01-setup-and-configure/' },
+          { text: '02 // Security & Metastore Governance', link: '/02-secure-and-govern/' },
+          { text: '03 // Medallion Pipeline Ingestion', link: '/03-prepare-and-process/' },
+          { text: '04 // Lakeflow & CI/CD Operations', link: '/04-deploy-and-maintain/' }
         ]
       },
-      { text: 'Labs', link: '/labs/' },
-      { text: 'Question Bank', link: '/question-bank/' }
+      { text: 'Hands-on Labs', link: '/labs/' },
+      { text: '181-Q Simulator', link: '/question-bank/' }
     ],
     sidebar,
     socialLinks: [
@@ -918,10 +919,6 @@ export default defineConfig({
     ],
     search: {
       provider: 'local'
-    },
-    footer: {
-      message: 'Released under open educational resources for Azure Databricks Data Engineers.',
-      copyright: 'Copyright © 2026 Balasubramanian-pg | DP-750 Portal'
     }
   }
 })

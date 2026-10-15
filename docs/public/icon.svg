@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Minimalist Databricks / Data Block Stack icon with crisp narrow borders -->
+  <path d="M16 2L3 8.5L16 15L29 8.5L16 2Z" stroke="#E2E8F0" stroke-width="1.75" stroke-linejoin="miter" stroke-linecap="square"/>
+  <path d="M3 14.5L16 21L29 14.5" stroke="#94A3B8" stroke-width="1.75" stroke-linejoin="miter" stroke-linecap="square"/>
+  <path d="M3 20.5L16 27L29 20.5" stroke="#64748B" stroke-width="1.75" stroke-linejoin="miter" stroke-linecap="square"/>
+  <circle cx="16" cy="8.5" r="1.5" fill="#F8FAFC"/>
+</svg>

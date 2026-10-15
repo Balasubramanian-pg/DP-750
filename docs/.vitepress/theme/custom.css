@@ -1,0 +1,130 @@
+/* Avenir Next Cyr / Modern Geometric Sans fallback stack */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --vp-font-family-base: 'Avenir Next Cyr', 'Avenir Next', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --vp-font-family-mono: 'JetBrains Mono', 'Fira Code', Menlo, Monaco, Consolas, monospace;
+
+  /* Sharp crypto-minimalist palette: Pure contrast, precise lines, zero fuzzy borders */
+  --vp-c-brand-1: #0ea5e9;
+  --vp-c-brand-2: #38bdf8;
+  --vp-c-brand-3: #0284c7;
+  --vp-c-brand-soft: rgba(14, 165, 233, 0.08);
+
+  /* Force sharp corner radii across the system */
+  --vp-border-radius: 2px !important;
+  --vp-code-block-radius: 2px !important;
+  --vp-button-round-radius: 2px !important;
+  --vp-avatar-border-radius: 2px !important;
+}
+
+/* Dark mode by default styling matching modern crypto dashboards (Uniswap / Paradigm / Hyperliquid vibe) */
+html.dark {
+  --vp-c-bg: #090A0F;
+  --vp-c-bg-alt: #0D0F17;
+  --vp-c-bg-elv: #121520;
+  --vp-c-bg-soft: #111420;
+  --vp-c-border: #1E2335;
+  --vp-c-divider: #1A1F30;
+  --vp-c-text-1: #F1F5F9;
+  --vp-c-text-2: #94A3B8;
+  --vp-c-text-3: #64748B;
+}
+
+html:not(.dark) {
+  --vp-c-bg: #FAFAFC;
+  --vp-c-bg-alt: #F1F3F7;
+  --vp-c-bg-elv: #FFFFFF;
+  --vp-c-bg-soft: #EAEFF5;
+  --vp-c-border: #D1D8E2;
+  --vp-c-divider: #E2E8F0;
+  --vp-c-text-1: #0F172A;
+  --vp-c-text-2: #475569;
+  --vp-c-text-3: #64748B;
+}
+
+/* Eliminate round pill aesthetic */
+button, input, select, .VPButton, .VPHomeHero .action .VPButton, .VPFeature, .custom-block, pre, code {
+  border-radius: 2px !important;
+}
+
+/* Minimalist technical navbar & status accents */
+.VPNavBar {
+  border-bottom: 1px solid var(--vp-c-border) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.VPHome {
+  margin-bottom: 4rem;
+}
+
+/* Monospace micro-labels */
+.mono-label {
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Global Footer styling */
+.site-footer-custom {
+  border-top: 1px solid var(--vp-c-border);
+  padding: 3.5rem 1.5rem 2.5rem;
+  background: var(--vp-c-bg-alt);
+  font-size: 0.88rem;
+}
+
+.site-footer-inner {
+  max-width: 1152px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .site-footer-inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.footer-col h4 {
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vp-c-text-1);
+  margin-bottom: 1rem;
+}
+
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-col a {
+  color: var(--vp-c-text-2);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.footer-col a:hover {
+  color: var(--vp-c-brand-1);
+}
+
+.footer-bottom {
+  max-width: 1152px;
+  margin: 2.5rem auto 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--vp-c-divider);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--vp-c-text-3);
+  font-size: 0.8rem;
+}
