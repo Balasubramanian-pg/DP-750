@@ -1,6 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
+  /* Full Wide Layout: Override default 1440px constraint to 1920px */
+  --vp-layout-max-width: 1920px;
+
   /* Headings: Outfit */
   --vp-font-family-headings: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   
@@ -61,10 +64,14 @@ button, input, select, .VPButton, .VPHomeHero .action .VPButton, .VPFeature, .cu
   border-radius: 2px !important;
 }
 
-/* Minimalist technical navbar & status accents */
+/* Minimalist technical navbar & status accents across 1920px width */
 .VPNavBar {
   border-bottom: 1px solid var(--vp-c-border) !important;
   backdrop-filter: blur(12px) !important;
+}
+
+.VPNavBar .container {
+  max-width: 1840px !important;
 }
 
 /* Monospace micro-labels */
@@ -75,23 +82,25 @@ button, input, select, .VPButton, .VPHomeHero .action .VPButton, .VPFeature, .cu
   text-transform: uppercase;
 }
 
-/* Global Footer styling */
+/* Full 1920px Wide Footer styling */
 .site-footer-custom {
   border-top: 1px solid var(--vp-c-border);
-  padding: 3.5rem 1.5rem 2.5rem;
+  padding: 4rem 3rem 2.5rem;
   background: var(--vp-c-bg-alt);
   font-size: 0.88rem;
+  width: 100%;
 }
 
 .site-footer-inner {
-  max-width: 1152px;
+  max-width: 1840px;
+  width: 100%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 2.5rem;
+  gap: 3.5rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .site-footer-inner {
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -113,7 +122,7 @@ button, input, select, .VPButton, .VPHomeHero .action .VPButton, .VPFeature, .cu
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
 .footer-col a {
@@ -123,17 +132,18 @@ button, input, select, .VPButton, .VPHomeHero .action .VPButton, .VPFeature, .cu
 }
 
 .footer-col a:hover {
-  color: var(--vp-c-brand-1);
+  color: #FF3621;
 }
 
 .footer-bottom {
-  max-width: 1152px;
-  margin: 2.5rem auto 0;
+  max-width: 1840px;
+  width: 100%;
+  margin: 3rem auto 0;
   padding-top: 1.5rem;
   border-top: 1px solid var(--vp-c-divider);
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: var(--vp-c-text-3);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
 }

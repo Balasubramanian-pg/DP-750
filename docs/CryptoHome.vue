@@ -28,7 +28,7 @@
         </a>
       </div>
 
-      <!-- Live Telemetry Matrix (Now in Avenir Next, clean and proportional) -->
+      <!-- Live Telemetry Matrix -->
       <div class="telemetry-bar">
         <div class="telemetry-item">
           <span class="t-key">EXAM CODE</span>
@@ -103,7 +103,7 @@
       </div>
     </section>
 
-    <!-- Hands-on Lab Walkthroughs (Full Width Layout) -->
+    <!-- Hands-on Lab Walkthroughs (Full 1920px Split Grid) -->
     <section class="content-section lab-split">
       <div class="split-left">
         <div class="section-badge">
@@ -173,56 +173,63 @@
 </template>
 
 <style scoped>
-/* Full Wide Layout: Max Width 1400px across all displays */
+/* Exact 1920px Wide Full Resolution Canvas */
 .wide-landing {
-  max-width: 1400px;
+  max-width: 1840px;
   width: 100%;
   margin: 0 auto;
-  padding: 2rem 2.5rem 5rem;
+  padding: 3rem 3rem 6rem;
+  box-sizing: border-box;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .wide-landing {
-    padding: 1.5rem 1.25rem 4rem;
+    padding: 2rem 1.5rem 4rem;
   }
 }
 
 /* Hero Section */
 .hero-block {
-  padding: 3rem 0 3.5rem;
+  padding: 2.5rem 0 4rem;
   border-bottom: 1px solid var(--vp-c-border);
 }
 
 .badge-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.45rem 0.9rem;
+  gap: 0.65rem;
+  padding: 0.5rem 1rem;
   background: var(--vp-c-bg-soft);
   border: 1px solid var(--vp-c-border);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.8rem;
   font-family: var(--vp-font-family-base) !important;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.04em;
   color: var(--vp-c-text-2);
 }
 
 .badge-dot {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   background: #FF3621;
 }
 
 .main-headline {
   font-family: var(--vp-font-family-headings) !important;
-  font-size: 3.4rem;
-  line-height: 1.12;
-  font-weight: 700;
-  letter-spacing: -0.03em;
+  font-size: 4.2rem;
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.035em;
   color: var(--vp-c-text-1);
-  max-width: 1000px;
-  margin: 0 0 1.3rem;
+  max-width: 1300px;
+  margin: 0 0 1.5rem;
+}
+
+@media (max-width: 1280px) {
+  .main-headline {
+    font-size: 3.4rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -233,27 +240,27 @@
 
 .lead-subhead {
   font-family: var(--vp-font-family-base) !important;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   line-height: 1.65;
   color: var(--vp-c-text-2);
-  max-width: 820px;
-  margin: 0 0 2.2rem;
+  max-width: 980px;
+  margin: 0 0 2.5rem;
 }
 
 .cta-strip {
   display: flex;
-  gap: 0.9rem;
+  gap: 1rem;
   flex-wrap: wrap;
-  margin-bottom: 3.2rem;
+  margin-bottom: 3.5rem;
 }
 
 .btn-terminal {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.8rem 1.5rem;
+  gap: 0.6rem;
+  padding: 0.9rem 1.8rem;
   font-family: var(--vp-font-family-base) !important;
-  font-size: 0.88rem;
+  font-size: 0.94rem;
   font-weight: 600;
   text-decoration: none;
   border: 1px solid transparent;
@@ -292,26 +299,27 @@
   border-color: var(--vp-c-text-1);
 }
 
-/* Telemetry Bar using Avenir Next with natural layout */
+/* Full Width Telemetry Bar across 1920px screen */
 .telemetry-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   border: 1px solid var(--vp-c-border);
   background: var(--vp-c-bg-elv);
+  width: 100%;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .telemetry-bar {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 .telemetry-item {
-  padding: 1.1rem 1.4rem;
+  padding: 1.3rem 1.8rem;
   border-right: 1px solid var(--vp-c-border);
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.35rem;
 }
 
 .telemetry-item:last-child {
@@ -320,7 +328,7 @@
 
 .t-key {
   font-family: var(--vp-font-family-base) !important;
-  font-size: 0.74rem;
+  font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   color: var(--vp-c-text-3);
@@ -328,53 +336,54 @@
 
 .t-val {
   font-family: var(--vp-font-family-base) !important;
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--vp-c-text-1);
 }
 
 /* Sections */
 .content-section {
-  padding: 4.5rem 0;
+  padding: 5rem 0;
   border-bottom: 1px solid var(--vp-c-border);
 }
 
 .section-badge {
-  margin-bottom: 2.2rem;
+  margin-bottom: 2.5rem;
 }
 
 .section-kicker {
   font-family: var(--vp-font-family-base) !important;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   color: #0078d4;
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
 }
 
 .section-badge h2 {
   font-family: var(--vp-font-family-headings) !important;
-  font-size: 2rem;
+  font-size: 2.3rem;
   font-weight: 700;
   color: var(--vp-c-text-1);
   letter-spacing: -0.02em;
   margin: 0;
 }
 
-/* Modules List (Wide) */
+/* Full Width Modules Grid */
 .track-list {
   display: flex;
   flex-direction: column;
   border: 1px solid var(--vp-c-border);
+  width: 100%;
 }
 
 .track-row {
   display: grid;
-  grid-template-columns: 120px 1fr auto;
+  grid-template-columns: 140px 1fr auto;
   align-items: center;
-  gap: 2.5rem;
-  padding: 1.6rem 2rem;
+  gap: 3rem;
+  padding: 1.8rem 2.5rem;
   border-bottom: 1px solid var(--vp-c-border);
   background: var(--vp-c-bg-elv);
   text-decoration: none;
@@ -391,30 +400,30 @@
 
 .track-id {
   font-family: var(--vp-font-family-headings) !important;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: #0078d4;
 }
 
 .track-details h3 {
   font-family: var(--vp-font-family-headings) !important;
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 600;
   color: var(--vp-c-text-1);
-  margin: 0 0 0.35rem;
+  margin: 0 0 0.4rem;
 }
 
 .track-details p {
   font-family: var(--vp-font-family-base) !important;
-  font-size: 0.94rem;
+  font-size: 0.98rem;
   color: var(--vp-c-text-2);
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .track-action {
   font-family: var(--vp-font-family-base) !important;
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--vp-c-text-3);
   white-space: nowrap;
@@ -424,33 +433,34 @@
   color: #0078d4;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .track-row {
     grid-template-columns: 1fr;
-    gap: 0.85rem;
+    gap: 0.9rem;
   }
 }
 
-/* Lab Split Layout (Wide) */
+/* Full 1920px Width Lab Split Layout */
 .lab-split {
   display: grid;
-  grid-template-columns: 1fr 1.35fr;
-  gap: 3.5rem;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 4.5rem;
   align-items: center;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .lab-split {
     grid-template-columns: 1fr;
+    gap: 3rem;
   }
 }
 
 .split-copy {
   font-family: var(--vp-font-family-base) !important;
   color: var(--vp-c-text-2);
-  line-height: 1.65;
-  font-size: 1rem;
-  margin-bottom: 1.8rem;
+  line-height: 1.7;
+  font-size: 1.05rem;
+  margin-bottom: 2.2rem;
 }
 
 .inline-btn {
@@ -460,15 +470,16 @@
 .terminal-table {
   border: 1px solid var(--vp-c-border);
   background: var(--vp-c-bg-elv);
+  width: 100%;
 }
 
 .t-row {
   display: grid;
-  grid-template-columns: 90px 1fr 100px;
-  gap: 1.2rem;
-  padding: 1rem 1.3rem;
+  grid-template-columns: 100px 1fr 110px;
+  gap: 1.5rem;
+  padding: 1.15rem 1.6rem;
   border-bottom: 1px solid var(--vp-c-border);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   text-decoration: none;
   color: var(--vp-c-text-2);
   align-items: center;
@@ -485,7 +496,7 @@
 
 .t-head {
   font-family: var(--vp-font-family-base) !important;
-  font-size: 0.76rem;
+  font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -496,42 +507,44 @@
 
 .lab-pill {
   font-family: var(--vp-font-family-headings) !important;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #0078d4;
 }
 
 .time-pill {
   font-family: var(--vp-font-family-base) !important;
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   color: var(--vp-c-text-3);
 }
 
-/* Simulator Callout */
+/* Simulator Callout across 1920px screen */
 .simulator-callout {
-  padding-top: 4.5rem;
+  padding-top: 5rem;
 }
 
 .sim-inner {
   border: 1px solid var(--vp-c-border);
   background: var(--vp-c-bg-elv);
-  padding: 3rem;
+  padding: 3.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .sim-inner h2 {
   font-family: var(--vp-font-family-headings) !important;
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 700;
   color: var(--vp-c-text-1);
-  margin: 0.5rem 0 0.85rem;
+  margin: 0.5rem 0 0.95rem;
 }
 
 .sim-inner p {
   font-family: var(--vp-font-family-base) !important;
   color: var(--vp-c-text-2);
-  max-width: 750px;
-  line-height: 1.65;
-  font-size: 1.05rem;
-  margin: 0 0 2rem;
+  max-width: 880px;
+  line-height: 1.68;
+  font-size: 1.1rem;
+  margin: 0 0 2.2rem;
 }
 </style>
