@@ -821,54 +821,54 @@ const sidebar = {
   ],
   "/labs/": [
     {
-      "text": "Engineering Labs",
+      "text": "Hands-on Labs",
       "items": [
         {
-          "text": "00 // Workspace Setup & Config",
+          "text": "00. Workspace Setup and Configuration",
           "link": "/labs/"
         },
         {
-          "text": "01 // Explore Azure Databricks",
+          "text": "01. Explore Azure Databricks",
           "link": "/labs/explore-azure-databricks"
         },
         {
-          "text": "02 // Select & Configure Compute",
+          "text": "02. Select and Configure Compute",
           "link": "/labs/select-and-configure-compute"
         },
         {
-          "text": "03 // Objects in Unity Catalog",
+          "text": "03. Objects in Unity Catalog",
           "link": "/labs/create-and-organize-objects-in-unity-catalog"
         },
         {
-          "text": "04 // Secure Unity Catalog Objects",
+          "text": "04. Secure Unity Catalog Objects",
           "link": "/labs/secure-unity-catalog-objects"
         },
         {
-          "text": "05 // Govern Unity Catalog Objects",
+          "text": "05. Govern Unity Catalog Objects",
           "link": "/labs/govern-unity-catalog-objects"
         },
         {
-          "text": "06 // Data Modeling in Unity Catalog",
+          "text": "06. Data Modeling in Unity Catalog",
           "link": "/labs/design-implement-data-modeling-unity-catalog"
         },
         {
-          "text": "07 // Ingest Data into Unity Catalog",
+          "text": "07. Ingest Data into Unity Catalog",
           "link": "/labs/ingest-data-into-unity-catalog"
         },
         {
-          "text": "08 // Cleanse, Transform & Load",
+          "text": "08. Cleanse, Transform and Load Data",
           "link": "/labs/cleanse-transform-load-data-into-unity-catalog"
         },
         {
-          "text": "10 // Design Implement Data Pipelines",
+          "text": "10. Design and Implement Data Pipelines",
           "link": "/labs/design-implement-data-pipelines"
         },
         {
-          "text": "11 // Implement Lakeflow Jobs",
+          "text": "11. Implement Lakeflow Jobs",
           "link": "/labs/implement-lakeflow-jobs"
         },
         {
-          "text": "99 // Environment Cleanup",
+          "text": "99. Environment Cleanup",
           "link": "/labs/cleanup"
         }
       ]
@@ -876,10 +876,10 @@ const sidebar = {
   ],
   "/question-bank/": [
     {
-      "text": "Exam Simulation",
+      "text": "Exam Preparation",
       "items": [
         {
-          "text": "Interactive 181-Q Simulator",
+          "text": "Interactive 181-Question Simulator",
           "link": "/question-bank/"
         }
       ]
@@ -888,33 +888,40 @@ const sidebar = {
 }
 
 export default defineConfig({
-  title: 'DP-750 PROTOCOL',
-  description: 'Enterprise Azure Databricks Data Engineering Architecture & Practice',
+  title: 'DP-750 Azure Databricks',
+  description: 'Azure Databricks Data Engineering Certification Portal & Practice Engine',
   base: '/DP-750/',
   ignoreDeadLinks: true,
   cleanUrls: true,
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/DP-750/icon.svg' }]
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/DP-750/databricks.svg' }]
   ],
   themeConfig: {
-    logo: '/icon.svg',
-    siteTitle: 'DP-750 // CORE',
+    logo: '/databricks.svg',
+    siteTitle: 'DP-750 Azure Databricks',
     nav: [
       { text: 'Core Architecture', link: '/01-setup-and-configure/' },
       {
-        text: 'Curriculum Specs',
+        text: 'Curriculum Modules',
         items: [
-          { text: '01 // Setup & Runtime Engine', link: '/01-setup-and-configure/' },
-          { text: '02 // Security & Metastore Governance', link: '/02-secure-and-govern/' },
-          { text: '03 // Medallion Pipeline Ingestion', link: '/03-prepare-and-process/' },
-          { text: '04 // Lakeflow & CI/CD Operations', link: '/04-deploy-and-maintain/' }
+          { text: 'Module 1: Setup and Runtime Environment', link: '/01-setup-and-configure/' },
+          { text: 'Module 2: Security and Metastore Governance', link: '/02-secure-and-govern/' },
+          { text: 'Module 3: Medallion Pipeline Ingestion', link: '/03-prepare-and-process/' },
+          { text: 'Module 4: Lakeflow and CI/CD Operations', link: '/04-deploy-and-maintain/' }
         ]
       },
       { text: 'Hands-on Labs', link: '/labs/' },
-      { text: '181-Q Simulator', link: '/question-bank/' }
+      { text: '181-Question Simulator', link: '/question-bank/' }
     ],
     sidebar,
     socialLinks: [
+      {
+        icon: {
+          svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45a1.6 1.6 0 1 0 1.6 1.6c0-.88-.72-1.6-1.6-1.6Z"/></svg>'
+        },
+        link: 'https://www.linkedin.com/in/balasubramanianpg2022/?isSelfProfile=true',
+        ariaLabel: 'LinkedIn Profile'
+      },
       { icon: 'github', link: 'https://github.com/Balasubramanian-pg/DP-750' }
     ],
     search: {
