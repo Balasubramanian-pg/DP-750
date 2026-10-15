@@ -1,11 +1,14 @@
-/* Avenir Next Cyr / Modern Geometric Sans fallback stack */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  --vp-font-family-base: 'Avenir Next Cyr', 'Avenir Next', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* Headings: Outfit */
+  --vp-font-family-headings: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  /* Body and all other elements: Avenir Next Cyr */
+  --vp-font-family-base: 'Avenir Next Cyr', 'Avenir Next', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --vp-font-family-mono: 'JetBrains Mono', 'Fira Code', Menlo, Monaco, Consolas, monospace;
 
-  /* Sharp crypto-minimalist palette: Pure contrast, precise lines, zero fuzzy borders */
+  /* Sharp crypto-minimalist palette */
   --vp-c-brand-1: #0ea5e9;
   --vp-c-brand-2: #38bdf8;
   --vp-c-brand-3: #0284c7;
@@ -18,7 +21,17 @@
   --vp-avatar-border-radius: 2px !important;
 }
 
-/* Dark mode by default styling matching modern crypto dashboards (Uniswap / Paradigm / Hyperliquid vibe) */
+/* Headings font enforcement */
+h1, h2, h3, h4, h5, h6, .vp-doc h1, .vp-doc h2, .vp-doc h3, .vp-doc h4, .main-headline, .section-badge h2, .sim-inner h2 {
+  font-family: var(--vp-font-family-headings) !important;
+  letter-spacing: -0.025em;
+}
+
+body, p, span, a, li, input, select, button, td, th {
+  font-family: var(--vp-font-family-base);
+}
+
+/* Dark mode by default styling matching modern crypto dashboards */
 html.dark {
   --vp-c-bg: #090A0F;
   --vp-c-bg-alt: #0D0F17;
@@ -54,10 +67,6 @@ button, input, select, .VPButton, .VPHomeHero .action .VPButton, .VPFeature, .cu
   backdrop-filter: blur(12px) !important;
 }
 
-.VPHome {
-  margin-bottom: 4rem;
-}
-
 /* Monospace micro-labels */
 .mono-label {
   font-family: var(--vp-font-family-mono);
@@ -90,7 +99,7 @@ button, input, select, .VPButton, .VPHomeHero .action .VPButton, .VPFeature, .cu
 }
 
 .footer-col h4 {
-  font-family: var(--vp-font-family-mono);
+  font-family: var(--vp-font-family-mono) !important;
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
