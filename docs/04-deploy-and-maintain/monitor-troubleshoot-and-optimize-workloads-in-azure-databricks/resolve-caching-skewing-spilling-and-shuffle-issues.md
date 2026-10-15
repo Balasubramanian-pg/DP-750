@@ -1,0 +1,3 @@
+# Resolve caching skewing spilling and shuffle issues
+
+\n_Failed to fetch content._\n\n---\n\n## Navigation\n\n- Previous: [04. Troubleshoot and repair Spark jobs and notebooks](04.%20Troubleshoot%20and%20repair%20Spark%20jobs%20and%20notebooks.md)\n- Next: [06. Implement log streaming with Azure Log Analytics](06.%20Implement%20log%20streaming%20with%20Azure%20Log%20Analytics.md)\n\n## Source\n\nMicrosoft Learn: [Resolve caching skewing spilling and shuffle issues](https://learn.microsoft.com/en-us/training/modules/monitor-troubleshoot-optimize-workloads-azure-databricks/5-resolve-caching-skewing-spilling-shuffle)\n

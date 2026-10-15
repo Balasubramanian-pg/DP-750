@@ -1,0 +1,25 @@
+# Secure Unity Catalog objects
+
+**Duration:** 107 min
+**URL:** https://learn.microsoft.com/en-us/training/modules/secure-unity-catalog-objects/
+
+## Learning Objectives
+- Understand the query lifecycle in Unity Catalog and how security is enforced
+- Implement access control strategies using inherited and explicit permissions
+- Apply fine-grained access control through row filtering and column masking
+- Securely access Azure Key Vault secrets in Azure Databricks workflows
+- Authenticate data access using service principals
+- Configure managed identities for secure resource access without managing credentials
+
+## Topics
+- [01. Introduction](01.%20Introduction.md)
+- [02. Understand the query lifecycle](02.%20Understand%20the%20query%20lifecycle.md)
+- [03. Implement access control strategies](03.%20Implement%20access%20control%20strategies.md)
+- [04. Understand fine-grained access control](04.%20Understand%20fine-grained%20access%20control.md)
+- [05. Implement row filtering and column masking](05.%20Implement%20row%20filtering%20and%20column%20masking.md)
+- [06. Access Azure Key Vault secrets](06.%20Access%20Azure%20Key%20Vault%20secrets.md)
+- [07. Authenticate data access with service principals](07.%20Authenticate%20data%20access%20with%20service%20principals.md)
+- [08. Authenticate resource access with managed identities](08.%20Authenticate%20resource%20access%20with%20managed%20identities.md)
+- [09. Exercise](09.%20Exercise.md)
+- [10. Knowledge check](10.%20Knowledge%20check.md)
+- [11. Summary](11.%20Summary.md)
