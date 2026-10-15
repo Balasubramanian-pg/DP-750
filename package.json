@@ -1,0 +1,26 @@
+{
+  "name": "repo",
+  "version": "1.0.0",
+  "description": "> [!NOTE]\r > The following documentation outlines the requisite expertise, technical proficiencies, and operational responsibilities expected of candidates pursuing this certification. The material serves as a baseline for evaluating readiness in enterprise data engineering contexts.",
+  "main": "index.js",
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Balasubramanian-pg/DP-750.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Balasubramanian-pg/DP-750/issues"
+  },
+  "homepage": "https://github.com/Balasubramanian-pg/DP-750#readme",
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  },
+  "type": "module"
+}
