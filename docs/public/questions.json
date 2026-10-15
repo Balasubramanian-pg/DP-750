@@ -1,0 +1,4708 @@
+[
+  {
+    "id": 3,
+    "title": "Q1: How does row-level filtering optimize storage while securing multi-tenant datasets?",
+    "subtitle": "Row-level filtering enforces granular user segmentation without data duplication overhead.",
+    "objective": "Evaluate query optimization and security mechanics.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By duplicating physical tables for each distinct user role and department"
+      },
+      {
+        "key": "B",
+        "text": "By executing parameterized predicate pushdowns to restrict visibility dynamically"
+      },
+      {
+        "key": "C",
+        "text": "By encrypting individual cell values with static organization keys"
+      },
+      {
+        "key": "D",
+        "text": "By converting operational parquet files into immutable CSV archives"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Predicate pushdowns evaluate filters at query parse time against session context functions without altering physical files. Explain how Spark catalyst optimizer injects filter predicates dynamically."
+  },
+  {
+    "id": 4,
+    "title": "Q2: Which mechanism applies dynamic masking functions to sensitive columns based on user group membership?",
+    "subtitle": "Dynamic column masking prevents unauthorized data exposure at the projection layer.",
+    "objective": "Evaluate column-level security and dynamic evaluation.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Static schema migration scripts executed during daily batch ingest"
+      },
+      {
+        "key": "B",
+        "text": "Manual view creation with hardcoded CASE statements per user"
+      },
+      {
+        "key": "C",
+        "text": "Unity Catalog column masking functions evaluated at query execution time"
+      },
+      {
+        "key": "D",
+        "text": "Azure Key Vault secrets rotation applied during storage reads"
+      }
+    ],
+    "correct": "C",
+    "explanation": "C. Unity Catalog column masks are defined using SQL functions referencing current_user() or is_account_group_member() to transform column outputs on the fly without rewriting underlying Delta tables."
+  },
+  {
+    "id": 5,
+    "title": "Q3: When configuring a row filter function in Unity Catalog, which SQL built-in function identifies the authenticated user principal?",
+    "subtitle": "Automated row filtering requires careful evaluation of session context functions.",
+    "objective": "Test knowledge of built-in security session context functions.",
+    "options": [
+      {
+        "key": "A",
+        "text": "system.client.user_id"
+      },
+      {
+        "key": "B",
+        "text": "current_user()"
+      },
+      {
+        "key": "C",
+        "text": "az_identity_principal()"
+      },
+      {
+        "key": "D",
+        "text": "spark.session.user"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. current_user() is the standard Spark SQL function utilized within row filter predicates to determine the calling principal's email or identity string."
+  },
+  {
+    "id": 6,
+    "title": "Q4: What is the primary operational advantage of implementing dynamic row filters over static view creation?",
+    "subtitle": "Fine-grained access policies enforce compliance without administrative sprawl.",
+    "objective": "Assess architectural benefits of dynamic policies over views.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Elimination of compute cluster resource consumption"
+      },
+      {
+        "key": "B",
+        "text": "Direct storage encryption key rotation at rest"
+      },
+      {
+        "key": "C",
+        "text": "Elimination of view proliferation and centralized policy manageability"
+      },
+      {
+        "key": "D",
+        "text": "Bypassing Azure Active Directory token expiration limits"
+      }
+    ],
+    "correct": "C",
+    "explanation": "C. Creating separate views for every department creates view sprawl. Dynamic row filters attach directly to the underlying table, allowing a single table to serve multiple secured segments."
+  },
+  {
+    "id": 7,
+    "title": "Q5: How should a column mask function be structured to display only the last four digits of a Social Security Number to standard analysts?",
+    "subtitle": "Column masking logic preserves data utility while neutralizing privacy risks.",
+    "objective": "Test SQL syntax for conditional column masking functions.",
+    "options": [
+      {
+        "key": "A",
+        "text": "CASE WHEN is_account_group_member('HR') THEN ssn ELSE CONCAT('XXX-XX-', RIGHT(ssn, 4)) END"
+      },
+      {
+        "key": "B",
+        "text": "ALTER TABLE secure_table DROP COLUMN ssn WHERE role != 'HR'"
+      },
+      {
+        "key": "C",
+        "text": "ENCRYPT(ssn, 'AES256') WITH KEY vault_secret"
+      },
+      {
+        "key": "D",
+        "text": "MASK ssn USING 'XXXX' FOR ALL USERS EXCEPT HR"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Unity Catalog masks utilize standard SQL conditional logic combined with group membership evaluation functions to conditionally transform column outputs."
+  },
+  {
+    "id": 9,
+    "title": "Q6: Which tool captures automated column-level data lineage across notebooks, jobs, and tables in Unity Catalog?",
+    "subtitle": "Automated data lineage maps precise table and column level provenance.",
+    "objective": "Evaluate native platform data lineage capabilities.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Azure Monitor Log Analytics workspace queries"
+      },
+      {
+        "key": "B",
+        "text": "Unity Catalog Catalog Explorer lineage graph engine"
+      },
+      {
+        "key": "C",
+        "text": "Databricks File System audit log parser scripts"
+      },
+      {
+        "key": "D",
+        "text": "Custom Apache Spark listener event hooks"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Catalog Explorer automatically extracts lineage from Spark query execution plans, tracking dependencies down to the individual column level without external instrumentation."
+  },
+  {
+    "id": 10,
+    "title": "Q7: How do metadata-based access policies leverage tags to simplify data governance?",
+    "subtitle": "Metadata-based access policies streamline large-scale permission management.",
+    "objective": "Test understanding of metadata tagging and attribute-based security.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By encrypting storage containers tagged with confidential labels"
+      },
+      {
+        "key": "B",
+        "text": "By applying automated access rules to any object possessing a specific key-value tag"
+      },
+      {
+        "key": "C",
+        "text": "By routing tagged jobs to high-priority compute clusters automatically"
+      },
+      {
+        "key": "D",
+        "text": "By generating synthetic test datasets for tagged development schemas"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Attribute-based access control (ABAC) uses metadata tags to dynamically evaluate and apply security policies, removing the need to manually assign permissions to hundreds of individual tables."
+  },
+  {
+    "id": 11,
+    "title": "Q8: When examining table lineage in Catalog Explorer, what level of granularity is supported for impact analysis?",
+    "subtitle": "Upstream provenance visibility ensures regulatory audit readiness.",
+    "objective": "Test lineage scope and depth in governance tools.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Workspace cluster level only"
+      },
+      {
+        "key": "B",
+        "text": "Entire catalog level without table distinction"
+      },
+      {
+        "key": "C",
+        "text": "Table level and column level dependency mapping"
+      },
+      {
+        "key": "D",
+        "text": "Azure subscription billing level tracking"
+      }
+    ],
+    "correct": "C",
+    "explanation": "C. Unity Catalog provides both table-level and column-level lineage, allowing data engineers to trace exactly which source columns fed into a transformed curated metric."
+  },
+  {
+    "id": 12,
+    "title": "Q9: What is the primary prerequisite for implementing attribute-based access control (ABAC) in Unity Catalog?",
+    "subtitle": "Metadata tagging enables dynamic attribute-based access control frameworks.",
+    "objective": "Evaluate prerequisites for metadata-driven security policies.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Establishing standardized key-value tags across catalogs, schemas, and tables"
+      },
+      {
+        "key": "B",
+        "text": "Migrating all external tables into managed DBFS storage roots"
+      },
+      {
+        "key": "C",
+        "text": "Upgrading all compute clusters to serverless SQL warehouses"
+      },
+      {
+        "key": "D",
+        "text": "Configuring Azure Key Vault RBAC role assignments"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. ABAC relies on consistent tagging taxonomy (e.g., classification:confidential, department:finance) to evaluate policies dynamically."
+  },
+  {
+    "id": 14,
+    "title": "Q10: Which architectural property distinguishes Delta Sharing from traditional cloud data replication?",
+    "subtitle": "Delta Sharing enables secure cross-organization data distribution via open protocols.",
+    "objective": "Test core principles of zero-copy secure data sharing.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It requires recipients to store duplicated copies in Azure Blob Storage"
+      },
+      {
+        "key": "B",
+        "text": "It provides secure, direct read access to live cloud storage without data movement"
+      },
+      {
+        "key": "C",
+        "text": "It mandates that all consuming organizations use identical Databricks workspaces"
+      },
+      {
+        "key": "D",
+        "text": "It routes all consumer queries through an intermediary staging database"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Delta Sharing relies on open REST protocols and cloud pre-signed URLs to grant direct access to underlying Parquet files in Delta tables without duplicating data."
+  },
+  {
+    "id": 15,
+    "title": "Q11: How do recipients authenticate against a Delta Sharing server when consuming shared tables?",
+    "subtitle": "Cross-organization data distribution requires robust credential management.",
+    "objective": "Evaluate authentication mechanisms in Delta Sharing.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Azure Active Directory user password prompt"
+      },
+      {
+        "key": "B",
+        "text": "SQL Server Authentication connection strings"
+      },
+      {
+        "key": "C",
+        "text": "Secure JSON-based sharing credential files containing bearer tokens"
+      },
+      {
+        "key": "D",
+        "text": "Anonymous public HTTP endpoints"
+      }
+    ],
+    "correct": "C",
+    "explanation": "C. Delta Sharing uses secure credential files (or profile files) containing encrypted token endpoints to establish authorized connection sessions."
+  },
+  {
+    "id": 16,
+    "title": "Q12: When testing cross-organization data distribution via Delta Sharing, what ensures that the provider retains full revocation control?",
+    "subtitle": "Delta Sharing protocol guarantees secure, auditable data exchange.",
+    "objective": "Assess provider administrative controls in data sharing.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Centralized share definitions and token expiration managed in the provider Unity Catalog"
+      },
+      {
+        "key": "B",
+        "text": "Manual deletion of recipient cloud storage containers"
+      },
+      {
+        "key": "C",
+        "text": "Weekly rotation of recipient cluster encryption keys"
+      },
+      {
+        "key": "D",
+        "text": "Hardcoded TTL limits inside Delta transaction log files"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Providers manage shares, recipients, and grants centrally in Unity Catalog, allowing instant revocation of sharing access without affecting internal tables."
+  },
+  {
+    "id": 18,
+    "title": "Q13: How do Azure Databricks workspaces securely reference secrets stored in Azure Key Vault?",
+    "subtitle": "Azure Key Vault integration secures credential management within notebooks.",
+    "objective": "Test secure secret referencing in Databricks environments.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Hardcoding connection strings in environment variables"
+      },
+      {
+        "key": "B",
+        "text": "Configuring an Azure Key Vault-backed secret scope in Databricks"
+      },
+      {
+        "key": "C",
+        "text": "Mounting Key Vault secrets directly into DBFS as plaintext files"
+      },
+      {
+        "key": "D",
+        "text": "Passing secrets via Spark cluster configuration parameters in plain text"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Secret scopes backed by Azure Key Vault allow notebooks to retrieve sensitive keys using dbutils.secrets.get(scope, key) without exposing plaintext credentials."
+  },
+  {
+    "id": 19,
+    "title": "Q14: What is the primary security benefit of using managed identities for Azure storage access instead of storage account keys?",
+    "subtitle": "Managed service identity authentication eliminates credential maintenance overhead.",
+    "objective": "Evaluate managed identity security advantages.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Automatic credential lifecycle management and removal of shared secret maintenance"
+      },
+      {
+        "key": "B",
+        "text": "Unlimited throughput scaling for Delta Lake transaction logs"
+      },
+      {
+        "key": "C",
+        "text": "Elimination of all Azure RBAC permission checks on storage containers"
+      },
+      {
+        "key": "D",
+        "text": "Faster Spark shuffle read performance across worker nodes"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Managed identities eliminate hardcoded account keys and connection strings, as Azure manages the identity lifecycle and token generation automatically."
+  },
+  {
+    "id": 20,
+    "title": "Q15: When retrieving a secret inside a Databricks notebook, what mechanism prevents the secret value from appearing in Spark UI logs?",
+    "subtitle": "Secure credential storage practices prevent accidental secret disclosure.",
+    "objective": "Test runtime secret redaction and logging protection.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Restarting the Spark driver after each retrieval"
+      },
+      {
+        "key": "B",
+        "text": "Automatic redaction of secret strings by the Databricks execution runtime"
+      },
+      {
+        "key": "C",
+        "text": "Encrypting the Spark UI web server port with SSL certificates"
+      },
+      {
+        "key": "D",
+        "text": "Storing secrets exclusively in local driver memory caches"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. The Databricks runtime automatically redacts any retrieved secret value from Spark UI outputs, notebooks logs, and driver logs (replacing them with [REDACTED])."
+  },
+  {
+    "id": 21,
+    "title": "Q16: How does Unity Catalog external location configuration use service principals to access external cloud storage?",
+    "subtitle": "Service principal authentication workflows secure external storage access.",
+    "objective": "Assess service principal integration with external locations.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By storing service principal passwords in plaintext table comments"
+      },
+      {
+        "key": "B",
+        "text": "By binding storage credentials to a service principal authorized via Azure RBAC"
+      },
+      {
+        "key": "C",
+        "text": "By assigning service principal owner rights to every Spark worker node"
+      },
+      {
+        "key": "D",
+        "text": "By converting service principal tokens into Kerberos ticket cache files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Unity Catalog storage credentials associate with a managed service principal (or managed identity) granted appropriate Azure RBAC roles on storage containers."
+  },
+  {
+    "id": 23,
+    "title": "Q17: What is the primary role of Microsoft Entra ID groups when assigning privileges within Unity Catalog?",
+    "subtitle": "Microsoft Entra ID integration establishes core enterprise security principles.",
+    "objective": "Evaluate enterprise group management principles.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Determining Spark cluster CPU core allocation limits"
+      },
+      {
+        "key": "B",
+        "text": "Managing securable object access permissions at scale through group membership"
+      },
+      {
+        "key": "C",
+        "text": "Defining Delta Lake table partitioning and Z-order columns"
+      },
+      {
+        "key": "D",
+        "text": "Automatically generating storage container SAS tokens"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Assigning privileges to Entra ID groups (rather than individual users) ensures scalable, manageable access control aligned with corporate HR structures."
+  },
+  {
+    "id": 24,
+    "title": "Q18: Which architectural challenge does a centralized governance model solve when transitioning from legacy workspace-level ACLs?",
+    "subtitle": "Centralized governance model shifts eliminate decentralized silos.",
+    "objective": "Test understanding of centralized vs decentralized governance.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Fragmented, inconsistent access policies scattered across disparate workspace databases"
+      },
+      {
+        "key": "B",
+        "text": "High cloud egress latency during multi-region data replication"
+      },
+      {
+        "key": "C",
+        "text": "Excessive cluster startup times for job-specific compute"
+      },
+      {
+        "key": "D",
+        "text": "Incompatibility between Delta Lake and traditional Parquet storage"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Legacy workspace ACLs created siloed permission models. Unity Catalog centralizes governance into a single metastore across all workspaces."
+  },
+  {
+    "id": 25,
+    "title": "Q19: Which Azure service collects comprehensive audit logs for Unity Catalog data access and governance changes?",
+    "subtitle": "Audit log management tracks critical data movement and access events.",
+    "objective": "Identify audit logging infrastructure and sink destinations.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Azure Kubernetes Service container insights"
+      },
+      {
+        "key": "B",
+        "text": "Azure Monitor Diagnostic Settings routed to a Log Analytics workspace"
+      },
+      {
+        "key": "C",
+        "text": "Azure SQL Database audit tables"
+      },
+      {
+        "key": "D",
+        "text": "Local Databricks notebook output cells"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Databricks diagnostic logs stream account and workspace audit events (including Unity Catalog data access) to Azure Monitor and Log Analytics."
+  },
+  {
+    "id": 26,
+    "title": "Q20: When migrating an existing workspace to Unity Catalog, what happens to legacy Hive metastore table permissions?",
+    "subtitle": "Workspace level permission transition requirements demand careful planning.",
+    "objective": "Evaluate migration behavior for legacy Hive metastore permissions.",
+    "options": [
+      {
+        "key": "A",
+        "text": "They automatically map to Unity Catalog external locations"
+      },
+      {
+        "key": "B",
+        "text": "They remain isolated in the legacy Hive metastore and must be explicitly migrated and re-secured"
+      },
+      {
+        "key": "C",
+        "text": "They are deleted immediately upon metastore attachment"
+      },
+      {
+        "key": "D",
+        "text": "They convert into Azure Key Vault secret access policies"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Hive metastore and Unity Catalog are distinct architectural layers. Legacy tables do not automatically inherit Unity Catalog grants and require explicit migration."
+  },
+  {
+    "id": 28,
+    "title": "Q21: What is the highest level securable object in the Unity Catalog permission hierarchy?",
+    "subtitle": "Unity Catalog object level security foundations govern hierarchical permissions.",
+    "objective": "Test knowledge of Unity Catalog root securable objects.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Azure Databricks Workspace"
+      },
+      {
+        "key": "B",
+        "text": "Metastore"
+      },
+      {
+        "key": "C",
+        "text": "Catalog"
+      },
+      {
+        "key": "D",
+        "text": "Schema"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. The Metastore is the root container in Unity Catalog, storing metadata for all catalogs, schemas, tables, views, and volumes within an Azure region."
+  },
+  {
+    "id": 29,
+    "title": "Q22: How can multiple Azure Databricks workspaces share a single Unity Catalog metastore?",
+    "subtitle": "Workspace level permission transition requirements dictate multi-workspace governance.",
+    "objective": "Evaluate multi-workspace metastore sharing architectures.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By binding each workspace to the same regional Unity Catalog metastore instance"
+      },
+      {
+        "key": "B",
+        "text": "By mounting workspace DBFS roots across all storage accounts"
+      },
+      {
+        "key": "C",
+        "text": "By synchronizing local Hive metastores via scheduled notebook jobs"
+      },
+      {
+        "key": "D",
+        "text": "By sharing cluster driver memory pools across workspace boundaries"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. A single Unity Catalog metastore can be assigned to multiple Azure Databricks workspaces in the same region, enabling centralized governance and data sharing across teams."
+  },
+  {
+    "id": 30,
+    "title": "Q23: When configuring managed identity integration for an external location, what Azure RBAC role must be assigned to the managed identity on the storage account?",
+    "subtitle": "Managed identity integration secures external storage access end-to-end.",
+    "objective": "Test precise Azure RBAC role requirements for storage access.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Contributor or Owner at subscription scope"
+      },
+      {
+        "key": "B",
+        "text": "Storage Blob Data Contributor on the target storage container"
+      },
+      {
+        "key": "C",
+        "text": "Key Vault Secrets User on the vault instance"
+      },
+      {
+        "key": "D",
+        "text": "Reader and Data Access Administrator globally"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. The Storage Blob Data Contributor role on the specific storage account or container is required for Unity Catalog external locations to read and write underlying Delta files."
+  },
+  {
+    "id": 31,
+    "title": "Q24: Which protocol standard does Delta Sharing utilize for underlying data transfer between provider and recipient?",
+    "subtitle": "Cross-organization data distribution via Delta Sharing protocols ensures secure exchange.",
+    "objective": "Identify underlying networking and transfer protocols in Delta Sharing.",
+    "options": [
+      {
+        "key": "A",
+        "text": "JDBC / ODBC relational drivers"
+      },
+      {
+        "key": "B",
+        "text": "Open REST APIs and pre-signed cloud storage URLs"
+      },
+      {
+        "key": "C",
+        "text": "FTP/SFTP file transfer daemons"
+      },
+      {
+        "key": "D",
+        "text": "Hadoop Distributed File System (HDFS) RPC protocol"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Delta Sharing is built on an open REST protocol that communicates table metadata and provides time-limited pre-signed cloud storage URLs for secure file retrieval."
+  },
+  {
+    "id": 33,
+    "title": "Q25: Where do customer data and Spark worker nodes reside within the Azure Databricks deployment architecture?",
+    "subtitle": "Control and compute plane separation guarantees enterprise cloud security.",
+    "objective": "Evaluate control plane vs compute plane isolation boundaries.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Inside the Databricks-managed control plane subscription"
+      },
+      {
+        "key": "B",
+        "text": "Inside the customer\u2019s own Azure subscription (compute plane VNet)"
+      },
+      {
+        "key": "C",
+        "text": "Within Microsoft Entra ID tenant shared storage clusters"
+      },
+      {
+        "key": "D",
+        "text": "On localized on-premises gateway appliances"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. The compute plane (cluster worker nodes, storage interactions) executes entirely within the customer's Azure subscription and virtual network, ensuring data never leaves customer control."
+  },
+  {
+    "id": 34,
+    "title": "Q26: What is the primary operational difference between an all-purpose cluster and a job-specific cluster in Azure Databricks?",
+    "subtitle": "All-purpose and job-specific clusters serve distinct operational workloads.",
+    "objective": "Test operational differences between interactive and automated compute.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Job clusters support Unity Catalog while all-purpose clusters do not"
+      },
+      {
+        "key": "B",
+        "text": "All-purpose clusters are designed for interactive notebook development, whereas job clusters terminate automatically upon workflow completion"
+      },
+      {
+        "key": "C",
+        "text": "Job clusters run exclusively on serverless SQL warehouses"
+      },
+      {
+        "key": "D",
+        "text": "All-purpose clusters prevent autoscaling under any circumstances"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. All-purpose clusters are interactive and stay running until manually terminated or timed out. Job clusters spin up specifically for a scheduled task and terminate immediately upon completion, optimizing cost."
+  },
+  {
+    "id": 35,
+    "title": "Q27: How does autoscaling behave on a Databricks compute cluster when handling variable pipeline workloads?",
+    "subtitle": "Compute scaling and lifecycle management optimize cluster resource utilization.",
+    "objective": "Evaluate autoscaling logic and worker node elasticity.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It dynamically adds or removes worker nodes between configured minimum and maximum limits based on pending task queue pressure"
+      },
+      {
+        "key": "B",
+        "text": "It automatically scales driver node RAM without adding worker nodes"
+      },
+      {
+        "key": "C",
+        "text": "It migrates workloads to serverless SQL warehouses when CPU utilization exceeds 90%"
+      },
+      {
+        "key": "D",
+        "text": "It pauses the cluster during heavy ingestion spikes to conserve memory"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Autoscaling evaluates pending Spark tasks and adjusts worker node counts between min and max boundaries defined in cluster settings."
+  },
+  {
+    "id": 36,
+    "title": "Q28: Which component sits directly below a catalog in the three-level Unity Catalog namespace?",
+    "subtitle": "Unity Catalog hierarchical levels organize enterprise data assets logically.",
+    "objective": "Test knowledge of the three-level namespace hierarchy.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Metastore"
+      },
+      {
+        "key": "B",
+        "text": "Table"
+      },
+      {
+        "key": "C",
+        "text": "Schema (Database)"
+      },
+      {
+        "key": "D",
+        "text": "Volume"
+      }
+    ],
+    "correct": "C",
+    "explanation": "C. The namespace hierarchy is Metastore -> Catalog -> Schema -> (Table / View / Volume / Function / Model). Schemas represent the second level of organization."
+  },
+  {
+    "id": 37,
+    "title": "Q29: What is the primary conceptual difference between a Unity Catalog metastore and a schema?",
+    "subtitle": "Metastores and schemas provide distinct scopes of data organization.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "A metastore is the top-level container for all enterprise catalogs in an Azure region, whereas a schema organizes specific tables and views within a catalog"
+      },
+      {
+        "key": "B",
+        "text": "A schema manages cloud storage credentials while a metastore manages user authentication"
+      },
+      {
+        "key": "C",
+        "text": "A metastore is restricted to a single notebook whereas a schema spans multiple workspaces"
+      },
+      {
+        "key": "D",
+        "text": "A schema contains physical Parquet files while a metastore contains only Spark code"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. The metastore is regional and encompasses all catalogs. Schemas are granular logical containers within catalogs used to group related tables and views."
+  },
+  {
+    "id": 38,
+    "title": "Q30: How can an organization use Unity Catalog catalogs to meet strict regulatory data residency and isolation mandates?",
+    "subtitle": "Regulatory compliance requirements shape Unity Catalog hierarchy design.",
+    "objective": "Assess regulatory isolation design patterns using catalogs.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By storing all tables in a single flat database schema"
+      },
+      {
+        "key": "B",
+        "text": "By creating dedicated catalogs mapped to specific regional storage roots and enforcing strict access grants per department"
+      },
+      {
+        "key": "C",
+        "text": "By disabling Unity Catalog lineage tracking for sensitive datasets"
+      },
+      {
+        "key": "D",
+        "text": "By routing all queries through all-purpose shared clusters"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Dedicated catalogs associated with specific external storage locations allow organizations to segregate regulated data domains and apply granular governance."
+  },
+  {
+    "id": 39,
+    "title": "Q31: When designing an Azure Databricks environment for production ETL and ad-hoc BI, how should compute resources be segregated?",
+    "subtitle": "Workspace deployment requirements align workload types with specific constructs.",
+    "objective": "Test best practices for workload segregation and cluster sizing.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Run both ETL pipelines and user ad-hoc queries on a single all-purpose cluster"
+      },
+      {
+        "key": "B",
+        "text": "Use dedicated job clusters for production data pipelines and serverless SQL warehouses or isolated all-purpose clusters for BI analysts"
+      },
+      {
+        "key": "C",
+        "text": "Disable Unity Catalog on production workloads to improve shuffle speed"
+      },
+      {
+        "key": "D",
+        "text": "Route all queries through driver nodes without worker instances"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Segregating production ETL (job clusters) from BI users (SQL warehouses or dedicated interactive clusters) prevents resource contention and maintains cost accountability."
+  },
+  {
+    "id": 40,
+    "title": "Q32: How does Microsoft Fabric interact with Delta tables governed by Azure Databricks Unity Catalog?",
+    "subtitle": "Microsoft Fabric and Power BI integration leverages Unity Catalog seamlessly.",
+    "objective": "Evaluate cross-platform analytics integration with Microsoft Fabric.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By requiring full data duplication into Fabric OneLake storage accounts"
+      },
+      {
+        "key": "B",
+        "text": "By leveraging Lakehouse shortcut connections and direct read access to Unity Catalog managed storage"
+      },
+      {
+        "key": "C",
+        "text": "By converting Delta tables into CSV files during query execution"
+      },
+      {
+        "key": "D",
+        "text": "By bypassing Unity Catalog security permissions entirely"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Microsoft Fabric connects to Unity Catalog assets using shortcuts and direct Delta table integration, enabling unified analytics across platforms without data duplication."
+  },
+  {
+    "id": 41,
+    "title": "Q33: What is a key configuration characteristic of SQL warehouses compared to standard all-purpose clusters in Databricks?",
+    "subtitle": "SQL warehouses configuration differs from all-purpose and job clusters.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "SQL warehouses require manual cluster sizing and cannot autoscale"
+      },
+      {
+        "key": "B",
+        "text": "SQL warehouses are optimized for concurrent BI and SQL query execution with automatic serverless scaling and instant startup"
+      },
+      {
+        "key": "C",
+        "text": "SQL warehouses execute Python and R code natively in notebook cells"
+      },
+      {
+        "key": "D",
+        "text": "SQL warehouses do not support Unity Catalog governance policies"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. SQL warehouses are purpose-built for SQL and BI workloads, offering rapid serverless startup, automatic concurrency scaling, and native Unity Catalog enforcement."
+  },
+  {
+    "id": 42,
+    "title": "Q34: Why is isolating authentication tokens from direct workspace configuration files a critical security practice?",
+    "subtitle": "Isolation of authentication tokens protects workspace configurations.",
+    "objective": "Test understanding of token security and leak prevention.",
+    "options": [
+      {
+        "key": "A",
+        "text": "To prevent plaintext credential exposure in source control repositories and unauthorized workspace access"
+      },
+      {
+        "key": "B",
+        "text": "To accelerate Spark partition shuffle performance during batch ingestion"
+      },
+      {
+        "key": "C",
+        "text": "To eliminate the need for Azure Key Vault integration entirely"
+      },
+      {
+        "key": "D",
+        "text": "To enable automatic cluster resizing during peak query hours"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Storing tokens or connection strings directly in configuration files risks exposure in Git repositories. Isolating them via Key Vault and secret scopes maintains strict security."
+  },
+  {
+    "id": 43,
+    "title": "Q35: During a transition to a centralized Unity Catalog governance model, what is the primary compliance milestone to verify?",
+    "subtitle": "Governance model transition compliance requirements demand structured roadmaps.",
+    "objective": "Evaluate compliance milestones during governance migration.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Disabling all Azure Monitor audit logging to reduce storage costs"
+      },
+      {
+        "key": "B",
+        "text": "Ensuring all data assets are registered in Unity Catalog catalogs with verified ownership and least-privilege access grants"
+      },
+      {
+        "key": "C",
+        "text": "Migrating all notebooks from Python to Scala"
+      },
+      {
+        "key": "D",
+        "text": "Replacing all managed tables with external CSV files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Centralized governance requires verifying that all assets reside within Unity Catalog with proper ownership assignments and least-privilege RBAC/ABAC controls."
+  },
+  {
+    "id": 44,
+    "title": "Q36: Which SQL GRANT syntax correctly assigns SELECT permission on a specific schema to an enterprise group in Unity Catalog?",
+    "subtitle": "Fine-grained permission application secures table and schema access.",
+    "objective": "Test ANSI SQL grant syntax for Unity Catalog schemas.",
+    "options": [
+      {
+        "key": "A",
+        "text": "ALTER DATABASE finance_schema GRANT READ TO GROUP finance_analysts"
+      },
+      {
+        "key": "B",
+        "text": "GRANT SELECT ON SCHEMA finance_catalog.hr_schema TO `finance-analysts`"
+      },
+      {
+        "key": "C",
+        "text": "SET PERMISSION SELECT ON TABLE finance_catalog.* TO finance_analysts"
+      },
+      {
+        "key": "D",
+        "text": "ASSIGN ROLE reader TO finance_analysts ON hr_schema"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Unity Catalog uses standard ANSI SQL GRANT/REVOKE statements, such as GRANT SELECT ON SCHEMA catalog.schema TO `group-name`."
+  },
+  {
+    "id": 45,
+    "title": "Q37: Which event category in Databricks audit logs captures table reads, writes, and partition scans?",
+    "subtitle": "Audit log management tracks data movement events across the enterprise.",
+    "objective": "Identify audit event categories for data access tracking.",
+    "options": [
+      {
+        "key": "A",
+        "text": "cluster_management events"
+      },
+      {
+        "key": "B",
+        "text": "unityCatalog audit events and table access logs"
+      },
+      {
+        "key": "C",
+        "text": "workspace_security configuration events"
+      },
+      {
+        "key": "D",
+        "text": "billing_metering usage logs"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Unity Catalog records all data access operations (reads, writes, catalog modifications) in diagnostic audit logs for compliance review."
+  },
+  {
+    "id": 46,
+    "title": "Q38: When organizing workspaces in a multi-environment architecture (Dev, Test, Prod), how should Unity Catalog catalogs be mapped?",
+    "subtitle": "Workspace level permission transition requirements necessitate catalog mapping.",
+    "objective": "Test environment isolation patterns using catalogs.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Store all development and production tables in a single default schema"
+      },
+      {
+        "key": "B",
+        "text": "Create dedicated catalogs for each environment (e.g., dev_catalog, test_catalog, prod_catalog)"
+      },
+      {
+        "key": "C",
+        "text": "Use separate metastores for every individual developer notebook"
+      },
+      {
+        "key": "D",
+        "text": "Disable all schema separation and rely solely on workspace-level passwords"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Standard enterprise design patterns use separate catalogs for Dev, Test, and Prod environments to ensure clean environment isolation and access control."
+  },
+  {
+    "id": 47,
+    "title": "Q39: What is the primary role of an external location object in Unity Catalog when connecting to Azure Storage?",
+    "subtitle": "Service principal authentication workflows secure external storage access.",
+    "objective": "Evaluate the purpose of external location objects in Unity Catalog.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It compiles Scala source code into executable Java bytecode"
+      },
+      {
+        "key": "B",
+        "text": "It bridges Unity Catalog security to underlying cloud storage containers using storage credentials and service principals"
+      },
+      {
+        "key": "C",
+        "text": "It automatically generates Power BI dashboards from Delta tables"
+      },
+      {
+        "key": "D",
+        "text": "It enforces CPU throttling limits on all-purpose compute clusters"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. External locations bind storage paths to storage credentials, ensuring that users can only access underlying storage files if they have been granted privileges in Unity Catalog."
+  },
+  {
+    "id": 48,
+    "title": "Q40: Which command lists available secret scopes configured within an Azure Databricks workspace?",
+    "subtitle": "Secure credential storage practices using Azure Key Vault prevent leakage.",
+    "objective": "Test Databricks utilities command syntax for secrets management.",
+    "options": [
+      {
+        "key": "A",
+        "text": "spark.conf.get(\"spark.databricks.secrets.scopes\")"
+      },
+      {
+        "key": "B",
+        "text": "dbutils.secrets.listScopes()"
+      },
+      {
+        "key": "C",
+        "text": "az databricks secret-scopes list"
+      },
+      {
+        "key": "D",
+        "text": "SELECT * FROM system.secrets.scopes"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. dbutils.secrets.listScopes() is the standard Databricks Utilities command used in notebooks to list all configured secret scopes."
+  },
+  {
+    "id": 49,
+    "title": "Q41: How are permissions applied to notebooks, folders, and experiments within an Azure Databricks workspace?",
+    "subtitle": "Databricks workspace object level security foundations govern notebook assets.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "Exclusively through Unity Catalog metastore SQL GRANT statements"
+      },
+      {
+        "key": "B",
+        "text": "Through workspace-level Access Control Lists (ACLs) assigned to users and groups"
+      },
+      {
+        "key": "C",
+        "text": "By modifying Azure Key Vault access policies"
+      },
+      {
+        "key": "D",
+        "text": "By configuring Delta Lake transaction log checkpoints"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Workspace objects (notebooks, folders, MLflow experiments) use workspace-level ACLs, whereas data assets (catalogs, schemas, tables) use Unity Catalog governance."
+  },
+  {
+    "id": 50,
+    "title": "Q42: When configuring a storage credential in Unity Catalog using a managed identity, what eliminates the need to rotate storage account keys?",
+    "subtitle": "Managed identity integration for external storage access security simplifies trust.",
+    "objective": "Assess credential rotation elimination via managed identities.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Azure automatically manages the identity lifecycle and token issuance without long-lived secrets"
+      },
+      {
+        "key": "B",
+        "text": "Databricks automatically generates new storage account root passwords every 24 hours"
+      },
+      {
+        "key": "C",
+        "text": "Spark worker nodes encrypt all data at rest using AES-512"
+      },
+      {
+        "key": "D",
+        "text": "Delta Sharing protocol bypasses Azure storage authentication entirely"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. System-assigned or user-assigned managed identities rely on Azure-managed tokens, removing the operational risk of hardcoded secret expiration or rotation."
+  },
+  {
+    "id": 51,
+    "title": "Q43: What role does the Delta Sharing recipient object play in the provider's Unity Catalog?",
+    "subtitle": "Cross-organization data distribution via Delta Sharing protocols ensures security.",
+    "objective": "Test understanding of Delta Sharing recipient objects.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It defines the recipient's Azure subscription billing meter"
+      },
+      {
+        "key": "B",
+        "text": "It represents the consuming organization or tenant authorized to access specific shares"
+      },
+      {
+        "key": "C",
+        "text": "It stores backup copies of the shared Delta tables in local metastore storage"
+      },
+      {
+        "key": "D",
+        "text": "It enforces CPU core limits on the recipient's Spark cluster"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. The recipient object in Unity Catalog defines who is receiving the data and associates them with specific shares containing authorized tables."
+  },
+  {
+    "id": 52,
+    "title": "Q44: Which practice ensures that API tokens used for Databricks automation are securely isolated?",
+    "subtitle": "Isolation of authentication tokens from direct workspace configuration protects systems.",
+    "objective": "Evaluate best practices for automation token lifecycle management.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Pasting tokens directly into notebook Markdown cells for team visibility"
+      },
+      {
+        "key": "B",
+        "text": "Storing personal access tokens or service principal secrets in secure CI/CD secret vaults and Key Vault"
+      },
+      {
+        "key": "C",
+        "text": "Saving tokens in unencrypted local text files on cluster driver nodes"
+      },
+      {
+        "key": "D",
+        "text": "Hardcoding tokens into Spark configuration defaults"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Automation tokens and secrets should always be injected securely via CI/CD secret management or Azure Key Vault rather than hardcoded in code."
+  },
+  {
+    "id": 53,
+    "title": "Q45: When auditing a newly implemented Unity Catalog governance model, how do administrators verify that least-privilege principles are enforced?",
+    "subtitle": "Governance model transition compliance requirements demand structured audits.",
+    "objective": "Test least-privilege audit procedures in Unity Catalog.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By verifying that all users have admin rights across all catalogs"
+      },
+      {
+        "key": "B",
+        "text": "By reviewing catalog, schema, and table privilege grants to ensure users and groups possess only the minimum required access"
+      },
+      {
+        "key": "C",
+        "text": "By checking that all workspaces share a single root DBFS storage account"
+      },
+      {
+        "key": "D",
+        "text": "By disabling row-level filters on confidential tables"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Least privilege verification involves auditing current privilege grants via Catalog Explorer or information schema queries to ensure no excessive permissions exist."
+  },
+  {
+    "id": 54,
+    "title": "Q46: When both a row filter and a column mask are applied to the same table, in what order are they evaluated by the Spark query engine?",
+    "subtitle": "Row-level filtering and dynamic column masking mechanics ensure robust security.",
+    "objective": "Evaluate evaluation order of row filters and column masks.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Row filters restrict record visibility first, followed by column masking transformations on the remaining rows"
+      },
+      {
+        "key": "B",
+        "text": "Column masks are applied before filtering any rows from the dataset"
+      },
+      {
+        "key": "C",
+        "text": "Both filters execute simultaneously in separate driver memory threads"
+      },
+      {
+        "key": "D",
+        "text": "Row filters and column masks are mutually exclusive and cannot be applied together"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Row filtering prunes unauthorized rows during predicate pushdown, and column masks transform sensitive attributes on the projected rows before returning results."
+  },
+  {
+    "id": 55,
+    "title": "Q47: How does Unity Catalog handle lineage tracking when data is transformed using external Spark jobs outside Databricks?",
+    "subtitle": "Automated data lineage tracking and metadata policies provide complete visibility.",
+    "objective": "Test lineage capture behavior with external table writes.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Lineage is automatically captured via local file system polling"
+      },
+      {
+        "key": "B",
+        "text": "External Spark jobs writing directly to Unity Catalog managed tables register metadata updates and transaction logs, enabling lineage capture"
+      },
+      {
+        "key": "C",
+        "text": "Lineage tracking is impossible unless executed inside a Databricks notebook"
+      },
+      {
+        "key": "D",
+        "text": "Azure Monitor generates manual lineage graphs via PowerShell scripts"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. As long as operations occur against Unity Catalog managed tables through supported Spark connectors or APIs, Delta transaction logs and query parsing capture provenance."
+  },
+  {
+    "id": 56,
+    "title": "Q48: What happens when a provider revokes access to a shared table in Delta Sharing?",
+    "subtitle": "Delta Sharing protocols secure cross organization data distribution effectively.",
+    "objective": "Evaluate runtime revocation mechanics in Delta Sharing.",
+    "options": [
+      {
+        "key": "A",
+        "text": "The recipient's pre-signed URL access tokens immediately fail, blocking further data reads"
+      },
+      {
+        "key": "B",
+        "text": "The recipient's local cloud storage account is automatically deleted by Azure"
+      },
+      {
+        "key": "C",
+        "text": "All historical parquet files cached by the recipient are permanently wiped"
+      },
+      {
+        "key": "D",
+        "text": "The recipient workspace cluster shuts down automatically"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Because Delta Sharing relies on time-limited pre-signed URLs managed by the provider, revoking access stops future file access instantly."
+  },
+  {
+    "id": 57,
+    "title": "Q49: Which authentication mechanism is recommended for production Azure Databricks jobs connecting to Azure SQL Database without storing passwords?",
+    "subtitle": "Azure Key Vault secrets and managed service identity authentication secure access.",
+    "objective": "Test production authentication best practices for external databases.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Hardcoded SQL username and password in JDBC connection strings"
+      },
+      {
+        "key": "B",
+        "text": "Microsoft Entra ID authentication utilizing managed identities or Key Vault secret scopes"
+      },
+      {
+        "key": "C",
+        "text": "Anonymous SQL server connection strings with public access enabled"
+      },
+      {
+        "key": "D",
+        "text": "Local cluster driver file caching"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Managed identities and Key Vault secret scopes eliminate plaintext credentials, adhering to enterprise security best practices for DP-750."
+  },
+  {
+    "id": 58,
+    "title": "Q50: How does Unity Catalog synchronize identity and group membership from Microsoft Entra ID?",
+    "subtitle": "Microsoft Entra ID integration and core security principles govern enterprise access.",
+    "objective": "Evaluate SCIM identity synchronization mechanics.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Through manual CSV user uploads performed daily by administrators"
+      },
+      {
+        "key": "B",
+        "text": "Automatically via SCIM provisioning and account console synchronization with Entra ID"
+      },
+      {
+        "key": "C",
+        "text": "By parsing Spark cluster driver error logs every hour"
+      },
+      {
+        "key": "D",
+        "text": "Through Azure Blob Storage container access keys"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Databricks uses SCIM (System for Cross-domain Identity Management) to automatically synchronize users and groups from Microsoft Entra ID into the Databricks account console."
+  },
+  {
+    "id": 63,
+    "title": "Q1: How does row-level filtering optimize storage while securing multi-tenant streaming datasets?",
+    "subtitle": "Row-level filtering enforces granular user segmentation without data duplication overhead.",
+    "objective": "Evaluate query optimization and security mechanics during stream ingestion.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By duplicating physical files for each distinct user role and department"
+      },
+      {
+        "key": "B",
+        "text": "By executing parameterized predicate pushdowns to restrict visibility dynamically"
+      },
+      {
+        "key": "C",
+        "text": "By encrypting individual cell values with static organization keys"
+      },
+      {
+        "key": "D",
+        "text": "By converting operational parquet files into immutable CSV archives"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Predicate pushdowns evaluate filters at query parse time against session context functions without altering physical files."
+  },
+  {
+    "id": 64,
+    "title": "Q2: Which mechanism applies dynamic masking functions to sensitive ingested columns based on user group membership?",
+    "subtitle": "Dynamic column masking prevents unauthorized data exposure at the projection layer.",
+    "objective": "Evaluate column-level security and dynamic evaluation during transformations.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Static schema migration scripts executed during daily batch ingest"
+      },
+      {
+        "key": "B",
+        "text": "Manual view creation with hardcoded CASE statements per user"
+      },
+      {
+        "key": "C",
+        "text": "Unity Catalog column masking functions evaluated at query execution time"
+      },
+      {
+        "key": "D",
+        "text": "Azure Key Vault secrets rotation applied during storage reads"
+      }
+    ],
+    "correct": "C",
+    "explanation": "C. Column masks are defined using SQL functions referencing session credentials to transform column outputs on the fly."
+  },
+  {
+    "id": 65,
+    "title": "Q3: When configuring a row filter function during stream ingestion, which SQL built-in function identifies the authenticated user principal?",
+    "subtitle": "Automated row filtering requires careful evaluation of session context functions.",
+    "objective": "Test knowledge of built-in security session context functions in pipelines.",
+    "options": [
+      {
+        "key": "A",
+        "text": "system.client.user_id"
+      },
+      {
+        "key": "B",
+        "text": "current_user()"
+      },
+      {
+        "key": "C",
+        "text": "az_identity_principal()"
+      },
+      {
+        "key": "D",
+        "text": "spark.session.user"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. current_user() is the standard Spark SQL function utilized within row filter predicates."
+  },
+  {
+    "id": 66,
+    "title": "Q4: What is the primary operational advantage of implementing dynamic row filters over static view creation in pipelines?",
+    "subtitle": "Fine-grained access policies enforce compliance without administrative sprawl.",
+    "objective": "Assess architectural benefits of dynamic policies over views.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Elimination of compute cluster resource consumption"
+      },
+      {
+        "key": "B",
+        "text": "Direct storage encryption key rotation at rest"
+      },
+      {
+        "key": "C",
+        "text": "Elimination of view proliferation and centralized policy manageability"
+      },
+      {
+        "key": "D",
+        "text": "Bypassing Azure Active Directory token expiration limits"
+      }
+    ],
+    "correct": "C",
+    "explanation": "C. Dynamic row filters attach directly to underlying tables, avoiding view sprawl across ingestion pipelines."
+  },
+  {
+    "id": 67,
+    "title": "Q5: How should a column mask function be structured to display only the last four digits of a sensitive identifier to analysts?",
+    "subtitle": "Column masking logic preserves data utility while neutralizing privacy risks.",
+    "objective": "Test SQL syntax for conditional column masking functions.",
+    "options": [
+      {
+        "key": "A",
+        "text": "CASE WHEN is_account_group_member('HR') THEN val ELSE CONCAT('XXX-', RIGHT(val, 4)) END"
+      },
+      {
+        "key": "B",
+        "text": "ALTER TABLE secure_table DROP COLUMN val WHERE role != 'HR'"
+      },
+      {
+        "key": "C",
+        "text": "ENCRYPT(val, 'AES256') WITH KEY vault_secret"
+      },
+      {
+        "key": "D",
+        "text": "MASK val USING 'XXXX' FOR ALL USERS EXCEPT HR"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Unity Catalog masks utilize standard SQL conditional logic combined with group membership evaluation functions."
+  },
+  {
+    "id": 69,
+    "title": "Q6: Which tool captures automated column-level data lineage across transformation notebooks and jobs?",
+    "subtitle": "Automated data lineage maps precise table and column level provenance.",
+    "objective": "Evaluate native platform data lineage capabilities during transformation.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Azure Monitor Log Analytics workspace queries"
+      },
+      {
+        "key": "B",
+        "text": "Unity Catalog Catalog Explorer lineage graph engine"
+      },
+      {
+        "key": "C",
+        "text": "Databricks File System audit log parser scripts"
+      },
+      {
+        "key": "D",
+        "text": "Custom Apache Spark listener event hooks"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Catalog Explorer automatically extracts lineage from Spark query execution plans."
+  },
+  {
+    "id": 70,
+    "title": "Q7: How do metadata-based access policies leverage tags to simplify data pipeline governance?",
+    "subtitle": "Metadata-based access policies streamline large-scale permission management.",
+    "objective": "Test understanding of metadata tagging and attribute-based security.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By encrypting storage containers tagged with confidential labels"
+      },
+      {
+        "key": "B",
+        "text": "By applying automated access rules to any object possessing a specific key-value tag"
+      },
+      {
+        "key": "C",
+        "text": "By routing tagged jobs to high-priority compute clusters automatically"
+      },
+      {
+        "key": "D",
+        "text": "By generating synthetic test datasets for tagged development schemas"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Attribute-based access control (ABAC) uses metadata tags to dynamically apply policies."
+  },
+  {
+    "id": 71,
+    "title": "Q8: When examining table lineage during data transformation, what level of granularity is supported?",
+    "subtitle": "Upstream provenance visibility ensures regulatory audit readiness.",
+    "objective": "Test lineage scope and depth in governance tools.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Workspace cluster level only"
+      },
+      {
+        "key": "B",
+        "text": "Entire catalog level without table distinction"
+      },
+      {
+        "key": "C",
+        "text": "Table level and column level dependency mapping"
+      },
+      {
+        "key": "D",
+        "text": "Azure subscription billing level tracking"
+      }
+    ],
+    "correct": "C",
+    "explanation": "C. Unity Catalog provides both table-level and column-level lineage mapping."
+  },
+  {
+    "id": 72,
+    "title": "Q9: What is the primary prerequisite for implementing attribute-based access control (ABAC) on ingested assets?",
+    "subtitle": "Metadata tagging enables dynamic attribute-based access control frameworks.",
+    "objective": "Evaluate prerequisites for metadata-driven security policies.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Establishing standardized key-value tags across catalogs, schemas, and tables"
+      },
+      {
+        "key": "B",
+        "text": "Migrating all external tables into managed DBFS storage roots"
+      },
+      {
+        "key": "C",
+        "text": "Upgrading all compute clusters to serverless SQL warehouses"
+      },
+      {
+        "key": "D",
+        "text": "Configuring Azure Key Vault RBAC role assignments"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. ABAC relies on consistent tagging taxonomy to evaluate security policies dynamically."
+  },
+  {
+    "id": 74,
+    "title": "Q10: Which architectural property distinguishes Delta Sharing from traditional cloud data replication?",
+    "subtitle": "Delta Sharing enables secure cross-organization data distribution via open protocols.",
+    "objective": "Test core principles of zero-copy secure data sharing.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It requires recipients to store duplicated copies in Azure Blob Storage"
+      },
+      {
+        "key": "B",
+        "text": "It provides secure, direct read access to live cloud storage without data movement"
+      },
+      {
+        "key": "C",
+        "text": "It mandates that all consuming organizations use identical Databricks workspaces"
+      },
+      {
+        "key": "D",
+        "text": "It routes all consumer queries through an intermediary staging database"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Delta Sharing relies on open REST protocols and pre-signed URLs without data duplication."
+  },
+  {
+    "id": 75,
+    "title": "Q11: How do recipients authenticate against a Delta Sharing server when consuming shared tables?",
+    "subtitle": "Cross-organization data distribution requires robust credential management.",
+    "objective": "Evaluate authentication mechanisms in Delta Sharing.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Azure Active Directory user password prompt"
+      },
+      {
+        "key": "B",
+        "text": "SQL Server Authentication connection strings"
+      },
+      {
+        "key": "C",
+        "text": "Secure JSON-based sharing credential files containing bearer tokens"
+      },
+      {
+        "key": "D",
+        "text": "Anonymous public HTTP endpoints"
+      }
+    ],
+    "correct": "C",
+    "explanation": "C. Delta Sharing uses secure credential files containing encrypted token endpoints."
+  },
+  {
+    "id": 76,
+    "title": "Q12: When testing cross-organization data distribution, what ensures that the provider retains full revocation control?",
+    "subtitle": "Delta Sharing protocol guarantees secure, auditable data exchange.",
+    "objective": "Assess provider administrative controls in data sharing.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Centralized share definitions and token expiration managed in the provider Unity Catalog"
+      },
+      {
+        "key": "B",
+        "text": "Manual deletion of recipient cloud storage containers"
+      },
+      {
+        "key": "C",
+        "text": "Weekly rotation of recipient cluster encryption keys"
+      },
+      {
+        "key": "D",
+        "text": "Hardcoded TTL limits inside Delta transaction log files"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Providers manage shares and tokens centrally in Unity Catalog for instant revocation."
+  },
+  {
+    "id": 78,
+    "title": "Q13: How do Azure Databricks workspaces securely reference secrets stored in Azure Key Vault during ingestion?",
+    "subtitle": "Azure Key Vault integration secures credential management within ingestion notebooks.",
+    "objective": "Test secure secret referencing in Databricks environments.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Hardcoding connection strings in environment variables"
+      },
+      {
+        "key": "B",
+        "text": "Configuring an Azure Key Vault-backed secret scope in Databricks"
+      },
+      {
+        "key": "C",
+        "text": "Mounting Key Vault secrets directly into DBFS as plaintext files"
+      },
+      {
+        "key": "D",
+        "text": "Passing secrets via Spark cluster configuration parameters in plain text"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Secret scopes backed by Key Vault allow notebooks to retrieve keys securely via dbutils."
+  },
+  {
+    "id": 79,
+    "title": "Q14: What is the primary security benefit of using managed identities for Azure storage access instead of account keys?",
+    "subtitle": "Managed service identity authentication eliminates credential maintenance overhead.",
+    "objective": "Evaluate managed identity security advantages.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Automatic credential lifecycle management and removal of shared secret maintenance"
+      },
+      {
+        "key": "B",
+        "text": "Unlimited throughput scaling for Delta Lake transaction logs"
+      },
+      {
+        "key": "C",
+        "text": "Elimination of all Azure RBAC permission checks on storage containers"
+      },
+      {
+        "key": "D",
+        "text": "Faster Spark shuffle read performance across worker nodes"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Managed identities eliminate hardcoded account keys and connection strings."
+  },
+  {
+    "id": 80,
+    "title": "Q15: When retrieving a secret inside a Databricks notebook, what mechanism prevents the secret value from appearing in logs?",
+    "subtitle": "Secure credential storage practices prevent accidental secret disclosure.",
+    "objective": "Test runtime secret redaction and logging protection.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Restarting the Spark driver after each retrieval"
+      },
+      {
+        "key": "B",
+        "text": "Automatic redaction of secret strings by the Databricks execution runtime"
+      },
+      {
+        "key": "C",
+        "text": "Encrypting the Spark UI web server port with SSL certificates"
+      },
+      {
+        "key": "D",
+        "text": "Storing secrets exclusively in local driver memory caches"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. The Databricks runtime automatically redacts any retrieved secret value from Spark UI outputs and logs."
+  },
+  {
+    "id": 82,
+    "title": "Q16: What is the primary role of Microsoft Entra ID groups when assigning privileges for data pipelines?",
+    "subtitle": "Microsoft Entra ID integration establishes core enterprise security principles.",
+    "objective": "Evaluate enterprise group management principles.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Determining Spark cluster CPU core allocation limits"
+      },
+      {
+        "key": "B",
+        "text": "Managing securable object access permissions at scale through group membership"
+      },
+      {
+        "key": "C",
+        "text": "Defining Delta Lake table partitioning and Z-order columns"
+      },
+      {
+        "key": "D",
+        "text": "Automatically generating storage container SAS tokens"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Assigning privileges to Entra ID groups ensures scalable, manageable access control."
+  },
+  {
+    "id": 83,
+    "title": "Q17: Which architectural challenge does a centralized governance model solve when transitioning from legacy ACLs?",
+    "subtitle": "Centralized governance model shifts eliminate decentralized silos.",
+    "objective": "Test understanding of centralized vs decentralized governance.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Fragmented, inconsistent access policies scattered across disparate workspace databases"
+      },
+      {
+        "key": "B",
+        "text": "High cloud egress latency during multi-region data replication"
+      },
+      {
+        "key": "C",
+        "text": "Excessive cluster startup times for job-specific compute"
+      },
+      {
+        "key": "D",
+        "text": "Incompatibility between Delta Lake and traditional Parquet storage"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Legacy workspace ACLs created siloed permission models. Unity Catalog centralizes governance."
+  },
+  {
+    "id": 84,
+    "title": "Q18: How do metadata tags facilitate attribute-based access control in ingestion schemas?",
+    "subtitle": "Attribute-based access control using metadata tags streamlines pipeline security.",
+    "objective": "Evaluate metadata tag utilization for security policies.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By compiling Java bytecode for Spark executors"
+      },
+      {
+        "key": "B",
+        "text": "By enabling dynamic policy evaluation based on object classification tags"
+      },
+      {
+        "key": "C",
+        "text": "By encrypting parquet files at rest"
+      },
+      {
+        "key": "D",
+        "text": "By automatically generating Delta Lake checkpoints"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Metadata tags allow policies to apply automatically to assets sharing specific attributes."
+  },
+  {
+    "id": 85,
+    "title": "Q19: Which SQL syntax correctly grants SELECT permission on a schema to an enterprise group?",
+    "subtitle": "Fine-grained permission application secures table and schema access.",
+    "objective": "Test ANSI SQL grant syntax for schemas.",
+    "options": [
+      {
+        "key": "A",
+        "text": "GRANT SELECT ON SCHEMA catalog.schema TO `group-name`"
+      },
+      {
+        "key": "B",
+        "text": "ALTER DATABASE schema GRANT READ TO GROUP group-name"
+      },
+      {
+        "key": "C",
+        "text": "SET PERMISSION SELECT ON TABLE catalog.* TO group-name"
+      },
+      {
+        "key": "D",
+        "text": "ASSIGN ROLE reader TO group-name ON schema"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Unity Catalog uses standard ANSI SQL GRANT/REVOKE statements."
+  },
+  {
+    "id": 86,
+    "title": "Q20: Which event category in Databricks audit logs captures table reads, writes, and partition scans?",
+    "subtitle": "Audit log management tracks data movement events across the enterprise.",
+    "objective": "Identify audit event categories for data access tracking.",
+    "options": [
+      {
+        "key": "A",
+        "text": "cluster_management events"
+      },
+      {
+        "key": "B",
+        "text": "unityCatalog audit events and table access logs"
+      },
+      {
+        "key": "C",
+        "text": "workspace_security configuration events"
+      },
+      {
+        "key": "D",
+        "text": "billing_metering usage logs"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Unity Catalog records all data access operations in diagnostic audit logs."
+  },
+  {
+    "id": 88,
+    "title": "Q21: When migrating an existing workspace to Unity Catalog, what happens to legacy Hive metastore table permissions?",
+    "subtitle": "Workspace level permission transition requirements demand careful planning.",
+    "objective": "Evaluate migration behavior for legacy Hive metastore permissions.",
+    "options": [
+      {
+        "key": "A",
+        "text": "They automatically map to Unity Catalog external locations"
+      },
+      {
+        "key": "B",
+        "text": "They remain isolated in the legacy Hive metastore and must be explicitly migrated"
+      },
+      {
+        "key": "C",
+        "text": "They are deleted immediately upon metastore attachment"
+      },
+      {
+        "key": "D",
+        "text": "They convert into Azure Key Vault secret access policies"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Hive metastore and Unity Catalog are distinct; legacy tables require explicit migration."
+  },
+  {
+    "id": 89,
+    "title": "Q22: How does a Unity Catalog external location object use service principals to access cloud storage?",
+    "subtitle": "Service principal authentication workflows secure external storage access.",
+    "objective": "Assess service principal integration with external locations.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By storing service principal passwords in plaintext table comments"
+      },
+      {
+        "key": "B",
+        "text": "By binding storage credentials to a service principal authorized via Azure RBAC"
+      },
+      {
+        "key": "C",
+        "text": "By assigning service principal owner rights to every Spark worker node"
+      },
+      {
+        "key": "D",
+        "text": "By converting service principal tokens into Kerberos ticket cache files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. External locations associate with a service principal granted Azure RBAC roles on storage."
+  },
+  {
+    "id": 90,
+    "title": "Q23: Which command lists available secret scopes configured within an Azure Databricks workspace?",
+    "subtitle": "Secure credential storage practices using Azure Key Vault prevent leakage.",
+    "objective": "Test Databricks utilities command syntax for secrets management.",
+    "options": [
+      {
+        "key": "A",
+        "text": "spark.conf.get(\"spark.databricks.secrets.scopes\")"
+      },
+      {
+        "key": "B",
+        "text": "dbutils.secrets.listScopes()"
+      },
+      {
+        "key": "C",
+        "text": "az databricks secret-scopes list"
+      },
+      {
+        "key": "D",
+        "text": "SELECT * FROM system.secrets.scopes"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. dbutils.secrets.listScopes() is the standard command used to list configured secret scopes."
+  },
+  {
+    "id": 91,
+    "title": "Q24: How are permissions applied to notebooks, folders, and experiments within an Azure Databricks workspace?",
+    "subtitle": "Databricks workspace object level security foundations govern notebook assets.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "Exclusively through Unity Catalog metastore SQL GRANT statements"
+      },
+      {
+        "key": "B",
+        "text": "Through workspace-level Access Control Lists (ACLs) assigned to users and groups"
+      },
+      {
+        "key": "C",
+        "text": "By modifying Azure Key Vault access policies"
+      },
+      {
+        "key": "D",
+        "text": "By configuring Delta Lake transaction log checkpoints"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Workspace objects use workspace-level ACLs, whereas data assets use Unity Catalog."
+  },
+  {
+    "id": 92,
+    "title": "Q25: When configuring a storage credential in Unity Catalog using a managed identity, what eliminates rotation overhead?",
+    "subtitle": "Managed identity integration for external storage access security simplifies trust.",
+    "objective": "Assess credential rotation elimination via managed identities.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Azure automatically manages the identity lifecycle and token issuance without long-lived secrets"
+      },
+      {
+        "key": "B",
+        "text": "Databricks automatically generates new storage account root passwords every 24 hours"
+      },
+      {
+        "key": "C",
+        "text": "Spark worker nodes encrypt all data at rest using AES-512"
+      },
+      {
+        "key": "D",
+        "text": "Delta Sharing protocol bypasses Azure storage authentication entirely"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Managed identities rely on Azure-managed tokens, removing secret expiration risks."
+  },
+  {
+    "id": 94,
+    "title": "Q26: What role does the Delta Sharing recipient object play in the provider's Unity Catalog?",
+    "subtitle": "Cross-organization data distribution via Delta Sharing protocols ensures secure exchange.",
+    "objective": "Test understanding of Delta Sharing recipient objects.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It defines the recipient's Azure subscription billing meter"
+      },
+      {
+        "key": "B",
+        "text": "It represents the consuming organization or tenant authorized to access specific shares"
+      },
+      {
+        "key": "C",
+        "text": "It stores backup copies of shared Delta tables in local metastore storage"
+      },
+      {
+        "key": "D",
+        "text": "It enforces CPU core limits on the recipient's Spark cluster"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. The recipient object defines who is receiving data and associates them with shares."
+  },
+  {
+    "id": 95,
+    "title": "Q27: Which practice ensures that API tokens used for Databricks automation are securely isolated?",
+    "subtitle": "Isolation of authentication tokens from direct workspace configuration protects systems.",
+    "objective": "Evaluate best practices for automation token lifecycle management.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Pasting tokens directly into notebook Markdown cells for team visibility"
+      },
+      {
+        "key": "B",
+        "text": "Storing personal access tokens or service principal secrets in secure CI/CD secret vaults and Key Vault"
+      },
+      {
+        "key": "C",
+        "text": "Saving tokens in unencrypted local text files on cluster driver nodes"
+      },
+      {
+        "key": "D",
+        "text": "Hardcoding tokens into Spark configuration defaults"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Automation secrets should always be injected via CI/CD secret vaults or Key Vault."
+  },
+  {
+    "id": 96,
+    "title": "Q28: When auditing a newly implemented Unity Catalog governance model, how do administrators verify least-privilege?",
+    "subtitle": "Governance model transition compliance requirements demand structured audits.",
+    "objective": "Test least-privilege audit procedures in Unity Catalog.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By verifying that all users have admin rights across all catalogs"
+      },
+      {
+        "key": "B",
+        "text": "By reviewing catalog, schema, and table privilege grants to ensure users possess only minimum required access"
+      },
+      {
+        "key": "C",
+        "text": "By checking that all workspaces share a single root DBFS storage account"
+      },
+      {
+        "key": "D",
+        "text": "By disabling row-level filters on confidential tables"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Least privilege verification involves auditing current privilege grants via Catalog Explorer."
+  },
+  {
+    "id": 97,
+    "title": "Q29: When both a row filter and column mask are applied to the same table, in what order are they evaluated?",
+    "subtitle": "Row-level filtering and dynamic column masking mechanics ensure robust security.",
+    "objective": "Evaluate evaluation order of row filters and column masks.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Row filters restrict record visibility first, followed by column masking transformations on remaining rows"
+      },
+      {
+        "key": "B",
+        "text": "Column masks are applied before filtering any rows from the dataset"
+      },
+      {
+        "key": "C",
+        "text": "Both filters execute simultaneously in separate driver memory threads"
+      },
+      {
+        "key": "D",
+        "text": "Row filters and column masks are mutually exclusive and cannot be applied together"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Row filtering prunes unauthorized rows first, and column masks transform projected attributes."
+  },
+  {
+    "id": 98,
+    "title": "Q30: How does Unity Catalog handle lineage tracking when data is transformed using external Spark jobs?",
+    "subtitle": "Automated data lineage tracking and metadata policies provide complete visibility.",
+    "objective": "Test lineage capture behavior with external table writes.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Lineage is automatically captured via local file system polling"
+      },
+      {
+        "key": "B",
+        "text": "External Spark jobs writing directly to Unity Catalog managed tables register metadata updates and transaction logs"
+      },
+      {
+        "key": "C",
+        "text": "Lineage tracking is impossible unless executed inside a Databricks notebook"
+      },
+      {
+        "key": "D",
+        "text": "Azure Monitor generates manual lineage graphs via PowerShell scripts"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Operations against Unity Catalog managed tables through supported APIs capture provenance."
+  },
+  {
+    "id": 99,
+    "title": "Q31: What happens when a provider revokes access to a shared table in Delta Sharing?",
+    "subtitle": "Delta Sharing protocols secure cross organization data distribution effectively.",
+    "objective": "Evaluate runtime revocation mechanics in Delta Sharing.",
+    "options": [
+      {
+        "key": "A",
+        "text": "The recipient's pre-signed URL access tokens immediately fail, blocking further data reads"
+      },
+      {
+        "key": "B",
+        "text": "The recipient's local cloud storage account is automatically deleted by Azure"
+      },
+      {
+        "key": "C",
+        "text": "All historical parquet files cached by the recipient are permanently wiped"
+      },
+      {
+        "key": "D",
+        "text": "The recipient workspace cluster shuts down automatically"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Pre-signed URLs managed by the provider stop future file access instantly upon revocation."
+  },
+  {
+    "id": 100,
+    "title": "Q32: Which authentication mechanism is recommended for production Azure Databricks jobs connecting to SQL Database?",
+    "subtitle": "Azure Key Vault secrets and managed service identity authentication secure access.",
+    "objective": "Test production authentication best practices for external databases.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Hardcoded SQL username and password in JDBC connection strings"
+      },
+      {
+        "key": "B",
+        "text": "Microsoft Entra ID authentication utilizing managed identities or Key Vault secret scopes"
+      },
+      {
+        "key": "C",
+        "text": "Anonymous SQL server connection strings with public access enabled"
+      },
+      {
+        "key": "D",
+        "text": "Local cluster driver file caching"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Managed identities and Key Vault secret scopes eliminate plaintext credentials."
+  },
+  {
+    "id": 101,
+    "title": "Q33: How does Unity Catalog synchronize identity and group membership from Microsoft Entra ID?",
+    "subtitle": "Microsoft Entra ID integration and core security principles govern enterprise access.",
+    "objective": "Evaluate SCIM identity synchronization mechanics.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Through manual CSV user uploads performed daily by administrators"
+      },
+      {
+        "key": "B",
+        "text": "Automatically via SCIM provisioning and account console synchronization with Entra ID"
+      },
+      {
+        "key": "C",
+        "text": "By parsing Spark cluster driver error logs every hour"
+      },
+      {
+        "key": "D",
+        "text": "Through Azure Blob Storage container access keys"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Databricks uses SCIM to automatically synchronize users and groups from Entra ID."
+  },
+  {
+    "id": 103,
+    "title": "Q34: What is the primary operational advantage of using Databricks Auto Loader (cloudFiles) over standard Spark read formats?",
+    "subtitle": "Auto Loader cloud file source ingestion optimizes incremental file processing.",
+    "objective": "Evaluate Auto Loader incremental file discovery mechanisms.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It requires manual listing of every incoming storage directory on each micro-batch"
+      },
+      {
+        "key": "B",
+        "text": "It incrementally processes new files as they arrive without listing entire directories, scaling to billions of files"
+      },
+      {
+        "key": "C",
+        "text": "It converts all incoming binary payloads into uncompressed CSV text files"
+      },
+      {
+        "key": "D",
+        "text": "It disables Delta Lake transaction logging to accelerate write throughput"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Auto Loader uses directory listing or notification modes to process new files incrementally."
+  },
+  {
+    "id": 104,
+    "title": "Q35: How does Auto Loader handle schema evolution when new columns appear in incoming JSON files?",
+    "subtitle": "Auto Loader schema evolution handles incoming data drift gracefully.",
+    "objective": "Test Auto Loader schema evolution and data drift handling.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It immediately crashes the streaming pipeline and drops the batch"
+      },
+      {
+        "key": "B",
+        "text": "It automatically detects new columns and updates the target Delta table schema when configured with evolution options"
+      },
+      {
+        "key": "C",
+        "text": "It stores all new columns inside a single unstructured string column named _rescued_data only"
+      },
+      {
+        "key": "D",
+        "text": "It converts the table format from Delta Lake back to legacy Parquet files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Auto Loader supports automatic schema evolution to absorb new columns seamlessly."
+  },
+  {
+    "id": 105,
+    "title": "Q36: When should an engineer configure Auto Loader to use notification mode (cloudFiles.useNotification) instead of directory listing?",
+    "subtitle": "Notification mode architecture accelerates Auto Loader file discovery at scale.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "When processing small directories with fewer than 100 total files"
+      },
+      {
+        "key": "B",
+        "text": "When ingestion storage accounts contain millions of files where directory listing becomes a performance bottleneck"
+      },
+      {
+        "key": "C",
+        "text": "When connecting to legacy on-premises FTP servers without event grids"
+      },
+      {
+        "key": "D",
+        "text": "When operating entirely offline without cloud event notifications"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Notification mode uses Azure Event Grid and Queue Storage to notify Auto Loader of new files instantly."
+  },
+  {
+    "id": 106,
+    "title": "Q37: What is the function of the rescued data column (_rescue_data) in Auto Loader?",
+    "subtitle": "Rescued data column configuration prevents pipeline failures from malformed records.",
+    "objective": "Evaluate error handling and data rescue mechanisms in streaming ingestion.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Capturing malformed, corrupted, or schema-mismatched records that fail parsing without failing the stream"
+      },
+      {
+        "key": "B",
+        "text": "Storing authentication tokens for Azure Key Vault connection attempts"
+      },
+      {
+        "key": "C",
+        "text": "Logging Spark cluster driver garbage collection metrics"
+      },
+      {
+        "key": "D",
+        "text": "Indexing Delta transaction log checkpoint files for faster time travel queries"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. The rescued data column stores records that do not match the expected schema instead of failing the pipeline."
+  },
+  {
+    "id": 107,
+    "title": "Q38: Why is executing OPTIMIZE with Z-ORDER BY recommended for large Delta tables populated by ingestion pipelines?",
+    "subtitle": "Delta Lake optimize and z-order commands improve read performance on large tables.",
+    "objective": "Test understanding of file compaction and multi-dimensional clustering.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It converts parquet files into compressed ZIP archives for long-term cold storage retention"
+      },
+      {
+        "key": "B",
+        "text": "It compacts small files into larger optimal blocks and co-locates related data to enable data skipping"
+      },
+      {
+        "key": "C",
+        "text": "It automatically generates Unity Catalog row filters for multi-tenant users"
+      },
+      {
+        "key": "D",
+        "text": "It rotates Azure Storage account access keys without restarting clusters"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. OPTIMIZE compacts small files, and Z-ORDER groups correlated data to maximize file skipping during reads."
+  },
+  {
+    "id": 108,
+    "title": "Q39: What is the primary purpose of applying a watermark in Spark Structured Streaming transformations?",
+    "subtitle": "Structured streaming watermarking handles late-arriving data in stateful computations.",
+    "objective": "Evaluate state management and late data handling in streaming queries.",
+    "options": [
+      {
+        "key": "A",
+        "text": "To encrypt streaming micro-batches before writing to Delta storage"
+      },
+      {
+        "key": "B",
+        "text": "To allow the streaming engine to drop expired state data and handle late-arriving records safely"
+      },
+      {
+        "key": "C",
+        "text": "To watermark PDF reports generated from downstream BI queries"
+      },
+      {
+        "key": "D",
+        "text": "To throttle network bandwidth between worker nodes during shuffle operations"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Watermarking specifies how long the engine should wait for late data and when to clean up state memory."
+  },
+  {
+    "id": 109,
+    "title": "Q40: How can an engineer query a historical version of a Delta table from three days ago for audit verification?",
+    "subtitle": "Delta Lake time travel mechanisms enable reproducibility and audit recovery.",
+    "objective": "Test Delta Lake time travel query syntax and capabilities.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By restoring a manual backup snapshot from Azure Blob Storage container archives"
+      },
+      {
+        "key": "B",
+        "text": "By using Delta time travel syntax such as VERSION AS OF or TIMESTAMP AS OF in SQL queries"
+      },
+      {
+        "key": "C",
+        "text": "By rolling back the Unity Catalog metastore to a previous regional restore point"
+      },
+      {
+        "key": "D",
+        "text": "By re-running all Auto Loader ingestion pipelines from scratch"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Delta transaction logs enable querying past table versions via TIMESTAMP AS OF or VERSION AS OF."
+  },
+  {
+    "id": 110,
+    "title": "Q41: What is the operational effect of executing the VACUUM command on a Delta table?",
+    "subtitle": "Vacuum maintenance command manages historical data retention in Delta tables.",
+    "objective": "Test understanding of storage garbage collection and vacuum retention.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It compacts small Parquet files into a single master partition file"
+      },
+      {
+        "key": "B",
+        "text": "It permanently removes data files older than the retention threshold that are no longer referenced by the transaction log"
+      },
+      {
+        "key": "C",
+        "text": "It clears all cached query results from driver node memory"
+      },
+      {
+        "key": "D",
+        "text": "It deletes the Unity Catalog schema and all associated external locations"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. VACUUM deletes unreferenced historical data files to free up storage space."
+  },
+  {
+    "id": 111,
+    "title": "Q42: When configuring a Spark Structured Streaming query, what does setting .trigger(availableNow = true) achieve?",
+    "subtitle": "Streaming triggers determine micro-batch execution frequency and resource cost.",
+    "objective": "Evaluate streaming trigger options and job execution control.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It runs the query continuously with a fixed 1-second micro-batch interval"
+      },
+      {
+        "key": "B",
+        "text": "It processes all available data in the source tables/files through micro-batches and then terminates the cluster automatically"
+      },
+      {
+        "key": "C",
+        "text": "It pauses streaming execution until manual administrative approval is granted"
+      },
+      {
+        "key": "D",
+        "text": "It executes the query synchronously on the driver node without worker executors"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. availableNow processes all backlog data and terminates, optimizing cost for batch-like streaming pipelines."
+  },
+  {
+    "id": 112,
+    "title": "Q43: What is the primary benefit of enabling Change Data Feed (CDF) on a Delta Lake table?",
+    "subtitle": "Change data feed enables downstream ingestion pipelines to consume row-level deltas.",
+    "objective": "Test Change Data Feed capabilities for incremental pipeline design.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It compresses Parquet files into ZIP archives for backup storage"
+      },
+      {
+        "key": "B",
+        "text": "It records row-level inserts, updates, and deletes, allowing downstream streams to consume only changed data easily"
+      },
+      {
+        "key": "C",
+        "text": "It automatically applies Unity Catalog row-level filters without query overhead"
+      },
+      {
+        "key": "D",
+        "text": "It encrypts transaction log files using customer-managed keys"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. CDF tracks row-level changes (inserts, updates, deletes) to power downstream incremental pipelines."
+  },
+  {
+    "id": 114,
+    "title": "Q44: What is the primary architectural advantage of Delta Live Tables (DLT) over imperative Spark code?",
+    "subtitle": "Delta Live Tables (DLT) framework simplifies declarative ETL pipeline development.",
+    "objective": "Evaluate declarative pipeline advantages in Delta Live Tables.",
+    "options": [
+      {
+        "key": "A",
+        "text": "DLT requires manual orchestration of task dependencies and retry loops in notebooks"
+      },
+      {
+        "key": "B",
+        "text": "DLT manages infrastructure deployment, dependency graphs, data quality expectations, and error recovery automatically"
+      },
+      {
+        "key": "C",
+        "text": "DLT restricts execution to single-node driver instances without worker pools"
+      },
+      {
+        "key": "D",
+        "text": "DLT replaces Delta Lake storage with traditional CSV flat files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. DLT automates dependency management, infrastructure scaling, and quality validation."
+  },
+  {
+    "id": 115,
+    "title": "Q45: How do DLT expectations behave when a data quality constraint fails (e.g., expecting valid_timestamp is not null)?",
+    "subtitle": "DLT expectations enforce data quality constraints and governance rules.",
+    "objective": "Test DLT expectation action clauses (drop, fail, warn).",
+    "options": [
+      {
+        "key": "A",
+        "text": "They always crash the pipeline immediately on the first invalid row"
+      },
+      {
+        "key": "B",
+        "text": "They can drop invalid records, record metrics in event logs, or fail the pipeline depending on the configured constraint clause"
+      },
+      {
+        "key": "C",
+        "text": "They automatically repair corrupted records using machine learning imputation"
+      },
+      {
+        "key": "D",
+        "text": "They migrate invalid records to Azure Key Vault secure storage"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Expectations support clauses like ON VIOLATION DROP ROW, FAIL UPDATE, or warning metrics tracking."
+  },
+  {
+    "id": 116,
+    "title": "Q46: In Delta Live Tables, what is the conceptual difference between a streaming table and a materialized view?",
+    "subtitle": "DLT streaming tables and materialized views organize medallion architecture layers.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "Streaming tables ingest append-only data incrementally, whereas materialized views compute fresh results for arbitrary queries and batch updates"
+      },
+      {
+        "key": "B",
+        "text": "Streaming tables require manual cluster restarts while materialized views run serverless"
+      },
+      {
+        "key": "C",
+        "text": "Materialized views only support CSV files while streaming tables support Delta format"
+      },
+      {
+        "key": "D",
+        "text": "There is no architectural distinction between them"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Streaming tables process append-only streams incrementally; materialized views precompute query results."
+  },
+  {
+    "id": 117,
+    "title": "Q47: Where are DLT pipeline execution metrics, data quality expectation statistics, and audit logs stored?",
+    "subtitle": "Pipeline event logs provide comprehensive telemetry and lineage tracking.",
+    "objective": "Identify DLT event log storage and telemetry architecture.",
+    "options": [
+      {
+        "key": "A",
+        "text": "In local driver ephemeral memory logs that clear on restart"
+      },
+      {
+        "key": "B",
+        "text": "In a Delta table event log maintained in cloud storage for the pipeline"
+      },
+      {
+        "key": "C",
+        "text": "In Azure Key Vault secret scope configuration files"
+      },
+      {
+        "key": "D",
+        "text": "In Unity Catalog metastore user access tables"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. DLT maintains a detailed event log in Delta table format capturing all pipeline telemetry."
+  },
+  {
+    "id": 118,
+    "title": "Q48: When should a DLT pipeline be configured to run in continuous mode versus development or triggered mode?",
+    "subtitle": "DLT pipeline mode selection balances latency and compute cost requirements.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "Continuous mode is used exclusively for nightly batch payroll reports"
+      },
+      {
+        "key": "B",
+        "text": "Continuous mode keeps the cluster running to process streaming data with low latency, whereas triggered mode runs once per schedule to minimize cost"
+      },
+      {
+        "key": "C",
+        "text": "Triggered mode requires manual user intervention for every micro-batch execution"
+      },
+      {
+        "key": "D",
+        "text": "Continuous mode bypasses Unity Catalog access permissions"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Continuous pipelines provide low-latency stream processing, while triggered pipelines optimize batch costs."
+  },
+  {
+    "id": 123,
+    "title": "Q1: Which core characteristic distinguishes streaming ingestion pipelines from scheduled batch ETL jobs?",
+    "subtitle": "Streaming ingestion architectures prioritize low latency event processing over bulk batch execution.",
+    "objective": "Evaluate conceptual differences between streaming and batch ingestion models.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Streaming pipelines require manual cluster scaling for every micro-batch execution"
+      },
+      {
+        "key": "B",
+        "text": "Streaming pipelines process data continuously or incrementally in micro-batches as records arrive"
+      },
+      {
+        "key": "C",
+        "text": "Streaming pipelines only support uncompressed CSV flat file formats"
+      },
+      {
+        "key": "D",
+        "text": "Streaming pipelines disable Delta Lake transaction logging entirely"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Streaming architectures ingest data continuously as it lands, minimizing latency compared to scheduled batch jobs."
+  },
+  {
+    "id": 124,
+    "title": "Q2: How do Spark Structured Streaming pipelines guarantee exactly-once processing semantics during transient failures?",
+    "subtitle": "Continuous streaming workloads require specialized handling of transient network failures.",
+    "objective": "Test knowledge of fault tolerance and exactly-once semantics in streaming.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By storing all micro-batch records in local driver temporary memory"
+      },
+      {
+        "key": "B",
+        "text": "By combining replayable sources, deterministic transformations, and idempotency in Delta Lake sinks"
+      },
+      {
+        "key": "C",
+        "text": "By disabling checkpointing to avoid cluster storage overhead"
+      },
+      {
+        "key": "D",
+        "text": "By converting operational Delta tables into static Parquet files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Structured Streaming relies on replayable logs and idempotent Delta writes tracked via checkpoint directories."
+  },
+  {
+    "id": 125,
+    "title": "Q3: When is a scheduled batch ingestion pattern preferred over a continuous streaming pipeline?",
+    "subtitle": "Batch ingestion schedules optimize resource utilization for high-latency reporting cycles.",
+    "objective": "Identify optimal business scenarios for batch versus streaming pipelines.",
+    "options": [
+      {
+        "key": "A",
+        "text": "When sub-second anomaly detection is required for financial transactions"
+      },
+      {
+        "key": "B",
+        "text": "When processing large bulk data dumps delivered nightly from legacy enterprise mainframes"
+      },
+      {
+        "key": "C",
+        "text": "When integrating real-time IoT sensor telemetry streams"
+      },
+      {
+        "key": "D",
+        "text": "When using Auto Loader notification mode with Azure Event Grid"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Bulk nightly transfers from legacy mainframes align well with scheduled batch jobs to optimize compute costs."
+  },
+  {
+    "id": 126,
+    "title": "Q4: What mechanism does Auto Loader use to discover new files in cloud storage without expensive directory listings?",
+    "subtitle": "Auto Loader cloud file source ingestion optimizes incremental file processing at scale.",
+    "objective": "Evaluate Auto Loader incremental file discovery mechanisms.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Scanning all historical parquet files on every micro-batch execution"
+      },
+      {
+        "key": "B",
+        "text": "Maintaining a RocksDB state store of discovered files and optional event notifications"
+      },
+      {
+        "key": "C",
+        "text": "Parsing Unity Catalog audit logs every hour"
+      },
+      {
+        "key": "D",
+        "text": "Querying Azure SQL Database transaction tables"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Auto Loader tracks file state in RocksDB or uses cloud notification queues to avoid full directory scans."
+  },
+  {
+    "id": 127,
+    "title": "Q5: How does adjusting the trigger processing time interval impact a Structured Streaming ingestion pipeline?",
+    "subtitle": "Micro-batch interval tuning balances processing latency against cluster operational overhead.",
+    "objective": "Analyze performance tuning parameters in streaming pipelines.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Shorter intervals decrease latency but increase cluster scheduling and driver coordination overhead"
+      },
+      {
+        "key": "B",
+        "text": "Longer intervals automatically increase Spark worker CPU core count"
+      },
+      {
+        "key": "C",
+        "text": "Interval tuning has no effect on streaming throughput or resource costs"
+      },
+      {
+        "key": "D",
+        "text": "Setting interval to zero disables Delta Lake checkpointing"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Very short intervals increase scheduling overhead; tuning balances latency against resource efficiency."
+  },
+  {
+    "id": 129,
+    "title": "Q6: How does enabling automatic schema evolution in Auto Loader affect incoming JSON files containing new columns?",
+    "subtitle": "Schema evolution mechanisms allow ingestion pipelines to adapt to incoming data drift.",
+    "objective": "Evaluate automated schema adaptation during data ingestion.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It immediately crashes the ingestion stream and rejects the batch"
+      },
+      {
+        "key": "B",
+        "text": "It automatically detects new columns and updates the target Delta table schema dynamically"
+      },
+      {
+        "key": "C",
+        "text": "It discards all new columns and saves only baseline attributes"
+      },
+      {
+        "key": "D",
+        "text": "It converts the Delta table format into legacy CSV archives"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Schema evolution merges new columns into the Delta table schema without requiring manual DDL intervention."
+  },
+  {
+    "id": 130,
+    "title": "Q7: What is the primary function of the rescued data column configured in Auto Loader ingestion?",
+    "subtitle": "Rescued data columns protect ingestion pipelines from unhandled schema anomalies.",
+    "objective": "Test understanding of error containment and rescued data patterns.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Storing Azure Key Vault secret access tokens"
+      },
+      {
+        "key": "B",
+        "text": "Capturing malformed, corrupted, or unexpected records that fail schema parsing without failing the stream"
+      },
+      {
+        "key": "C",
+        "text": "Logging Spark driver garbage collection metrics"
+      },
+      {
+        "key": "D",
+        "text": "Indexing Delta transaction log checkpoint files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. The rescued data column catches records that violate expected schemas, preventing pipeline failure and enabling downstream audit."
+  },
+  {
+    "id": 131,
+    "title": "Q8: When should an engineer configure an ingestion pipeline to reject data violating strict schema definitions instead of evolving?",
+    "subtitle": "Strict schema enforcement policies prevent unwanted data drift in trusted analytical layers.",
+    "objective": "Identify architectural requirements for strict schema enforcement.",
+    "options": [
+      {
+        "key": "A",
+        "text": "When processing exploratory data science notebooks"
+      },
+      {
+        "key": "B",
+        "text": "When ingesting highly regulated financial feeds into gold-tier production tables requiring strict contracts"
+      },
+      {
+        "key": "C",
+        "text": "When incoming source systems change column names daily"
+      },
+      {
+        "key": "D",
+        "text": "When using Delta Live Tables without expectations"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Gold-tier production tables require rigid schema contracts to prevent downstream analytical model corruption from data drift."
+  },
+  {
+    "id": 132,
+    "title": "Q9: Which Spark DataFrame write option explicitly permits merging new columns into an existing Delta table during batch appends?",
+    "subtitle": "Merge schema options provide controlled expansion of table structures.",
+    "objective": "Test Spark DataFrame write syntax for schema merging.",
+    "options": [
+      {
+        "key": "A",
+        "text": ".option(\"mergeSchema\", \"true\")"
+      },
+      {
+        "key": "B",
+        "text": ".option(\"evolutionMode\", \"forced\")"
+      },
+      {
+        "key": "C",
+        "text": "ALTER TABLE target EVOLVE SCHEMA"
+      },
+      {
+        "key": "D",
+        "text": "SET spark.databricks.delta.schema.autoMerge = false"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. .option(\"mergeSchema\", \"true\") is the standard Delta write option used to safely expand table schemas during appends."
+  },
+  {
+    "id": 134,
+    "title": "Q10: What is the primary performance benefit of properly partitioning a large Delta table by date?",
+    "subtitle": "Optimal table partitioning strategies minimize computational overhead during read operations.",
+    "objective": "Evaluate partition pruning mechanics and read performance optimization.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It guarantees 100% compression of parquet files into ZIP archives"
+      },
+      {
+        "key": "B",
+        "text": "It enables partition pruning, allowing query engines to skip scanning unrelated directory folders entirely"
+      },
+      {
+        "key": "C",
+        "text": "It automatically generates Unity Catalog row-level security filters"
+      },
+      {
+        "key": "D",
+        "text": "It eliminates the need for Delta Lake transaction logs"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Partition pruning enables Spark to bypass file folders that do not match query filter predicates, drastically reducing I/O."
+  },
+  {
+    "id": 135,
+    "title": "Q11: Why is partitioning a table by high-cardinality columns (such as transaction_id or timestamp) strongly discouraged in Delta Lake?",
+    "subtitle": "Over-partitioning anti-patterns introduce severe small file performance bottlenecks.",
+    "objective": "Identify the small file problem caused by over-partitioning.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It prevents Delta Lake from supporting ACID transactions"
+      },
+      {
+        "key": "B",
+        "text": "It creates millions of tiny folders and small files, causing metadata bloat and severe driver memory overhead"
+      },
+      {
+        "key": "C",
+        "text": "It violates Unity Catalog naming convention standards"
+      },
+      {
+        "key": "D",
+        "text": "It disables Z-order multi-dimensional clustering permanently"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. High-cardinality partitioning generates excessive small files, degrading metadata performance and executor efficiency."
+  },
+  {
+    "id": 136,
+    "title": "Q12: When should an engineer use Z-ORDER BY instead of partitioning for a column with high cardinality?",
+    "subtitle": "Delta Lake optimize and z-order commands complement partitioning for ultimate query speed.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "To co-locate correlated data within parquet files and enable data skipping without creating directory folders"
+      },
+      {
+        "key": "B",
+        "text": "To duplicate physical tables for multi-tenant users"
+      },
+      {
+        "key": "C",
+        "text": "To encrypt sensitive column values at rest"
+      },
+      {
+        "key": "D",
+        "text": "To bypass Unity Catalog access permissions"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Z-ordering clusters data within files based on statistics, avoiding directory bloat while enabling effective data skipping."
+  },
+  {
+    "id": 137,
+    "title": "Q13: Which maintenance command should be scheduled regularly to compact small files generated by continuous streaming ingestion?",
+    "subtitle": "Maintenance commands ensure sustainable storage performance across growing lakehouse tables.",
+    "objective": "Test knowledge of Delta Lake file compaction maintenance commands.",
+    "options": [
+      {
+        "key": "A",
+        "text": "DROP TABLE target_table"
+      },
+      {
+        "key": "B",
+        "text": "OPTIMIZE target_table"
+      },
+      {
+        "key": "C",
+        "text": "VACUUM target_table RETAIN 0 HOURS"
+      },
+      {
+        "key": "D",
+        "text": "ALTER TABLE target_table REBUILD METADATA"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. OPTIMIZE compacts small files into optimal-sized blocks, resolving fragmentation caused by frequent micro-batch writes."
+  },
+  {
+    "id": 139,
+    "title": "Q14: How does Unity Catalog contribute to maintaining structural integrity throughout lakehouse ingestion pipelines?",
+    "subtitle": "Unity Catalog governance enforces structural integrity across all lakehouse asset layers.",
+    "objective": "Evaluate the role of Unity Catalog in maintaining lakehouse structural integrity.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By executing Apache Spark shuffle joins on worker nodes"
+      },
+      {
+        "key": "B",
+        "text": "By centralizing table definitions, ownership, metadata tagging, and access permissions in a unified namespace"
+      },
+      {
+        "key": "C",
+        "text": "By encrypting Delta transaction logs with static cluster passwords"
+      },
+      {
+        "key": "D",
+        "text": "By compressing JSON payloads into CSV flat files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Unity Catalog provides centralized metadata management, ensuring consistent table definitions and security policies across pipelines."
+  },
+  {
+    "id": 140,
+    "title": "Q15: When a pipeline transforms bronze raw data into silver curated tables, how does Unity Catalog capture the dependency?",
+    "subtitle": "Automated lineage tracking in Unity Catalog provides end-to-end data provenance visibility.",
+    "objective": "Test understanding of automated data lineage in Unity Catalog.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Through manual CSV documentation uploaded by engineers"
+      },
+      {
+        "key": "B",
+        "text": "Automatically by parsing query execution plans and registering table-level and column-level lineage graphs"
+      },
+      {
+        "key": "C",
+        "text": "By monitoring Azure Blob Storage container access keys"
+      },
+      {
+        "key": "D",
+        "text": "By generating Azure Monitor alert rules via PowerShell"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Catalog Explorer automatically extracts lineage graphs from Spark operations writing between managed tables."
+  },
+  {
+    "id": 141,
+    "title": "Q16: What is the key structural difference between a managed table and an external table registered in Unity Catalog?",
+    "subtitle": "Managed and external tables in Unity Catalog define clear storage ownership boundaries.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "Managed tables have their underlying storage files deleted when dropped, whereas external tables retain storage files"
+      },
+      {
+        "key": "B",
+        "text": "External tables do not support Delta Lake ACID transactions"
+      },
+      {
+        "key": "C",
+        "text": "Managed tables require explicit Azure RBAC configuration on every read"
+      },
+      {
+        "key": "D",
+        "text": "External tables cannot be queried using Spark SQL"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Unity Catalog manages the lifecycle of storage for managed tables; external tables point to storage controlled outside the metastore."
+  },
+  {
+    "id": 142,
+    "title": "Q17: How does Unity Catalog govern non-tabular files (such as CSV dumps, images, or PDF documents) within lakehouse storage?",
+    "subtitle": "Volume objects in Unity Catalog secure non-tabular unstructured files.",
+    "objective": "Evaluate governance mechanisms for unstructured files using Volumes.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By converting them into Delta tables automatically"
+      },
+      {
+        "key": "B",
+        "text": "By organizing files within Unity Catalog Volumes, applying path-based permissions and governance"
+      },
+      {
+        "key": "C",
+        "text": "By encrypting them using Azure Key Vault secrets directly in DBFS root"
+      },
+      {
+        "key": "D",
+        "text": "By storing them inside Spark driver memory heaps"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Unity Catalog Volumes provide governed storage containers for non-tabular files, supporting standard SQL file access and permissions."
+  },
+  {
+    "id": 144,
+    "title": "Q18: How do Delta Live Tables (DLT) expectations enforce data quality constraints during ingestion?",
+    "subtitle": "Automated validation controls intercept corrupted records within processing pipelines.",
+    "objective": "Test knowledge of DLT data quality expectation action clauses.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By crashing the entire pipeline immediately upon the first warning"
+      },
+      {
+        "key": "B",
+        "text": "By dropping invalid rows, failing the update, or recording warning metrics in event logs based on configured clauses"
+      },
+      {
+        "key": "C",
+        "text": "By repairing corrupted records using machine learning imputation automatically"
+      },
+      {
+        "key": "D",
+        "text": "By migrating invalid payloads into Azure Key Vault storage"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. DLT expectations support clauses such as EXPECT ... ON VIOLATION DROP ROW or FAIL UPDATE to enforce quality thresholds."
+  },
+  {
+    "id": 145,
+    "title": "Q19: What is the recommended architectural pattern for handling records that fail data quality expectations in a medallion pipeline?",
+    "subtitle": "Data quality validation techniques prevent downstream analytical consumer contamination.",
+    "objective": "Evaluate quarantine and dead-letter queue patterns for data quality anomalies.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Deleting them permanently without audit records"
+      },
+      {
+        "key": "B",
+        "text": "Diverting them into a quarantined quarantine table or dead-letter queue for investigation"
+      },
+      {
+        "key": "C",
+        "text": "Bypassing validation checks entirely for gold-tier tables"
+      },
+      {
+        "key": "D",
+        "text": "Storing them in Spark driver temporary cache memory"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Quarantining failed records prevents downstream analytical corruption while enabling root-cause debugging."
+  },
+  {
+    "id": 146,
+    "title": "Q20: Which Delta Lake feature enforces structural column constraints (such as NOT NULL) during write operations?",
+    "subtitle": "NotNull and Unique constraints ensure foundational data integrity at the storage layer.",
+    "objective": "Test knowledge of Delta Lake table constraint enforcement syntax and mechanisms.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Unity Catalog column masking functions"
+      },
+      {
+        "key": "B",
+        "text": "Delta Lake table constraints (ALTER TABLE ADD CONSTRAINT)"
+      },
+      {
+        "key": "C",
+        "text": "Auto Loader notification mode configurations"
+      },
+      {
+        "key": "D",
+        "text": "Azure Key Vault access policies"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Delta Lake supports CHECK and NOT NULL constraints enforced automatically on every write operation."
+  },
+  {
+    "id": 147,
+    "title": "Q21: Where are Delta Live Tables expectation metrics and data quality violation statistics persisted for auditing?",
+    "subtitle": "Pipeline event logs provide comprehensive telemetry for data quality tracking.",
+    "objective": "Identify DLT event log storage and data quality telemetry architecture.",
+    "options": [
+      {
+        "key": "A",
+        "text": "In local driver ephemeral memory logs that clear on restart"
+      },
+      {
+        "key": "B",
+        "text": "In the DLT pipeline event log stored as a Delta table in cloud storage"
+      },
+      {
+        "key": "C",
+        "text": "In Azure Key Vault secret scope configuration files"
+      },
+      {
+        "key": "D",
+        "text": "In Unity Catalog metastore user permission tables"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. DLT maintains a detailed event log in Delta table format capturing all expectation metrics and pipeline health."
+  },
+  {
+    "id": 149,
+    "title": "Q22: What is the primary operational purpose of defining a watermark in Spark Structured Streaming?",
+    "subtitle": "Streaming ingestion watermarking handles late-arriving data in stateful computations.",
+    "objective": "Evaluate state management and late data handling in streaming queries.",
+    "options": [
+      {
+        "key": "A",
+        "text": "To encrypt micro-batch outputs before writing to Delta storage"
+      },
+      {
+        "key": "B",
+        "text": "To allow the streaming engine to drop expired state data and handle late-arriving records safely"
+      },
+      {
+        "key": "C",
+        "text": "To watermark PDF reports generated by downstream BI tools"
+      },
+      {
+        "key": "D",
+        "text": "To throttle network bandwidth during worker shuffle operations"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Watermarking specifies time thresholds for late data and garbage collection of state store memory."
+  },
+  {
+    "id": 150,
+    "title": "Q23: How can an engineer query a historical version of a Delta table from three days ago for pipeline audit verification?",
+    "subtitle": "Delta Lake time travel mechanisms enable reproducibility and audit recovery.",
+    "objective": "Test Delta Lake time travel query syntax and capabilities.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By restoring a manual backup snapshot from Azure Blob Storage container archives"
+      },
+      {
+        "key": "B",
+        "text": "By using Delta time travel syntax such as VERSION AS OF or TIMESTAMP AS OF in SQL queries"
+      },
+      {
+        "key": "C",
+        "text": "By rolling back the Unity Catalog metastore to a previous regional restore point"
+      },
+      {
+        "key": "D",
+        "text": "By re-running all Auto Loader ingestion pipelines from scratch"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Delta transaction logs enable querying past table versions via TIMESTAMP AS OF or VERSION AS OF clauses."
+  },
+  {
+    "id": 151,
+    "title": "Q24: What is the operational effect of executing the VACUUM command on a Delta Lake table?",
+    "subtitle": "Vacuum maintenance commands manage historical data retention in Delta tables.",
+    "objective": "Test understanding of storage garbage collection and vacuum retention.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It compacts small Parquet files into a single master partition file"
+      },
+      {
+        "key": "B",
+        "text": "It permanently removes historical data files older than the retention threshold that are no longer referenced by the transaction log"
+      },
+      {
+        "key": "C",
+        "text": "It clears all cached query results from driver node memory"
+      },
+      {
+        "key": "D",
+        "text": "It deletes the Unity Catalog schema and associated external locations"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. VACUUM deletes unreferenced historical data files to free up storage space after retention thresholds expire."
+  },
+  {
+    "id": 153,
+    "title": "Q25: When configuring a Spark Structured Streaming query, what does setting .trigger(availableNow = true) achieve?",
+    "subtitle": "Streaming trigger configurations determine micro-batch execution frequency and resource cost.",
+    "objective": "Evaluate streaming trigger options and job execution control.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It runs the query continuously with a fixed 1-second micro-batch interval"
+      },
+      {
+        "key": "B",
+        "text": "It processes all available backlog data through micro-batches and then terminates the cluster automatically"
+      },
+      {
+        "key": "C",
+        "text": "It pauses streaming execution until manual administrative approval is granted"
+      },
+      {
+        "key": "D",
+        "text": "It executes the query synchronously on the driver node without worker executors"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. availableNow processes all backlog data and terminates, optimizing cost for batch-like streaming pipelines."
+  },
+  {
+    "id": 154,
+    "title": "Q26: What is the primary benefit of enabling Change Data Feed (CDF) on a Delta Lake table?",
+    "subtitle": "Change data feed enables downstream ingestion pipelines to consume row-level deltas efficiently.",
+    "objective": "Test Change Data Feed capabilities for incremental pipeline design.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It compresses Parquet files into ZIP archives for backup storage"
+      },
+      {
+        "key": "B",
+        "text": "It records row-level inserts, updates, and deletes, allowing downstream streams to consume only changed data easily"
+      },
+      {
+        "key": "C",
+        "text": "It automatically applies Unity Catalog row-level filters without query overhead"
+      },
+      {
+        "key": "D",
+        "text": "It encrypts transaction log files using customer-managed keys"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. CDF tracks row-level changes (inserts, updates, deletes) to power downstream incremental pipelines."
+  },
+  {
+    "id": 155,
+    "title": "Q27: What is the primary architectural advantage of Delta Live Tables (DLT) over imperative Spark code?",
+    "subtitle": "Delta Live Tables framework simplifies declarative ETL pipeline development.",
+    "objective": "Evaluate declarative pipeline advantages in Delta Live Tables.",
+    "options": [
+      {
+        "key": "A",
+        "text": "DLT requires manual orchestration of task dependencies and retry loops in notebooks"
+      },
+      {
+        "key": "B",
+        "text": "DLT manages infrastructure deployment, dependency graphs, data quality expectations, and error recovery automatically"
+      },
+      {
+        "key": "C",
+        "text": "DLT restricts execution to single-node driver instances without worker pools"
+      },
+      {
+        "key": "D",
+        "text": "DLT replaces Delta Lake storage with traditional CSV flat files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. DLT automates dependency management, infrastructure scaling, and quality validation."
+  },
+  {
+    "id": 156,
+    "title": "Q28: In Delta Live Tables, what is the conceptual difference between a streaming table and a materialized view?",
+    "subtitle": "Streaming tables and materialized views organize medallion architecture layers in DLT.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "Streaming tables ingest append-only data incrementally, whereas materialized views compute fresh results for arbitrary queries and batch updates"
+      },
+      {
+        "key": "B",
+        "text": "Streaming tables require manual cluster restarts while materialized views run serverless"
+      },
+      {
+        "key": "C",
+        "text": "Materialized views only support CSV files while streaming tables support Delta format"
+      },
+      {
+        "key": "D",
+        "text": "There is no architectural distinction between them"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Streaming tables process append-only streams incrementally; materialized views precompute query results."
+  },
+  {
+    "id": 158,
+    "title": "Q29: An engineer is designing an ingestion pipeline for high-frequency clickstream data. Which combination of features provides optimal performance and data quality?",
+    "subtitle": "Scenario-based pipeline design requires balancing latency, cost, and structural integrity.",
+    "objective": "Test comprehensive architectural design skills combining Auto Loader, DLT, and optimization.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Batch CSV reads with manual directory scanning and no constraints"
+      },
+      {
+        "key": "B",
+        "text": "Auto Loader with notification mode, automatic schema evolution, DLT expectations, and Z-order optimization"
+      },
+      {
+        "key": "C",
+        "text": "All-purpose interactive clusters running hourly cron jobs on unmanaged parquet files"
+      },
+      {
+        "key": "D",
+        "text": "Disabling Unity Catalog and using local driver memory for state storage"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Combining Auto Loader, DLT expectations, schema evolution, and Z-ordering represents the optimal Lakehouse ingestion architecture."
+  },
+  {
+    "id": 159,
+    "title": "Q30: A Delta table is experiencing sluggish query performance after months of continuous streaming ingestion. What is the most effective remediation sequence?",
+    "subtitle": "Troubleshooting ingestion bottlenecks involves analyzing Spark executor metrics and file sizes.",
+    "objective": "Evaluate troubleshooting steps for degraded table performance caused by file fragmentation.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Delete the table and recreate it as a CSV archive"
+      },
+      {
+        "key": "B",
+        "text": "Execute OPTIMIZE to compact small files, followed by VACUUM to remove unreferenced historical data"
+      },
+      {
+        "key": "C",
+        "text": "Upgrade the cluster driver node RAM without running optimization commands"
+      },
+      {
+        "key": "D",
+        "text": "Disable Unity Catalog lineage tracking across workspaces"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. OPTIMIZE fixes small file fragmentation, and VACUUM cleans up old unreferenced files to restore query performance."
+  },
+  {
+    "id": 160,
+    "title": "Q31: Which ingestion pattern ensures that malformed JSON records do not halt a production streaming pipeline?",
+    "subtitle": "Pipeline error handling strategies protect downstream consumers from corrupted records.",
+    "objective": "Test robust error handling patterns in production ingestion pipelines.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Disabling schema validation entirely"
+      },
+      {
+        "key": "B",
+        "text": "Using Auto Loader with a rescue data column and routing bad records to a quarantine table"
+      },
+      {
+        "key": "C",
+        "text": "Storing raw data in uncompressed text files without Delta transactions"
+      },
+      {
+        "key": "D",
+        "text": "Restarting the Spark driver node after every failed batch"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Rescue data columns and quarantine tables ensure continuous pipeline execution while isolating bad records for audit."
+  },
+  {
+    "id": 161,
+    "title": "Q32: When should an engineer choose partitioning over Z-ordering when designing a new analytical Delta table?",
+    "subtitle": "Partitioning design requires balancing query pruning benefits against file system overhead.",
+    "objective": "Test decision criteria for choosing partitioning vs Z-ordering.",
+    "options": [
+      {
+        "key": "A",
+        "text": "When queries frequently filter by low-cardinality columns like region or country with distinct folder directories"
+      },
+      {
+        "key": "B",
+        "text": "When the filter column has millions of unique transaction ID values"
+      },
+      {
+        "key": "C",
+        "text": "When storage cost is unlimited and directory listing speed is irrelevant"
+      },
+      {
+        "key": "D",
+        "text": "When using legacy CSV files without Delta transaction logs"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Low-cardinality columns with frequent filter predicates are ideal candidates for physical partitioning."
+  },
+  {
+    "id": 162,
+    "title": "Q33: How does registering pipeline tables in Unity Catalog enhance enterprise governance compliance?",
+    "subtitle": "Unity Catalog governance integration guarantees end-to-end data security and lineage.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "By bypassing Azure RBAC security requirements on storage accounts"
+      },
+      {
+        "key": "B",
+        "text": "By centralizing access grants, tracking automated column-level lineage, and enforcing dynamic row/column security policies"
+      },
+      {
+        "key": "C",
+        "text": "By disabling audit log generation to protect user privacy"
+      },
+      {
+        "key": "D",
+        "text": "By converting Delta tables into unmanaged Hive tables"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Unity Catalog centralizes grants, lineage, and dynamic policies across all medallion layers."
+  },
+  {
+    "id": 167,
+    "title": "Q1: Which core characteristic distinguishes event-driven pipeline triggers from traditional cron-based time scheduling?",
+    "subtitle": "Event-driven workflow triggers optimize compute resource utilization compared to periodic polling schedules.",
+    "objective": "Evaluate operational benefits of event-driven workflows over periodic cron schedules.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Event triggers require manual intervention for every execution cycle"
+      },
+      {
+        "key": "B",
+        "text": "Event triggers execute workflows instantly upon the arrival of new source files or messages, eliminating idle polling costs"
+      },
+      {
+        "key": "C",
+        "text": "Event triggers only support uncompressed CSV flat file formats"
+      },
+      {
+        "key": "D",
+        "text": "Event triggers disable Delta Lake transaction logging entirely"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Event triggers fire immediately when files land in cloud storage (via Azure Event Grid), removing wasted compute idle time inherent in scheduled cron jobs."
+  },
+  {
+    "id": 168,
+    "title": "Q2: When is a traditional time-based cron schedule preferred over an event-driven trigger for data pipelines?",
+    "subtitle": "Cron-based scheduling models suit predictable batch reporting cycles with fixed operational windows.",
+    "objective": "Identify optimal business scenarios for time-based batch schedules.",
+    "options": [
+      {
+        "key": "A",
+        "text": "When processing real-time IoT financial telemetry feeds requiring sub-second latency"
+      },
+      {
+        "key": "B",
+        "text": "When consolidating nightly financial batch dumps delivered at a predictable time by legacy enterprise systems"
+      },
+      {
+        "key": "C",
+        "text": "When using Auto Loader with notification mode queues"
+      },
+      {
+        "key": "D",
+        "text": "When enforcing strict DLT expectations on streaming tables"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Nightly batch reporting cycles from legacy mainframes align perfectly with predictable time-based cron schedules."
+  },
+  {
+    "id": 169,
+    "title": "Q3: How do Azure Event Grid notifications integrate with Databricks workflows to initiate data processing?",
+    "subtitle": "Cloud storage event notifications power reactive pipeline execution architectures.",
+    "objective": "Test knowledge of cloud storage event integration mechanisms.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By compiling Java bytecode directly inside the storage account"
+      },
+      {
+        "key": "B",
+        "text": "By publishing file creation events to a queue that triggers a Databricks Job via webhook or API integration"
+      },
+      {
+        "key": "C",
+        "text": "By converting Delta tables into static Parquet files every hour"
+      },
+      {
+        "key": "D",
+        "text": "By bypassing Unity Catalog access permissions"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Azure Event Grid captures blob creation events and triggers Databricks Jobs instantly via webhooks."
+  },
+  {
+    "id": 170,
+    "title": "Q4: What happens if an event-driven workflow triggers before upstream source files have finished writing completely?",
+    "subtitle": "Handling intermittent upstream delays requires robust workflow retry policies.",
+    "objective": "Evaluate pipeline resilience against incomplete file landings.",
+    "options": [
+      {
+        "key": "A",
+        "text": "The pipeline automatically deletes the incomplete files"
+      },
+      {
+        "key": "B",
+        "text": "Ingestion sources (like Auto Loader) handle partial files gracefully or workflow retry logic manages temporary landing delays"
+      },
+      {
+        "key": "C",
+        "text": "The Databricks metastore deletes all historical tables"
+      },
+      {
+        "key": "D",
+        "text": "The cluster driver node restarts permanently"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Robust pipelines use incremental ingestion engines and retry logic to wait for file write completion."
+  },
+  {
+    "id": 171,
+    "title": "Q5: Which scenario is best suited for an event-driven trigger rather than a cron-based schedule?",
+    "subtitle": "Differentiating cron schedules from event triggers ensures optimal architecture selection.",
+    "objective": "Test decision criteria for choosing event triggers over cron schedules.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Variable file drops arriving at unpredictable times throughout the day from global suppliers"
+      },
+      {
+        "key": "B",
+        "text": "Monthly accounting summary reports generated on the last Friday"
+      },
+      {
+        "key": "C",
+        "text": "Weekly maintenance vacuum commands executed on Sundays"
+      },
+      {
+        "key": "D",
+        "text": "Hourly log archiving tasks with constant volume"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Unpredictable file arrivals require event-driven execution to process data immediately upon landing."
+  },
+  {
+    "id": 173,
+    "title": "Q6: What is the primary advantage of Lakeflow Spark Declarative Pipelines over traditional imperative notebooks?",
+    "subtitle": "Declarative pipeline frameworks automate infrastructure dependency management.",
+    "objective": "Evaluate benefits of declarative pipeline frameworks over imperative notebooks.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Declarative pipelines restrict execution to single-node drivers"
+      },
+      {
+        "key": "B",
+        "text": "Declarative pipelines automatically manage DAG dependency graphs, scaling, and quality validation from high-level specifications"
+      },
+      {
+        "key": "C",
+        "text": "Declarative pipelines replace Delta Lake storage with CSV files"
+      },
+      {
+        "key": "D",
+        "text": "Declarative pipelines prevent integration with Unity Catalog"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Declarative frameworks allow engineers to specify *what* tables to build, letting the engine handle orchestration and DAG execution automatically."
+  },
+  {
+    "id": 174,
+    "title": "Q7: When should an engineer choose a flexible imperative notebook over a declarative pipeline framework?",
+    "subtitle": "Imperative notebooks offer granular control for complex custom programmatic transformations.",
+    "objective": "Identify use cases where flexible notebooks surpass declarative pipelines.",
+    "options": [
+      {
+        "key": "A",
+        "text": "When building standard medallion architecture ingestion tables"
+      },
+      {
+        "key": "B",
+        "text": "When implementing complex custom machine learning training loops and bespoke data science exploratory logic"
+      },
+      {
+        "key": "C",
+        "text": "When deploying automated production data quality expectations"
+      },
+      {
+        "key": "D",
+        "text": "When managing Unity Catalog schema permissions"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Exploratory data science and custom ML workflows benefit from the flexibility of imperative notebooks."
+  },
+  {
+    "id": 175,
+    "title": "Q8: How do declarative pipelines define transformation logic between bronze, silver, and gold layers?",
+    "subtitle": "Declarative syntax simplifies medallion architecture table definitions.",
+    "objective": "Test understanding of declarative dependency resolution.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Through manual bash scripts executed on cluster driver nodes"
+      },
+      {
+        "key": "B",
+        "text": "Using declarative SQL or Python decorators that automatically resolve upstream table dependencies"
+      },
+      {
+        "key": "C",
+        "text": "By manually scheduling notebook paragraphs via cron expressions"
+      },
+      {
+        "key": "D",
+        "text": "By storing raw payloads in Azure Key Vault"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Declarative syntax uses decorators or SQL queries referencing source tables to construct the execution DAG automatically."
+  },
+  {
+    "id": 176,
+    "title": "Q9: What built-in operational feature is automatically provided by declarative pipeline frameworks?",
+    "subtitle": "Unified monitoring in declarative pipelines streamlines operational visibility.",
+    "objective": "Evaluate built-in operational capabilities of declarative pipelines.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Out-of-the-box data lineage, expectation metrics, and automated cluster scaling graphs"
+      },
+      {
+        "key": "B",
+        "text": "Manual log parsing scripts written in Python"
+      },
+      {
+        "key": "C",
+        "text": "Azure Blob Storage account key rotation"
+      },
+      {
+        "key": "D",
+        "text": "Direct integration with legacy FTP servers"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Declarative frameworks provide automated dashboards tracking table updates, row counts, and data quality metrics."
+  },
+  {
+    "id": 177,
+    "title": "Q10: How do declarative pipelines integrate with Unity Catalog securable objects?",
+    "subtitle": "Combining declarative pipelines with Unity Catalog ensures robust governance.",
+    "objective": "Test integration between declarative pipelines and Unity Catalog.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By bypassing Unity Catalog access permissions entirely"
+      },
+      {
+        "key": "B",
+        "text": "By automatically publishing created streaming tables and materialized views directly into designated Unity Catalog schemas"
+      },
+      {
+        "key": "C",
+        "text": "By converting all tables into local Hive metastore files"
+      },
+      {
+        "key": "D",
+        "text": "By storing catalog metadata in Azure Key Vault"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Tables produced by declarative pipelines register seamlessly into Unity Catalog for unified governance and security."
+  },
+  {
+    "id": 179,
+    "title": "Q11: What is the primary purpose of Declarative Automation Bundles in Databricks CI/CD workflows?",
+    "subtitle": "Declarative Automation Bundles codify workspace deployments for reliable CI/CD.",
+    "objective": "Evaluate core benefits of Declarative Automation Bundles for CI/CD.",
+    "options": [
+      {
+        "key": "A",
+        "text": "To execute manual notebook cells in production environments"
+      },
+      {
+        "key": "B",
+        "text": "To define and deploy jobs, pipelines, and workspace assets as version-controlled code across multiple environments"
+      },
+      {
+        "key": "C",
+        "text": "To rotate Azure storage account access keys automatically"
+      },
+      {
+        "key": "D",
+        "text": "To encrypt Delta transaction logs using AES-256"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Automation Bundles codify infrastructure and job configurations, enabling repeatable deployments via Git and CI/CD pipelines."
+  },
+  {
+    "id": 180,
+    "title": "Q12: How do Declarative Automation Bundles manage configuration differences between development and production targets?",
+    "subtitle": "Environment promotion requires parameterization to adapt configurations across stages.",
+    "objective": "Test bundle variable scoping and multi-target promotion mechanics.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By requiring manual code rewrites before deployment"
+      },
+      {
+        "key": "B",
+        "text": "Through target-specific configuration profiles and variable substitution within bundle YAML files"
+      },
+      {
+        "key": "C",
+        "text": "By disabling Unity Catalog in production targets"
+      },
+      {
+        "key": "D",
+        "text": "By storing environment passwords in plaintext markdown files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Bundle configuration files support target-specific parameters (e.g., cluster sizes, catalog names) for dev versus prod deployment."
+  },
+  {
+    "id": 181,
+    "title": "Q13: How do Automation Bundles ensure auditability when promoting pipeline code from staging to production?",
+    "subtitle": "Version control integration ensures complete auditability during code promotion.",
+    "objective": "Assess auditability and version control practices in bundle deployments.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By deleting staging workspace histories"
+      },
+      {
+        "key": "B",
+        "text": "By maintaining all job and pipeline definitions as tracked code in Git repositories with full commit history"
+      },
+      {
+        "key": "C",
+        "text": "By requiring verbal administrative approval for every deployment"
+      },
+      {
+        "key": "D",
+        "text": "By bypassing Azure Monitor diagnostic logging"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Because bundle definitions live in Git, every deployment is tied to a specific commit, ensuring pristine auditability."
+  },
+  {
+    "id": 182,
+    "title": "Q14: What are the foundational prerequisites for deploying code using Declarative Automation Bundles?",
+    "subtitle": "Core requirements for bundle deployment mandate valid YAML syntax and CLI tools.",
+    "objective": "Identify technical requirements for executing bundle deployments.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Databricks CLI installed, configured authentication, and a valid databricks.yml bundle configuration file"
+      },
+      {
+        "key": "B",
+        "text": "Manual creation of all jobs via the UI prior to deployment"
+      },
+      {
+        "key": "C",
+        "text": "Disabling Unity Catalog metastore attachments"
+      },
+      {
+        "key": "D",
+        "text": "Converting all notebooks into local CSV files"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Deploying bundles requires the Databricks CLI, authenticated credentials, and the root databricks.yml configuration file."
+  },
+  {
+    "id": 183,
+    "title": "Q15: How do Automation Bundles prevent configuration drift between testing and production environments?",
+    "subtitle": "Consistent environment promotion prevents drift across staging and production.",
+    "objective": "Evaluate how bundles eliminate configuration drift.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By allowing manual modifications directly in production UI workspaces"
+      },
+      {
+        "key": "B",
+        "text": "By enforcing declarative infrastructure-as-code deployment where all changes originate from source control"
+      },
+      {
+        "key": "C",
+        "text": "By randomizing cluster configurations on every execution"
+      },
+      {
+        "key": "D",
+        "text": "By storing workspace states in unmanaged CSV files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Infrastructure-as-code via bundles ensures that the deployed state mirrors the repository definition exactly, eliminating manual drift."
+  },
+  {
+    "id": 185,
+    "title": "Q16: Which Spark UI metrics are critical for diagnosing memory spill and executor bottlenecks in production pipelines?",
+    "subtitle": "Monitoring key performance metrics identifies root causes of production workload slowdowns.",
+    "objective": "Identify key metrics used to troubleshoot production workload performance bottlenecks.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Workspace user login counts and notebook folder names"
+      },
+      {
+        "key": "B",
+        "text": "Spill (memory) and Spill (disk), task duration skew, and GC (garbage collection) time"
+      },
+      {
+        "key": "C",
+        "text": "Azure subscription billing meter IDs"
+      },
+      {
+        "key": "D",
+        "text": "Unity Catalog object tag counts"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. High disk spill, task duration skew, and excessive GC time indicate memory pressure and resource bottlenecks in Spark jobs."
+  },
+  {
+    "id": 186,
+    "title": "Q17: What is the recommended proactive remediation strategy when a production streaming pipeline experiences persistent executor OOM errors?",
+    "subtitle": "Proactive remediation strategies prevent downstream consumer failures during incidents.",
+    "objective": "Test proactive remediation strategies to address failures before impacting downstream consumers.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Deleting the Delta table transaction log"
+      },
+      {
+        "key": "B",
+        "text": "Tuning shuffle partitions, scaling worker instance types, or optimizing window watermarks to reduce state memory"
+      },
+      {
+        "key": "C",
+        "text": "Disabling Unity Catalog access controls"
+      },
+      {
+        "key": "D",
+        "text": "Converting Delta tables into uncompressed CSV files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Addressing OOM errors requires scaling memory, tuning shuffle allocations, or adjusting state watermarks."
+  },
+  {
+    "id": 187,
+    "title": "Q18: Which metrics are essential for monitoring production workload reliability after deploying updated pipeline code?",
+    "subtitle": "Reliability monitoring metrics track pipeline health after code deployments.",
+    "objective": "Identify metrics for monitoring production workload reliability after deploying pipeline code changes.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Number of active developer notebook tabs"
+      },
+      {
+        "key": "B",
+        "text": "Job success/failure rates, task retry frequencies, micro-batch processing latency, and data quality expectation violation counts"
+      },
+      {
+        "key": "C",
+        "text": "Azure Key Vault secret rotation schedules"
+      },
+      {
+        "key": "D",
+        "text": "Delta Sharing recipient token counts"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Tracking failure rates, latencies, and expectation violations ensures post-deployment reliability."
+  },
+  {
+    "id": 188,
+    "title": "Q19: What symptom indicates that a production Delta table suffers from the small file problem during read operations?",
+    "subtitle": "Diagnosing storage bottlenecks requires analyzing file size distributions and metadata overhead.",
+    "objective": "Evaluate symptoms of file fragmentation and metadata performance degradation.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Instant query execution without executor shuffling"
+      },
+      {
+        "key": "B",
+        "text": "High metadata listing latency and driver memory exhaustion before execution begins"
+      },
+      {
+        "key": "C",
+        "text": "Automatic table compression into ZIP archives"
+      },
+      {
+        "key": "D",
+        "text": "Zero disk spill across all worker nodes"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Excessive small files overwhelm driver memory during directory listing phases, causing severe query latency."
+  },
+  {
+    "id": 189,
+    "title": "Q20: How do diagnostic log sinks help engineers troubleshoot intermittent pipeline job failures in Azure Databricks?",
+    "subtitle": "Diagnostic logging configuration provides deep visibility into pipeline execution anomalies.",
+    "objective": "Test understanding of centralized diagnostic logging for troubleshooting.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By deleting failed tasks automatically"
+      },
+      {
+        "key": "B",
+        "text": "By centralizing driver logs, cluster events, and Unity Catalog access audits into Azure Log Analytics for deep querying"
+      },
+      {
+        "key": "C",
+        "text": "By bypassing Spark shuffle partitions entirely"
+      },
+      {
+        "key": "D",
+        "text": "By converting operational tables into static Parquet files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Centralized logging in Log Analytics enables comprehensive Kusto queries to analyze error traces and cluster events."
+  },
+  {
+    "id": 191,
+    "title": "Q21: What is the primary operational symptom of data skew during a Spark shuffle join operation?",
+    "subtitle": "Data skew creates straggler tasks that degrade overall Spark job execution efficiency.",
+    "objective": "Test knowledge on tuning shuffle operations to resolve data skew in production.",
+    "options": [
+      {
+        "key": "A",
+        "text": "All worker tasks finish simultaneously with zero disk spill"
+      },
+      {
+        "key": "B",
+        "text": "Most tasks complete rapidly while a single task takes hours, resulting in executor OOM errors and job failure"
+      },
+      {
+        "key": "C",
+        "text": "The cluster automatically terminates without generating logs"
+      },
+      {
+        "key": "D",
+        "text": "Unity Catalog revokes user access permissions"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Data skew concentrates disproportionate data rows onto a single executor task (the straggler), causing memory exhaustion and halting execution."
+  },
+  {
+    "id": 192,
+    "title": "Q22: How does Spark Adaptive Query Execution (AQE) help mitigate performance degradation from data skew?",
+    "subtitle": "Adaptive Query Execution (AQE) automatically optimizes shuffle partitions at runtime.",
+    "objective": "Evaluate AQE capabilities for handling runtime data skew.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By deleting skewed keys entirely from datasets"
+      },
+      {
+        "key": "B",
+        "text": "By dynamically coalescing shuffle partitions and splitting skewed join partitions into smaller sub-tasks at runtime"
+      },
+      {
+        "key": "C",
+        "text": "By converting shuffle joins into broadcast joins without size limits"
+      },
+      {
+        "key": "D",
+        "text": "By restarting worker nodes when memory exceeds 50%"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. AQE inspects shuffle statistics at runtime and automatically splits oversized partitions to balance workload across executors."
+  },
+  {
+    "id": 193,
+    "title": "Q23: What is the manual engineering technique known as \"salting\" used to resolve severe data skew in join keys?",
+    "subtitle": "Salting skewed join keys distributes hot partitions across multiple cluster executors.",
+    "objective": "Test technical understanding of salting techniques for skewed joins.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Encrypting table columns with cryptographic salt strings"
+      },
+      {
+        "key": "B",
+        "text": "Appending a random integer suffix to skewed join keys on both sides of the join to distribute rows across tasks"
+      },
+      {
+        "key": "C",
+        "text": "Converting Parquet files into uncompressed CSV archives"
+      },
+      {
+        "key": "D",
+        "text": "Increasing driver node RAM limits without modifying queries"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Salting splits hot join keys into multiple buckets using random numbers, distributing computational load across workers."
+  },
+  {
+    "id": 194,
+    "title": "Q24: What is the risk of setting spark.sql.shuffle.partitions to an excessively high value on small datasets?",
+    "subtitle": "Configuring shuffle partition counts properly balances parallelism against task scheduling overhead.",
+    "objective": "Analyze trade-offs in configuring shuffle partition concurrency.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Complete cluster hardware failure"
+      },
+      {
+        "key": "B",
+        "text": "Excessive task scheduling overhead, tiny output files, and degraded execution performance due to serialization costs"
+      },
+      {
+        "key": "C",
+        "text": "Automatic bypassing of Unity Catalog security checks"
+      },
+      {
+        "key": "D",
+        "text": "Permanent deletion of Delta transaction log history"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Too many shuffle partitions on small data creates overhead from task scheduling and produces millions of tiny files."
+  },
+  {
+    "id": 195,
+    "title": "Q25: When should an engineer force a broadcast hash join using hint syntax in Spark SQL?",
+    "subtitle": "Broadcast hash joins eliminate shuffle operations for small dimension table lookups.",
+    "objective": "Evaluate broadcast join optimization strategies.",
+    "options": [
+      {
+        "key": "A",
+        "text": "When joining a massive fact table with a small dimension table to eliminate expensive shuffle exchanges"
+      },
+      {
+        "key": "B",
+        "text": "When joining two multi-terabyte fact tables together"
+      },
+      {
+        "key": "C",
+        "text": "When processing unstructured PDF files in Unity Catalog volumes"
+      },
+      {
+        "key": "D",
+        "text": "When disabling Delta Lake ACID transaction logs"
+      }
+    ],
+    "correct": "A",
+    "explanation": "A. Broadcasting small dimension tables sends a copy to all executors, avoiding shuffle phases entirely during joins."
+  },
+  {
+    "id": 197,
+    "title": "Q26: An enterprise architect is designing a production data platform. Which combination of practices ensures robust operations?",
+    "subtitle": "Comprehensive scenario design requires balancing orchestration, automation, and performance.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "Manual notebook execution, cron polling, and unmanaged CSV storage"
+      },
+      {
+        "key": "B",
+        "text": "Event-driven triggers, Declarative Automation Bundles in Git, AQE-enabled clusters, and Unity Catalog governance"
+      },
+      {
+        "key": "C",
+        "text": "Disabling all monitoring and running pipelines on single-node driver instances"
+      },
+      {
+        "key": "D",
+        "text": "Hardcoding production secrets directly in notebook markdown cells"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Combining event-driven triggers, Git-backed automation bundles, AQE performance tuning, and Unity Catalog represents the ultimate enterprise architecture."
+  },
+  {
+    "id": 198,
+    "title": "Q27: How does Databricks Workflows support complex multi-stage dependency graphs across disparate notebooks and tasks?",
+    "subtitle": "Advanced workflow dependency modeling orchestrates multi-stage data pipelines.",
+    "objective": "Test understanding of multi-task workflow orchestration capabilities.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By requiring manual execution of each task sequentially"
+      },
+      {
+        "key": "B",
+        "text": "Through visual task-dependency definitions supporting conditional branching, parameter passing, and parallel execution paths"
+      },
+      {
+        "key": "C",
+        "text": "By storing task orchestrations inside Azure Key Vault secrets"
+      },
+      {
+        "key": "D",
+        "text": "By converting all tasks into single-threaded shell scripts"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Databricks Workflows enables sophisticated task graphs with branching, parameters, and parallel job orchestration."
+  },
+  {
+    "id": 199,
+    "title": "Q28: What is the best practice for passing dynamic parameters (such as execution date or target environment) into Databricks Job tasks?",
+    "subtitle": "Pipeline parameterization enables flexible execution across test and production runs.",
+    "objective": "Evaluate parameter passing best practices in automated jobs.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Hardcoding date strings directly into source code notebooks"
+      },
+      {
+        "key": "B",
+        "text": "Utilizing job parameters and widget values accessed via dbutils.widgets.get()"
+      },
+      {
+        "key": "C",
+        "text": "Storing runtime parameters in public GitHub commit messages"
+      },
+      {
+        "key": "D",
+        "text": "Modifying cluster driver RAM settings on every run"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. dbutils.widgets allow jobs to accept dynamic runtime parameters safely without altering notebook source code."
+  },
+  {
+    "id": 200,
+    "title": "Q29: How can an engineering team configure proactive notifications for failed Databricks Job executions?",
+    "subtitle": "Automated alerting mechanisms notify operations teams of production pipeline failures.",
+    "objective": "Test configuration of operational alerting for job failures.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By manually checking task logs every morning"
+      },
+      {
+        "key": "B",
+        "text": "By configuring email, webhook, or PagerDuty alert destinations directly within Databricks Job notification settings"
+      },
+      {
+        "key": "C",
+        "text": "By disabling Unity Catalog audit logging"
+      },
+      {
+        "key": "D",
+        "text": "By storing alert configurations in local driver memory"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Databricks Jobs support built-in notification webhooks and email alerts for success, failure, and duration thresholds."
+  },
+  {
+    "id": 201,
+    "title": "Q30: When deploying updates using Automation Bundles, how does the CLI determine which resources have changed?",
+    "subtitle": "Version-controlled bundle deployments ensure reproducible workspace states.",
+    "objective": "Understand synchronization and diff mechanics in Automation Bundles.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By scanning all cluster driver RAM caches"
+      },
+      {
+        "key": "B",
+        "text": "By comparing local bundle YAML definitions and source files against the deployed workspace resource state"
+      },
+      {
+        "key": "C",
+        "text": "By deleting the entire Unity Catalog metastore"
+      },
+      {
+        "key": "D",
+        "text": "By prompting the user to manually select modified lines in the UI"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. The bundle deploy command computes diffs between local source configurations and remote workspace assets to apply updates precisely."
+  },
+  {
+    "id": 202,
+    "title": "Q31: What is the operational benefit of using instance pools when scheduling high-frequency production jobs?",
+    "subtitle": "Cluster instance pool configuration accelerates job startup times in production.",
+    "objective": "Evaluate instance pool benefits for production job latency.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Pools automatically encrypt Delta table files at rest"
+      },
+      {
+        "key": "B",
+        "text": "Pools maintain a set of idle, ready-to-use virtual machines, drastically reducing cluster startup and node acquisition latency"
+      },
+      {
+        "key": "C",
+        "text": "Pools bypass Unity Catalog permission checks for faster reads"
+      },
+      {
+        "key": "D",
+        "text": "Pools eliminate all Spark shuffle memory spill"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Instance pools pre-provision cloud VMs, eliminating cold-start delays when automated jobs trigger."
+  },
+  {
+    "id": 203,
+    "title": "Q32: When configuring production job clusters with worker instance pools, how should spot instances be utilized safely?",
+    "subtitle": "Spot instances optimization balances cost savings against node preemption risks.",
+    "objective": "Test configuration best practices for cost optimization and fault tolerance.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Use spot instances exclusively for the driver node without fallback"
+      },
+      {
+        "key": "B",
+        "text": "Use spot instances for worker nodes with automatic fallback to on-demand instances if cloud provider preemption occurs"
+      },
+      {
+        "key": "C",
+        "text": "Disable all spot instances to prevent Delta transaction log errors"
+      },
+      {
+        "key": "D",
+        "text": "Store spot instance passwords in Azure Key Vault"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Combining spot worker nodes with on-demand fallback ensures cost reduction while maintaining workflow resilience against preemption."
+  },
+  {
+    "id": 204,
+    "title": "Q33: Why must maintenance tasks like OPTIMIZE and VACUUM be scheduled regularly in high-frequency ingestion pipelines?",
+    "subtitle": "Optimizing Delta table maintenance schedules sustains high-performance querying.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "To delete Unity Catalog securable objects automatically"
+      },
+      {
+        "key": "B",
+        "text": "To compact fragmented small files generated by micro-batches and purge unreferenced historical data, preventing storage bloat"
+      },
+      {
+        "key": "C",
+        "text": "To rotate Azure Key Vault secret access keys"
+      },
+      {
+        "key": "D",
+        "text": "To bypass Spark shuffle partition limits"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Regular OPTIMIZE and VACUUM routines prevent small file accumulation and manage storage retention costs."
+  },
+  {
+    "id": 205,
+    "title": "Q34: How should a Databricks Job task be configured to handle transient network timeouts when connecting to external APIs?",
+    "subtitle": "Granular task retry policies ensure workflow robustness against transient cloud errors.",
+    "objective": "Evaluate workflow retry configurations for handling transient faults.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Setting task retries to zero to crash the pipeline immediately"
+      },
+      {
+        "key": "B",
+        "text": "Configuring automatic task retries with exponential backoff delay intervals"
+      },
+      {
+        "key": "C",
+        "text": "Disabling Unity Catalog governance policies"
+      },
+      {
+        "key": "D",
+        "text": "Converting the task into an interactive notebook"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Task retries with exponential backoff allow transient cloud or network errors to resolve before marking the job failed."
+  },
+  {
+    "id": 206,
+    "title": "Q35: What does an unusually high shuffle read volume compared to input data size indicate in a Spark execution plan?",
+    "subtitle": "Monitoring Spark shuffle read/write volumes reveals underlying join and aggregation inefficiencies.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "Optimal table partitioning with zero performance overhead"
+      },
+      {
+        "key": "B",
+        "text": "Inefficient join strategies, excessive wide transformations, or missing broadcast optimizations"
+      },
+      {
+        "key": "C",
+        "text": "Perfect cache utilization across all cluster executors"
+      },
+      {
+        "key": "D",
+        "text": "Successful Unity Catalog permission inheritance"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. High shuffle volume points to expensive wide transformations and joins that shuffle excessive data across the network."
+  },
+  {
+    "id": 207,
+    "title": "Q36: Which command allows engineers to validate and preview bundle deployments before executing changes in production?",
+    "subtitle": "Declarative bundle validation commands catch syntax and deployment errors pre-production.",
+    "objective": "Test CLI command knowledge for validating Automation Bundles.",
+    "options": [
+      {
+        "key": "A",
+        "text": "databricks bundle destroy --force"
+      },
+      {
+        "key": "B",
+        "text": "databricks bundle validate"
+      },
+      {
+        "key": "C",
+        "text": "spark.sql(\"VALIDATE BUNDLE\")"
+      },
+      {
+        "key": "D",
+        "text": "az databricks workspace check"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. databricks bundle validate parses YAML configurations and checks schema validity prior to deployment."
+  },
+  {
+    "id": 208,
+    "title": "Q37: Why is it recommended to execute independent pipeline tasks on separate cluster definitions within a Databricks Workflow?",
+    "subtitle": "Isolating task execution contexts prevents cascading failures across complex workflows.",
+    "objective": "Evaluate task isolation principles in multi-stage workflows.",
+    "options": [
+      {
+        "key": "A",
+        "text": "To maximize cluster startup latency"
+      },
+      {
+        "key": "B",
+        "text": "To prevent resource contention and isolate transient failures so a failure in one task does not lock resources for unrelated workloads"
+      },
+      {
+        "key": "C",
+        "text": "To bypass Unity Catalog object security permissions"
+      },
+      {
+        "key": "D",
+        "text": "To store all driver logs in local markdown cells"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Isolated compute tasks prevent resource contention and ensure clean failure domains across complex workflows."
+  },
+  {
+    "id": 209,
+    "title": "Q38: When examining the Spark UI stage summary, what does a wide gap between median task duration and max task duration signify?",
+    "subtitle": "Analyzing Spark UI stage timelines pinpoints exact tasks causing performance bottlenecks.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "Perfect workload balance across all executors"
+      },
+      {
+        "key": "B",
+        "text": "Severe data skew causing straggler tasks that stall the entire stage completion"
+      },
+      {
+        "key": "C",
+        "text": "Successful broadcast join execution"
+      },
+      {
+        "key": "D",
+        "text": "Instantaneous file listing by Auto Loader"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. A large discrepancy between median and max task duration highlights data skew and stragglers."
+  },
+  {
+    "id": 210,
+    "title": "Q39: How do automated retention policies on Delta Lake tables reduce long-term cloud storage costs?",
+    "subtitle": "Automated cleanup policies prevent unnecessary cloud storage accumulation.",
+    "objective": "Evaluate storage cost management using retention and vacuum policies.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By deleting active parquet data files on every query"
+      },
+      {
+        "key": "B",
+        "text": "By purging historical snapshots and unreferenced data files older than the retention window via scheduled VACUUM commands"
+      },
+      {
+        "key": "C",
+        "text": "By converting Delta tables into CSV flat files"
+      },
+      {
+        "key": "D",
+        "text": "By disabling Unity Catalog lineage tracking"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Scheduled VACUUM commands remove expired time-travel snapshots, reclaiming cloud storage space."
+  },
+  {
+    "id": 211,
+    "title": "Q40: How can a Databricks workflow wait for an external file ingestion source to complete before starting downstream transformations?",
+    "subtitle": "Managing dependencies between external systems and Databricks workflows ensures data integrity.",
+    "objective": "Test understanding of external dependency handling in workflows.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Hardcoding fixed sleep timers in Python code"
+      },
+      {
+        "key": "B",
+        "text": "Using file arrival triggers, sensor tasks, or event-driven webhook dependencies within Databricks Workflows"
+      },
+      {
+        "key": "C",
+        "text": "Disabling all monitoring alerts"
+      },
+      {
+        "key": "D",
+        "text": "Executing manual notebook cells daily"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Sensor tasks and event-driven triggers ensure workflows wait for external dependencies to land before proceeding."
+  },
+  {
+    "id": 212,
+    "title": "Q41: What is the primary operational risk of manually editing job configurations in a production Databricks UI workspace?",
+    "subtitle": "Version-controlled CI/CD pipelines eliminate manual configuration errors in production.",
+    "objective": "Evaluate risks associated with manual workspace edits versus code-based automation.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Accelerated cluster startup performance"
+      },
+      {
+        "key": "B",
+        "text": "Configuration drift, lack of auditability, and failure to reproduce deployments across environments"
+      },
+      {
+        "key": "C",
+        "text": "Automatic encryption of Delta transaction logs"
+      },
+      {
+        "key": "D",
+        "text": "Enhanced integration with Unity Catalog"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Manual UI edits cause drift and untracked changes, violating enterprise CI/CD standards."
+  },
+  {
+    "id": 213,
+    "title": "Q42: What symptom indicates that a Spark job requires a larger driver node instance type?",
+    "subtitle": "Configuring driver node specifications properly prevents Out-Of-Memory driver failures.",
+    "objective": "Test diagnosis of driver memory bottlenecks and collection overhead.",
+    "options": [
+      {
+        "key": "A",
+        "text": "High disk spill on worker executors during shuffle joins"
+      },
+      {
+        "key": "B",
+        "text": "Driver Out-Of-Memory (OOM) errors during collect(), broadcast operations, or massive metadata listing phases"
+      },
+      {
+        "key": "C",
+        "text": "Slow file landing times in cloud storage containers"
+      },
+      {
+        "key": "D",
+        "text": "Successful Unity Catalog privilege checks"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Heavy driver collection or massive metadata operations cause driver OOM errors, requiring larger driver RAM."
+  },
+  {
+    "id": 214,
+    "title": "Q43: Which architectural practice guarantees that production data operations remain secure, scalable, and audit-ready?",
+    "subtitle": "End-to-end operational governance ensures resilient, secure, and scalable lakehouses.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "Hardcoding credentials and running manual cron jobs on shared all-purpose clusters"
+      },
+      {
+        "key": "B",
+        "text": "Codifying infrastructure with Automation Bundles, enforcing Unity Catalog governance, monitoring via diagnostic logs, and optimizing shuffle performance"
+      },
+      {
+        "key": "C",
+        "text": "Disabling all monitoring tools and relying on user feedback"
+      },
+      {
+        "key": "D",
+        "text": "Storing raw data in unmanaged local CSV files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Codified deployments, centralized Unity Catalog governance, diagnostic logging, and performance tuning form the pillars of elite lakehouse operations."
+  },
+  {
+    "id": 216,
+    "title": "Q44: What is the primary benefit of setting up webhook alert integrations with PagerDuty for Databricks workflows?",
+    "subtitle": "Proactive incident response strategies minimize downtime in production analytics pipelines.",
+    "objective": "Test knowledge of proactive incident response and alerting integrations.",
+    "options": [
+      {
+        "key": "A",
+        "text": "To automatically delete Delta table history logs"
+      },
+      {
+        "key": "B",
+        "text": "To alert on-call engineers instantly upon job failure, minimizing MTTR (Mean Time To Resolution)"
+      },
+      {
+        "key": "C",
+        "text": "To bypass Unity Catalog access control policies"
+      },
+      {
+        "key": "D",
+        "text": "To increase Spark shuffle partition counts"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Webhook alerting to PagerDuty or Slack ensures rapid incident response and reduced downtime for analytics pipelines."
+  },
+  {
+    "id": 217,
+    "title": "Q45: How do cluster ACLs (Access Control Lists) enhance security within an Azure Databricks workspace?",
+    "subtitle": "Granular cluster access permissions secure multi-tenant data engineering environments.",
+    "objective": "Evaluate compute security and cluster ACL enforcement.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By encrypting Parquet files at rest in cloud storage"
+      },
+      {
+        "key": "B",
+        "text": "By restricting which users or groups can attach to, restart, or manage specific compute clusters"
+      },
+      {
+        "key": "C",
+        "text": "By automatically generating Unity Catalog row filters"
+      },
+      {
+        "key": "D",
+        "text": "By routing all queries through serverless SQL warehouses"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Cluster ACLs control compute access, preventing unauthorized users from executing code on privileged clusters."
+  },
+  {
+    "id": 218,
+    "title": "Q46: When configuring a multi-task job, how does setting maximum concurrent runs impact pipeline execution?",
+    "subtitle": "Configuring automated workflow retries guarantees resilience against intermittent cloud faults.",
+    "objective": "Test understanding of job concurrency limits and race condition prevention.",
+    "options": [
+      {
+        "key": "A",
+        "text": "It forces all tasks to execute sequentially on a single core"
+      },
+      {
+        "key": "B",
+        "text": "It controls whether multiple instances of the same job can run simultaneously, preventing race conditions or resource contention"
+      },
+      {
+        "key": "C",
+        "text": "It disables Unity Catalog lineage tracking"
+      },
+      {
+        "key": "D",
+        "text": "It deletes historical Delta transaction logs"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Limiting concurrent runs prevents overlapping job executions from competing for the same tables and files."
+  },
+  {
+    "id": 219,
+    "title": "Q47: Why should data engineers monitor job duration trends over time in production environments?",
+    "subtitle": "Monitoring job duration trends detects performance degradation before failures occur.",
+    "objective": "Evaluate proactive monitoring practices for detecting performance degradation.",
+    "options": [
+      {
+        "key": "A",
+        "text": "To verify Unity Catalog schema naming conventions"
+      },
+      {
+        "key": "B",
+        "text": "To identify creeping performance bottlenecks, data volume growth, or shuffle inefficiencies before they cause SLA breaches"
+      },
+      {
+        "key": "C",
+        "text": "To calculate Azure Key Vault secret rotation intervals"
+      },
+      {
+        "key": "D",
+        "text": "To automatically delete old notebook files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Tracking duration trends reveals performance regression early, allowing optimization before SLA failures occur."
+  },
+  {
+    "id": 220,
+    "title": "Q48: How do Git-backed Automation Bundles facilitate rapid rollback when a newly deployed pipeline version fails?",
+    "subtitle": "Version-controlled rollback strategies ensure rapid recovery from bad deployments.",
+    "objective": "Test knowledge on executing rapid rollbacks using version-controlled bundles.",
+    "options": [
+      {
+        "key": "A",
+        "text": "By deleting the entire Databricks workspace"
+      },
+      {
+        "key": "B",
+        "text": "By redeploying a previous stable Git commit hash via the bundle deployment CLI tool"
+      },
+      {
+        "key": "C",
+        "text": "By manually editing UI notebook cells in production"
+      },
+      {
+        "key": "D",
+        "text": "By bypassing Unity Catalog access policies"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Reverting to a prior Git commit and running bundle deploy restores the known good state instantly."
+  },
+  {
+    "id": 221,
+    "title": "Q49: What does excessive Garbage Collection (GC) time in Spark executor metrics indicate about a workload?",
+    "subtitle": "Analyzing Spark executor garbage collection logs reveals memory pressure issues.",
+    "objective": "",
+    "options": [
+      {
+        "key": "A",
+        "text": "Optimal cluster memory utilization with zero overhead"
+      },
+      {
+        "key": "B",
+        "text": "Severe memory pressure where executors spend more time freeing heap space than executing computation tasks"
+      },
+      {
+        "key": "C",
+        "text": "Instantaneous file listing by Auto Loader"
+      },
+      {
+        "key": "D",
+        "text": "Successful Unity Catalog privilege verification"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. High GC time indicates heap exhaustion, requiring increased executor memory or reduced partition batch sizes."
+  },
+  {
+    "id": 222,
+    "title": "Q50: Which practice ensures that unit tests and data quality validations run before code reaches production environments?",
+    "subtitle": "Integrating CI/CD testing gates prevents malformed pipeline code from reaching production.",
+    "objective": "Test understanding of CI/CD testing gates and automated validation workflows.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Directly modifying production notebooks via the web UI"
+      },
+      {
+        "key": "B",
+        "text": "Integrating CI/CD pipelines (GitHub Actions / Azure DevOps) that run bundle validation and test suites on every pull request"
+      },
+      {
+        "key": "C",
+        "text": "Disabling Unity Catalog auditing during development"
+      },
+      {
+        "key": "D",
+        "text": "Hardcoding passwords in source configuration files"
+      }
+    ],
+    "correct": "B",
+    "explanation": "B. Automated CI/CD testing gates catch bugs and configuration errors before merging into production branches."
+  }
+]
