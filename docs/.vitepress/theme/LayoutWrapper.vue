@@ -1,5 +1,6 @@
 <script setup>
 import DefaultTheme from 'vitepress/theme'
+import { withBase } from 'vitepress'
 import LessonCompletion from './LessonCompletion.vue'
 const { Layout } = DefaultTheme
 </script>
@@ -15,7 +16,7 @@ const { Layout } = DefaultTheme
         <div class="site-footer-inner">
           <div class="footer-col brand-col">
             <div class="footer-logo">
-              <img src="/databricks.svg" width="22" height="22" alt="Databricks Logo" class="brand-logo-img" />
+              <img :src="withBase('/databricks.svg')" width="22" height="22" alt="Databricks Logo" class="brand-logo-img" />
               <span class="brand-text">DP-750 Study Portal</span>
             </div>
             <p class="brand-desc">
@@ -41,6 +42,7 @@ const { Layout } = DefaultTheme
             <ul>
               <li><a href="/DP-750/labs/">Hands-on Labs (12 Labs)</a></li>
               <li><a href="/DP-750/question-bank/">Practice Quizzes</a></li>
+              <li><a href="https://notebook.google.com/notebook/939d1225-31a8-4583-a0f3-c0002b0a5557/preview" target="_blank" rel="noopener">NotebookLM Study Companion</a></li>
               <li><a href="https://github.com/Balasubramanian-pg/DP-750" target="_blank" rel="noopener">GitHub Repository</a></li>
               <li><a href="https://www.linkedin.com/in/balasubramanianpg2022/?isSelfProfile=true" target="_blank" rel="noopener">Connect on LinkedIn</a></li>
             </ul>
