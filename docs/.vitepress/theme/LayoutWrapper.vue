@@ -78,7 +78,7 @@ onUnmounted(() => {
       </a>
     </template>
 
-    <template #layout-bottom>
+    <template #doc-bottom>
       <footer v-if="route.path !== '/' && route.path !== '/index.html'" class="site-footer-custom">
         <div class="site-footer-inner">
           <div class="footer-col brand-col">

@@ -771,7 +771,10 @@ const activeNav = ref('home')
                 </div>
 
                 <div v-if="matchedModuleHint" class="filter-match-hint">
-                  <span class="match-badge">Direct Match</span>
+                  <svg class="match-notebook-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                  </svg>
                   <a :href="`/DP-750/${matchedModuleHint.slug}/`" class="match-link">
                     Jump to {{ matchedModuleHint.moduleName }} &rarr;
                   </a>
@@ -1829,31 +1832,29 @@ const activeNav = ref('home')
 .filter-match-hint {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.6rem 0.8rem;
-  background: rgba(144, 107, 255, 0.1);
+  gap: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  background: rgba(144, 107, 255, 0.12);
   border: 1px solid rgba(144, 107, 255, 0.25);
-  border-radius: 10px;
+  border-radius: 12px;
   margin-bottom: 0.85rem;
 }
 
-.match-badge {
-  font-size: 0.68rem;
-  font-weight: 700;
-  padding: 2px 6px;
-  background: #906BFF;
-  color: #FFFFFF;
-  border-radius: 6px;
+.match-notebook-icon {
+  flex-shrink: 0;
+  stroke: #FFFFFF;
 }
 
 .match-link {
-  font-size: 0.82rem;
-  color: #C084FC;
+  font-size: 0.84rem;
+  color: #FFFFFF;
   text-decoration: none;
   font-weight: 600;
+  transition: color 0.15s ease;
 }
 
 .match-link:hover {
+  color: #A78BFA;
   text-decoration: underline;
 }
 

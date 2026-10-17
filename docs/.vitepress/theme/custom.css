@@ -82,28 +82,38 @@ h4, h5, h6, .vp-doc h4, .vp-doc h5, .vp-doc h6, .widget-title {
   max-width: 1840px !important;
 }
 
-/* Footer styling */
+/* Footer styling for reading section (inside doc-bottom, clears left sidebar completely) */
 .site-footer-custom {
   border-top: 1px solid var(--portal-border);
-  padding: 4rem 3rem 2.5rem;
+  padding: 4rem 2rem 2.5rem;
   background: #111218;
   font-size: 0.88rem;
   width: 100%;
+  margin-top: 5rem;
+  box-sizing: border-box;
 }
 
 .site-footer-inner {
-  max-width: 1840px;
+  max-width: 1400px;
   width: 100%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 3.5rem;
+  gap: 3rem;
+  box-sizing: border-box;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
+  .site-footer-inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 640px) {
   .site-footer-inner {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1.5rem;
   }
 }
 
@@ -137,14 +147,103 @@ h4, h5, h6, .vp-doc h4, .vp-doc h5, .vp-doc h6, .widget-title {
 }
 
 .footer-bottom {
-  max-width: 1840px;
+  max-width: 1400px;
   width: 100%;
-  margin: 3rem auto 0;
+  margin: 2.5rem auto 0;
   padding-top: 1.5rem;
-  border-top: 1px solid var(--portal-border);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: #6B7280;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+/* Small, intuitive search bar in reading section top navbar */
+.VPNavBar .search {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+}
+
+.DocSearch-Button {
+  height: 32px !important;
+  padding: 0 10px !important;
+  border-radius: 9999px !important;
+  background-color: #161720 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  width: auto !important;
+  min-width: 130px !important;
+  max-width: 180px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  cursor: pointer !important;
+}
+
+.DocSearch-Button:hover {
+  background-color: #1E202B !important;
+  border-color: rgba(144, 107, 255, 0.4) !important;
+}
+
+.DocSearch-Button .DocSearch-Search-Icon {
+  width: 13px !important;
+  height: 13px !important;
+  color: #8E92A4 !important;
+}
+
+.DocSearch-Button-Placeholder {
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  color: #8E92A4 !important;
+  padding: 0 4px !important;
+  font-family: var(--vp-font-family-base) !important;
+}
+
+.DocSearch-Button-Keys {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+  min-width: auto !important;
+  padding: 0 !important;
+}
+
+.DocSearch-Button-Key {
+  height: 17px !important;
+  min-width: 17px !important;
+  padding: 0 3px !important;
+  font-size: 0.62rem !important;
+  font-weight: 600 !important;
+  background: #232533 !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 4px !important;
+  color: #A3A8BD !important;
+  font-family: var(--vp-font-family-mono) !important;
+}
+
+/* Social links in top navbar */
+.VPNavBarSocialLinks {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.VPSocialLink {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+.VPSocialLink:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #FFFFFF !important;
+}
+
+.VPSocialLink svg {
+  width: 18px !important;
+  height: 18px !important;
 }
