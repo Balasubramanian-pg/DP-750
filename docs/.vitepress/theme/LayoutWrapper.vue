@@ -90,7 +90,7 @@ onUnmounted(() => {
               Structured preparation portal for the Microsoft DP-750 Azure Databricks Data Engineer certification. Includes deep architectural modules, hands-on enterprise labs, and interactive practice quizzes.
             </p>
             <div class="author-tag">
-              <span>Maintained by Balasubramanian PG</span>
+              <span>Maintained by <a href="https://github.com/Balasubramanian-pg" target="_blank" rel="noopener" class="author-github-link">Balasubramanian PG</a> &middot; <a href="https://www.linkedin.com/in/balasubramanianpg2022/?isSelfProfile=true" target="_blank" rel="noopener" class="author-linkedin-link">LinkedIn</a></span>
             </div>
           </div>
 
@@ -116,6 +116,7 @@ onUnmounted(() => {
           <div class="footer-col">
             <h4>Policies & Resources</h4>
             <ul>
+              <li><a href="https://www.linkedin.com/in/balasubramanianpg2022/?isSelfProfile=true" target="_blank" rel="noopener">Connect on LinkedIn</a></li>
               <li><a href="/DP-750/privacy-policy">Privacy Policy</a></li>
               <li><a href="/DP-750/cookie-policy">Cookie Policy</a></li>
               <li><a href="https://learn.microsoft.com/en-us/credentials/certifications/azure-data-engineer/" target="_blank" rel="noopener">Official Exam Scope</a></li>
@@ -125,7 +126,7 @@ onUnmounted(() => {
         </div>
 
         <div class="footer-bottom">
-          <span>&copy; 2026 Balasubramanian PG. All rights reserved. Zero tracking cookies.</span>
+          <span>&copy; 2026 <a href="https://github.com/Balasubramanian-pg" target="_blank" rel="noopener" class="author-github-link">Balasubramanian PG</a>. All rights reserved. Zero tracking cookies.</span>
           <span>Open Educational Resource</span>
         </div>
       </footer>
