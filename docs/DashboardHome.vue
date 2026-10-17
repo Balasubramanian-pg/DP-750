@@ -2,35 +2,44 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { withBase } from 'vitepress'
 
-// Interactive metrics & state
-const selectedFilter = ref('all')
-const hoursSpent = ref(124)
+// Interactive metrics & state - ALL DEFAULT TO 0 ON CLEAN SLATE
 const completedLessons = ref(0)
-const totalLessons = 163
+const totalLessons = 183 // 51 (M1) + 23 (M2) + 52 (M3) + 45 (M4) + 12 (Labs)
 
 const progressPercentage = computed(() => {
+  if (completedLessons.value === 0) return 0
   return Math.min(100, Math.round((completedLessons.value / totalLessons) * 100))
 })
 
 const readinessScore = computed(() => {
-  if (completedLessons.value === 0) return 18
-  return Math.min(100, Math.round(18 + (completedLessons.value / totalLessons) * 82))
+  if (completedLessons.value === 0) return 0
+  return Math.min(100, Math.round((completedLessons.value / totalLessons) * 100))
 })
 
 const readinessVerdict = computed(() => {
   const score = readinessScore.value
   if (score >= 85) return 'Exam Ready'
   if (score >= 65) return 'High Readiness'
-  if (score >= 40) return 'Advancing'
-  return 'Foundations'
+  if (score >= 35) return 'Advancing'
+  if (score > 0) return 'Getting Started'
+  return 'Not Started'
 })
 
 // Dynamic Spline Wave Chart coordinates for Widget 4
 const waveData = computed(() => {
   const score = readinessScore.value
-  const t = Math.max(0.12, Math.min(1.0, score / 100))
-  const peakX = Math.round(25 + t * 185)
-  const peakY = Math.round(68 - t * 48)
+  if (score === 0) {
+    return {
+      peakX: 20,
+      peakY: 72,
+      linePath: 'M 10 72 L 230 72',
+      fillPath: 'M 10 72 L 230 72 L 230 90 L 10 90 Z'
+    }
+  }
+
+  const t = Math.max(0.08, Math.min(1.0, score / 100))
+  const peakX = Math.round(20 + t * 190)
+  const peakY = Math.round(72 - t * 52)
 
   const cp1x = Math.round(10 + (peakX - 10) * 0.45)
   const cp1y = Math.round(72 - (72 - peakY) * 0.25)
@@ -48,7 +57,10 @@ const waveData = computed(() => {
   return { peakX, peakY, linePath, fillPath }
 })
 
-// Pomodoro Focus Clock State
+// Pomodoro Focus Clock State - TIMESTAMP BASED PERSISTENCE ACROSS REFRESHES & NAV
+const POMO_ACTIVE_KEY = 'dp750_pomodoro_active'
+const POMO_STATS_KEY = 'dp750_pomodoro_stats'
+
 const pomoMode = ref('25')
 const pomoTotalSeconds = ref(25 * 60)
 const pomoRemainingSeconds = ref(25 * 60)
@@ -57,10 +69,16 @@ let pomoTimer = null
 const completedBlocks = ref(0)
 const totalFocusMinutes = ref(0)
 
+const hoursSpent = computed(() => {
+  const lessonHours = Math.round((completedLessons.value * 0.45) * 10) / 10
+  const pomodoroHours = Math.round((totalFocusMinutes.value / 60) * 10) / 10
+  return Math.round((lessonHours + pomodoroHours) * 10) / 10
+})
+
 function loadPomodoroStats() {
   if (typeof window === 'undefined') return
   try {
-    const raw = localStorage.getItem('dp750_pomodoro_stats')
+    const raw = localStorage.getItem(POMO_STATS_KEY)
     if (raw) {
       const data = JSON.parse(raw)
       completedBlocks.value = data.completedBlocks || 0
@@ -74,7 +92,7 @@ function loadPomodoroStats() {
 function savePomodoroStats() {
   if (typeof window === 'undefined') return
   try {
-    localStorage.setItem('dp750_pomodoro_stats', JSON.stringify({
+    localStorage.setItem(POMO_STATS_KEY, JSON.stringify({
       completedBlocks: completedBlocks.value,
       totalFocusMinutes: totalFocusMinutes.value
     }))
@@ -108,28 +126,27 @@ function playChime() {
   }
 }
 
-function setPomodoroMode(mode) {
-  pomoMode.value = mode
-  if (pomoRunning.value) {
-    clearInterval(pomoTimer)
-    pomoRunning.value = false
-  }
-  const mins = mode === '25' ? 25 : (mode === '50' ? 50 : 5)
-  pomoTotalSeconds.value = mins * 60
-  pomoRemainingSeconds.value = mins * 60
-}
-
-function togglePomodoro() {
-  if (pomoRunning.value) {
-    clearInterval(pomoTimer)
-    pomoRunning.value = false
-  } else {
-    pomoRunning.value = true
-    pomoTimer = setInterval(() => {
-      if (pomoRemainingSeconds.value > 0) {
-        pomoRemainingSeconds.value--
+function syncPomodoroState() {
+  if (typeof window === 'undefined') return
+  try {
+    const raw = localStorage.getItem(POMO_ACTIVE_KEY)
+    if (!raw) return
+    const data = JSON.parse(raw)
+    
+    pomoMode.value = data.mode || '25'
+    pomoTotalSeconds.value = data.totalSeconds || (pomoMode.value === '25' ? 1500 : (pomoMode.value === '50' ? 3000 : 300))
+    
+    if (data.status === 'running') {
+      const now = Date.now()
+      const remaining = Math.max(0, Math.round((data.targetEndTime - now) / 1000))
+      
+      if (remaining > 0) {
+        pomoRemainingSeconds.value = remaining
+        pomoRunning.value = true
+        startPomoInterval(data.targetEndTime)
       } else {
-        clearInterval(pomoTimer)
+        // Finished while away
+        pomoRemainingSeconds.value = 0
         pomoRunning.value = false
         playChime()
         if (pomoMode.value !== '5') {
@@ -137,20 +154,93 @@ function togglePomodoro() {
           totalFocusMinutes.value += pomoMode.value === '25' ? 25 : 50
           savePomodoroStats()
         }
-        const mins = pomoMode.value === '25' ? 25 : (pomoMode.value === '50' ? 50 : 5)
-        pomoRemainingSeconds.value = mins * 60
+        localStorage.setItem(POMO_ACTIVE_KEY, JSON.stringify({ status: 'idle', mode: pomoMode.value, totalSeconds: pomoTotalSeconds.value }))
+        pomoRemainingSeconds.value = pomoTotalSeconds.value
       }
-    }, 1000)
+    } else if (data.status === 'paused') {
+      pomoRemainingSeconds.value = data.remaining != null ? data.remaining : pomoTotalSeconds.value
+      pomoRunning.value = false
+    } else {
+      pomoRemainingSeconds.value = pomoTotalSeconds.value
+      pomoRunning.value = false
+    }
+  } catch (e) {
+    console.error('Failed to sync pomodoro state', e)
+  }
+}
+
+function startPomoInterval(targetEndTime) {
+  if (pomoTimer) clearInterval(pomoTimer)
+  pomoTimer = setInterval(() => {
+    const now = Date.now()
+    const remaining = Math.max(0, Math.round((targetEndTime - now) / 1000))
+    pomoRemainingSeconds.value = remaining
+    
+    if (remaining <= 0) {
+      clearInterval(pomoTimer)
+      pomoRunning.value = false
+      playChime()
+      if (pomoMode.value !== '5') {
+        completedBlocks.value++
+        totalFocusMinutes.value += pomoMode.value === '25' ? 25 : 50
+        savePomodoroStats()
+      }
+      localStorage.setItem(POMO_ACTIVE_KEY, JSON.stringify({ status: 'idle', mode: pomoMode.value, totalSeconds: pomoTotalSeconds.value }))
+      pomoRemainingSeconds.value = pomoTotalSeconds.value
+    }
+  }, 1000)
+}
+
+function togglePomodoro() {
+  if (pomoRunning.value) {
+    // Pause
+    clearInterval(pomoTimer)
+    pomoRunning.value = false
+    localStorage.setItem(POMO_ACTIVE_KEY, JSON.stringify({
+      status: 'paused',
+      remaining: pomoRemainingSeconds.value,
+      mode: pomoMode.value,
+      totalSeconds: pomoTotalSeconds.value
+    }))
+  } else {
+    // Start or Resume
+    pomoRunning.value = true
+    const targetEndTime = Date.now() + pomoRemainingSeconds.value * 1000
+    localStorage.setItem(POMO_ACTIVE_KEY, JSON.stringify({
+      status: 'running',
+      targetEndTime,
+      mode: pomoMode.value,
+      totalSeconds: pomoTotalSeconds.value
+    }))
+    startPomoInterval(targetEndTime)
   }
 }
 
 function resetPomodoro() {
-  if (pomoRunning.value) {
-    clearInterval(pomoTimer)
-    pomoRunning.value = false
-  }
+  if (pomoTimer) clearInterval(pomoTimer)
+  pomoRunning.value = false
   const mins = pomoMode.value === '25' ? 25 : (pomoMode.value === '50' ? 50 : 5)
+  pomoTotalSeconds.value = mins * 60
   pomoRemainingSeconds.value = mins * 60
+  localStorage.setItem(POMO_ACTIVE_KEY, JSON.stringify({
+    status: 'idle',
+    mode: pomoMode.value,
+    totalSeconds: pomoTotalSeconds.value
+  }))
+}
+
+function setPomodoroMode(mode) {
+  if (pomoTimer) clearInterval(pomoTimer)
+  pomoRunning.value = false
+  pomoMode.value = mode
+  const mins = mode === '25' ? 25 : (mode === '50' ? 50 : 5)
+  pomoTotalSeconds.value = mins * 60
+  pomoRemainingSeconds.value = mins * 60
+  localStorage.setItem(POMO_ACTIVE_KEY, JSON.stringify({
+    status: 'idle',
+    mode: pomoMode.value,
+    totalSeconds: pomoTotalSeconds.value
+  }))
 }
 
 const pomoFormattedTime = computed(() => {
@@ -174,6 +264,78 @@ const pomoStrokeOffset = computed(() => {
   return pomoCircumference * (1 - fraction)
 })
 
+// Timeframe Dropdown State
+const selectedTimeframe = ref('month') // 'month' | 'week'
+const showTimeframeDropdown = ref(false)
+
+function toggleTimeframeDropdown() {
+  showTimeframeDropdown.value = !showTimeframeDropdown.value
+  showFilterDropdown.value = false
+}
+
+function setTimeframe(tf) {
+  selectedTimeframe.value = tf
+  showTimeframeDropdown.value = false
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('dp750_timeframe', tf)
+  }
+}
+
+// "Filter by" Concept Navigator & Keyword Search State
+const filterKeyword = ref('')
+const showFilterDropdown = ref(false)
+
+function toggleFilterDropdown() {
+  showFilterDropdown.value = !showFilterDropdown.value
+  showTimeframeDropdown.value = false
+}
+
+function setFilterKw(kw) {
+  filterKeyword.value = kw
+}
+
+function clearFilterKw() {
+  filterKeyword.value = ''
+}
+
+const keywordMap = [
+  { 
+    keywords: ['photon', 'cluster', 'sizing', 'compute', 'runtime', 'single-user', 'shared access', 'vnet', 'pricing', 'dbu', 'driver', 'worker'], 
+    moduleId: '01', 
+    moduleName: 'Module 1: Workspace Setup and Runtime Architecture',
+    slug: '01-setup-and-configure'
+  },
+  { 
+    keywords: ['delta sharing', 'unity catalog', 'metastore', 'governance', 'row filter', 'column mask', 'lineage', 'grant', 'audit', 'credential', 'catalog', 'schema', 'table'], 
+    moduleId: '02', 
+    moduleName: 'Module 2: Unity Catalog Security and Governance',
+    slug: '02-secure-and-govern'
+  },
+  { 
+    keywords: ['medallion', 'streaming', 'auto loader', 'apply changes into', 'cdc', 'cloudfiles', 'checkpoint', 'watermark', 'bronze', 'silver', 'gold', 'lakeflow connect'], 
+    moduleId: '03', 
+    moduleName: 'Module 3: Medallion Architecture and Streaming Ingestion',
+    slug: '03-prepare-and-process'
+  },
+  { 
+    keywords: ['git', 'asset bundles', 'dabs', 'ci/cd', 'lakeflow jobs', 'workflow', 'dag', 'task', 'schedule', 'trigger', 'skew', 'optimization', 'cli'], 
+    moduleId: '04', 
+    moduleName: 'Module 4: Lakeflow Jobs, Asset Bundles, and CI/CD',
+    slug: '04-deploy-and-maintain'
+  }
+]
+
+const matchedModuleHint = computed(() => {
+  if (!filterKeyword.value.trim()) return null
+  const q = filterKeyword.value.toLowerCase().trim()
+  for (const item of keywordMap) {
+    if (item.keywords.some(k => k.includes(q) || q.includes(k))) {
+      return item
+    }
+  }
+  return null
+})
+
 // Search State
 const searchQuery = ref('')
 const searchIndex = ref([])
@@ -187,11 +349,93 @@ function focusSearch() {
 // Notifications State
 const showNotifications = ref(false)
 const notifications = ref([
-  { id: 1, title: 'Exam Readiness Milestone Reached', time: '10m ago', text: 'You scored 86% on Lakeflow Streaming Ingestion questions.', read: false },
-  { id: 2, title: 'New Lab 07 Walkthrough Available', time: '2h ago', text: 'Auto Loader directory schema inference guide updated.', read: false },
-  { id: 3, title: 'Practice Quizzes Refreshed', time: '1d ago', text: 'Added 15 new scenarios on Unity Catalog system tables.', read: true }
+  { id: 1, title: 'Exam Readiness Milestone', time: 'Active', text: 'Curriculum tracker calibrated for Microsoft DP-750 certification exam.', read: false },
+  { id: 2, title: 'Hands-on Labs Available', time: 'Active', text: '12 enterprise architectural labs ready for step-by-step practice.', read: false },
+  { id: 3, title: 'Practice Quizzes Available', time: 'Active', text: 'Scenario-based questions covering all 4 core exam domains.', read: true }
 ])
 const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
+
+// Privacy / Local Storage Consent State
+const hasConsented = ref(true)
+
+function checkConsent() {
+  if (typeof window === 'undefined') return
+  try {
+    const val = localStorage.getItem('dp750_storage_consent')
+    hasConsented.value = val === 'true'
+  } catch (e) {
+    hasConsented.value = true
+  }
+}
+
+function acceptConsent() {
+  hasConsented.value = true
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('dp750_storage_consent', 'true')
+  }
+}
+
+// Curriculum Modules - ALL DEFAULT TO 0 ON CLEAN SLATE
+const modules = ref([
+  {
+    id: '01',
+    name: 'Module 1: Workspace Setup and Runtime Architecture',
+    slug: '01-setup-and-configure',
+    iconType: 'chart',
+    hours: 0,
+    grade: '0/51',
+    progress: 0,
+    status: 'Not started',
+    desc: 'Cluster sizing, single-user vs shared access, Photon acceleration, and VNet integration.'
+  },
+  {
+    id: '02',
+    name: 'Module 2: Unity Catalog Security and Governance',
+    slug: '02-secure-and-govern',
+    iconType: 'atom',
+    hours: 0,
+    grade: '0/23',
+    progress: 0,
+    status: 'Not started',
+    desc: 'Three-level namespaces, row filters, column masking, metastore auditing, and lineage.'
+  },
+  {
+    id: '03',
+    name: 'Module 3: Medallion Architecture and Streaming Ingestion',
+    slug: '03-prepare-and-process',
+    iconType: 'pulse',
+    hours: 0,
+    grade: '0/52',
+    progress: 0,
+    status: 'Not started',
+    desc: 'Auto Loader schema evolution, CDC with APPLY CHANGES INTO, and Lakeflow Connect.'
+  },
+  {
+    id: '04',
+    name: 'Module 4: Lakeflow Jobs, Asset Bundles, and CI/CD',
+    slug: '04-deploy-and-maintain',
+    iconType: 'book',
+    hours: 0,
+    grade: '0/45',
+    progress: 0,
+    status: 'Not started',
+    desc: 'Multi-task DAG workflows, Databricks Asset Bundles (DABs), and Spark skew optimization.'
+  }
+])
+
+const filteredModules = computed(() => {
+  if (!filterKeyword.value.trim()) return modules.value
+  const q = filterKeyword.value.toLowerCase().trim()
+  
+  if (matchedModuleHint.value) {
+    return modules.value.filter(m => m.id === matchedModuleHint.value.moduleId)
+  }
+  
+  return modules.value.filter(m => 
+    m.name.toLowerCase().includes(q) || 
+    m.desc.toLowerCase().includes(q)
+  )
+})
 
 // Progress Loading
 function loadProgress() {
@@ -201,28 +445,31 @@ function loadProgress() {
     const list = raw ? JSON.parse(raw) : []
     completedLessons.value = list.length
 
-    // Update curriculum cards dynamically
+    // Dynamic curriculum calculation based on real files
     const m1Count = list.filter(p => p.includes('01-setup-and-configure')).length
     const m2Count = list.filter(p => p.includes('02-secure-and-govern')).length
     const m3Count = list.filter(p => p.includes('03-prepare-and-process')).length
     const m4Count = list.filter(p => p.includes('04-deploy-and-maintain')).length
 
-    if (m1Count > 0 && modules.value[0]) {
-      modules.value[0].progress = Math.min(100, Math.round((m1Count / 15) * 100))
-      modules.value[0].status = modules.value[0].progress === 100 ? 'Completed' : 'In progress'
-    }
-    if (m2Count > 0 && modules.value[1]) {
-      modules.value[1].progress = Math.min(100, Math.round((m2Count / 18) * 100))
-      modules.value[1].status = modules.value[1].progress === 100 ? 'Completed' : 'In progress'
-    }
-    if (m3Count > 0 && modules.value[2]) {
-      modules.value[2].progress = Math.min(100, Math.round((m3Count / 40) * 100))
-      modules.value[2].status = modules.value[2].progress === 100 ? 'Completed' : 'In progress'
-    }
-    if (m4Count > 0 && modules.value[3]) {
-      modules.value[3].progress = Math.min(100, Math.round((m4Count / 25) * 100))
-      modules.value[3].status = modules.value[3].progress === 100 ? 'Completed' : 'In progress'
-    }
+    modules.value[0].progress = Math.min(100, Math.round((m1Count / 51) * 100))
+    modules.value[0].hours = Math.round((m1Count * 0.45) * 10) / 10
+    modules.value[0].grade = `${m1Count}/51`
+    modules.value[0].status = modules.value[0].progress === 100 ? 'Completed' : (modules.value[0].progress > 0 ? 'In progress' : 'Not started')
+
+    modules.value[1].progress = Math.min(100, Math.round((m2Count / 23) * 100))
+    modules.value[1].hours = Math.round((m2Count * 0.45) * 10) / 10
+    modules.value[1].grade = `${m2Count}/23`
+    modules.value[1].status = modules.value[1].progress === 100 ? 'Completed' : (modules.value[1].progress > 0 ? 'In progress' : 'Not started')
+
+    modules.value[2].progress = Math.min(100, Math.round((m3Count / 52) * 100))
+    modules.value[2].hours = Math.round((m3Count * 0.45) * 10) / 10
+    modules.value[2].grade = `${m3Count}/52`
+    modules.value[2].status = modules.value[2].progress === 100 ? 'Completed' : (modules.value[2].progress > 0 ? 'In progress' : 'Not started')
+
+    modules.value[3].progress = Math.min(100, Math.round((m4Count / 45) * 100))
+    modules.value[3].hours = Math.round((m4Count * 0.45) * 10) / 10
+    modules.value[3].grade = `${m4Count}/45`
+    modules.value[3].status = modules.value[3].progress === 100 ? 'Completed' : (modules.value[3].progress > 0 ? 'In progress' : 'Not started')
   } catch (e) {
     console.error(e)
   }
@@ -243,16 +490,26 @@ onMounted(async () => {
 
   loadProgress()
   loadPomodoroStats()
+  syncPomodoroState()
+  checkConsent()
+
+  if (typeof window !== 'undefined') {
+    const tf = localStorage.getItem('dp750_timeframe')
+    if (tf) selectedTimeframe.value = tf
+  }
+
   window.addEventListener('keydown', handleKeydown)
   window.addEventListener('dp750-progress-updated', loadProgress)
-  window.addEventListener('storage', loadProgress)
+  window.addEventListener('storage', () => {
+    loadProgress()
+    syncPomodoroState()
+  })
 })
 
 onUnmounted(() => {
   if (pomoTimer) clearInterval(pomoTimer)
   window.removeEventListener('keydown', handleKeydown)
   window.removeEventListener('dp750-progress-updated', loadProgress)
-  window.removeEventListener('storage', loadProgress)
 })
 
 function handleKeydown(e) {
@@ -277,53 +534,6 @@ function toggleNotifications() {
 function markAllRead() {
   notifications.value.forEach(n => (n.read = true))
 }
-
-const modules = ref([
-  {
-    id: '01',
-    name: 'Module 1: Workspace Setup and Runtime Architecture',
-    slug: '01-setup-and-configure',
-    iconType: 'chart',
-    hours: 28,
-    grade: '51/51',
-    progress: 100,
-    status: 'Completed',
-    desc: 'Cluster sizing, single-user vs shared access, Photon acceleration, and VNet integration.'
-  },
-  {
-    id: '02',
-    name: 'Module 2: Unity Catalog Security and Governance',
-    slug: '02-secure-and-govern',
-    iconType: 'atom',
-    hours: 18,
-    grade: '20%',
-    progress: 20,
-    status: 'In progress',
-    desc: 'Three-level namespaces, row filters, column masking, metastore auditing, and lineage.'
-  },
-  {
-    id: '03',
-    name: 'Module 3: Medallion Architecture and Streaming Ingestion',
-    slug: '03-prepare-and-process',
-    iconType: 'pulse',
-    hours: 64,
-    grade: '74%',
-    progress: 74,
-    status: 'In progress',
-    desc: 'Auto Loader schema evolution, CDC with APPLY CHANGES INTO, and Lakeflow Connect.'
-  },
-  {
-    id: '04',
-    name: 'Module 4: Lakeflow Jobs, Asset Bundles, and CI/CD',
-    slug: '04-deploy-and-maintain',
-    iconType: 'book',
-    hours: 14,
-    grade: '0%',
-    progress: 0,
-    status: 'In progress',
-    desc: 'Multi-task DAG workflows, Databricks Asset Bundles (DABs), and Spark skew optimization.'
-  }
-])
 
 const activeNav = ref('home')
 </script>
@@ -383,14 +593,6 @@ const activeNav = ref('home')
           </svg>
         </a>
       </nav>
-
-      <div class="dock-bottom">
-        <a href="https://www.linkedin.com/in/balasubramanianpg2022/?isSelfProfile=true" target="_blank" rel="noopener" class="dock-item" title="LinkedIn Profile">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45a1.6 1.6 0 1 0 1.6 1.6c0-.88-.72-1.6-1.6-1.6Z"/>
-          </svg>
-        </a>
-      </div>
     </aside>
 
     <!-- Main Learning OS Content Pane -->
@@ -475,13 +677,6 @@ const activeNav = ref('home')
             </div>
           </div>
 
-          <!-- LinkedIn Profile Icon -->
-          <a href="https://www.linkedin.com/in/balasubramanianpg2022/?isSelfProfile=true" target="_blank" rel="noopener" class="header-social-btn linkedin-btn" title="Connect with Balasubramanian on LinkedIn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45a1.6 1.6 0 1 0 1.6 1.6c0-.88-.72-1.6-1.6-1.6Z"/>
-            </svg>
-          </a>
-
           <!-- GitHub Profile Icon -->
           <a href="https://github.com/Balasubramanian-pg/DP-750" target="_blank" rel="noopener" class="header-social-btn" title="View Source on GitHub">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -541,17 +736,69 @@ const activeNav = ref('home')
         <section class="courses-column">
           <div class="section-top-bar">
             <h3 class="column-title">Course you're taking</h3>
-            <div class="filter-dropdown-pill">
-              <span>Filter by</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M6 9l6 6 6-6"/>
-              </svg>
+            <div class="filter-dropdown-wrap">
+              <div 
+                class="filter-dropdown-pill" 
+                :class="{ active: showFilterDropdown || filterKeyword }"
+                @click="toggleFilterDropdown"
+              >
+                <span v-if="filterKeyword">Filter: "{{ filterKeyword }}"</span>
+                <span v-else>Filter by</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M6 9l6 6 6-6"/>
+                </svg>
+              </div>
+
+              <!-- Filter Popover -->
+              <div v-if="showFilterDropdown" class="filter-popover">
+                <div class="filter-popover-header">
+                  <span class="filter-popover-title">Concept & Module Navigator</span>
+                  <button v-if="filterKeyword" class="filter-clear-btn" @click="clearFilterKw">Clear</button>
+                </div>
+                
+                <div class="filter-input-box">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  <input 
+                    v-model="filterKeyword" 
+                    type="text" 
+                    placeholder="Type keyword e.g. delta sharing, git, photon..." 
+                    class="filter-kw-input"
+                    autofocus
+                  />
+                </div>
+
+                <div v-if="matchedModuleHint" class="filter-match-hint">
+                  <span class="match-badge">Direct Match</span>
+                  <a :href="`/DP-750/${matchedModuleHint.slug}/`" class="match-link">
+                    Jump to {{ matchedModuleHint.moduleName }} &rarr;
+                  </a>
+                </div>
+
+                <div class="filter-suggestions-title">Quick Topic Filters:</div>
+                <div class="filter-chips">
+                  <button class="filter-chip" :class="{ selected: filterKeyword === 'photon' }" @click="setFilterKw('photon')">Photon & Clusters (M1)</button>
+                  <button class="filter-chip" :class="{ selected: filterKeyword === 'delta sharing' }" @click="setFilterKw('delta sharing')">Delta Sharing (M2)</button>
+                  <button class="filter-chip" :class="{ selected: filterKeyword === 'unity catalog' }" @click="setFilterKw('unity catalog')">Unity Catalog (M2)</button>
+                  <button class="filter-chip" :class="{ selected: filterKeyword === 'auto loader' }" @click="setFilterKw('auto loader')">Auto Loader (M3)</button>
+                  <button class="filter-chip" :class="{ selected: filterKeyword === 'medallion' }" @click="setFilterKw('medallion')">Medallion Streams (M3)</button>
+                  <button class="filter-chip" :class="{ selected: filterKeyword === 'git' }" @click="setFilterKw('git')">Git & DABs CI/CD (M4)</button>
+                  <button class="filter-chip" :class="{ selected: filterKeyword === 'lakeflow jobs' }" @click="setFilterKw('lakeflow jobs')">Lakeflow DAGs (M4)</button>
+                </div>
+              </div>
             </div>
           </div>
 
           <div class="modules-card-list">
+            <div v-if="filteredModules.length === 0" class="filter-empty-state">
+              <p class="filter-empty-text">No module matches "{{ filterKeyword }}".</p>
+              <button class="filter-reset-action" @click="clearFilterKw">Reset Filter</button>
+            </div>
+
             <a 
-              v-for="mod in modules" 
+              v-for="mod in filteredModules" 
               :key="mod.id" 
               :href="`/DP-750/${mod.slug}/`"
               class="module-card-item"
@@ -613,11 +860,41 @@ const activeNav = ref('home')
         <section class="progress-column">
           <div class="section-top-bar">
             <h3 class="column-title">My Progress</h3>
-            <div class="filter-dropdown-pill">
-              <span>Last month</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M6 9l6 6 6-6"/>
-              </svg>
+            <div class="timeframe-dropdown-wrap">
+              <div 
+                class="filter-dropdown-pill" 
+                :class="{ active: showTimeframeDropdown }"
+                @click="toggleTimeframeDropdown"
+              >
+                <span>{{ selectedTimeframe === 'month' ? 'Last month' : 'Last week' }}</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M6 9l6 6 6-6"/>
+                </svg>
+              </div>
+
+              <!-- Timeframe Dropdown Menu -->
+              <div v-if="showTimeframeDropdown" class="timeframe-dropdown-menu">
+                <button 
+                  class="timeframe-option" 
+                  :class="{ selected: selectedTimeframe === 'month' }"
+                  @click="setTimeframe('month')"
+                >
+                  <span>Last month</span>
+                  <svg v-if="selectedTimeframe === 'month'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </button>
+                <button 
+                  class="timeframe-option" 
+                  :class="{ selected: selectedTimeframe === 'week' }"
+                  @click="setTimeframe('week')"
+                >
+                  <span>Last week</span>
+                  <svg v-if="selectedTimeframe === 'week'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -795,6 +1072,72 @@ const activeNav = ref('home')
           </div>
         </section>
       </div>
+
+      <!-- Privacy & Local Storage Permission Banner -->
+      <div v-if="!hasConsented" class="storage-consent-banner">
+        <div class="consent-inner">
+          <div class="consent-info">
+            <span class="consent-icon">🔒</span>
+            <div class="consent-text">
+              <span class="consent-title">100% Local Device Storage</span>
+              <span class="consent-desc">Your learning progress, completed lessons, and Pomodoro focus blocks are saved directly on your own computer. Zero tracking cookies, zero external telemetry.</span>
+            </div>
+          </div>
+          <button class="consent-accept-btn" @click="acceptConsent">Got it & Keep Saving</button>
+        </div>
+      </div>
+
+      <!-- Integrated Dashboard Footer -->
+      <footer class="dashboard-footer-integrated">
+        <div class="dash-footer-inner">
+          <div class="dash-footer-col brand-col">
+            <div class="dash-footer-logo">
+              <img :src="withBase('/databricks.svg')" width="20" height="20" alt="Databricks Logo" class="brand-logo-img" />
+              <span class="dash-footer-brand-text">DP-750 Study Portal</span>
+            </div>
+            <p class="dash-footer-desc">
+              Structured preparation portal for Microsoft DP-750 Azure Databricks Data Engineer certification. All learning metrics stored locally.
+            </p>
+            <div class="dash-author-tag">
+              <span>Maintained by Balasubramanian PG</span>
+            </div>
+          </div>
+
+          <div class="dash-footer-col">
+            <h4>Curriculum Modules</h4>
+            <ul>
+              <li><a href="/DP-750/01-setup-and-configure/">Module 1: Setup & Runtime</a></li>
+              <li><a href="/DP-750/02-secure-and-govern/">Module 2: Unity Catalog Security</a></li>
+              <li><a href="/DP-750/03-prepare-and-process/">Module 3: Medallion Ingestion</a></li>
+              <li><a href="/DP-750/04-deploy-and-maintain/">Module 4: Lakeflow Orchestration</a></li>
+            </ul>
+          </div>
+
+          <div class="dash-footer-col">
+            <h4>Practice & Execution</h4>
+            <ul>
+              <li><a href="/DP-750/labs/">Hands-on Labs (12 Labs)</a></li>
+              <li><a href="/DP-750/question-bank/">Practice Quizzes (181 Questions)</a></li>
+              <li><a href="https://notebook.google.com/notebook/939d1225-31a8-4583-a0f3-c0002b0a5557/preview" target="_blank" rel="noopener">NotebookLM Study Companion</a></li>
+            </ul>
+          </div>
+
+          <div class="dash-footer-col">
+            <h4>Policies & Resources</h4>
+            <ul>
+              <li><a href="/DP-750/privacy-policy">Privacy Policy</a></li>
+              <li><a href="/DP-750/cookie-policy">Cookie Policy</a></li>
+              <li><a href="https://learn.microsoft.com/en-us/credentials/certifications/azure-data-engineer/" target="_blank" rel="noopener">Official Exam Scope</a></li>
+              <li><a href="https://github.com/Balasubramanian-pg/DP-750/issues" target="_blank" rel="noopener">Report an Issue</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="dash-footer-bottom">
+          <span>&copy; 2026 Balasubramanian PG. All rights reserved. Zero tracking cookies.</span>
+          <span>Open Educational Resource</span>
+        </div>
+      </footer>
     </main>
   </div>
 </template>
@@ -815,13 +1158,17 @@ const activeNav = ref('home')
 /* LEFT NAVIGATION DOCK */
 .left-dock {
   width: 80px;
-  background-color: #12131A;
+  background-color: #0E0F14;
   border-right: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 1.5rem 0;
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 50;
 }
 
 @media (max-width: 900px) {
@@ -888,10 +1235,6 @@ const activeNav = ref('home')
   width: 4px;
   background: #906BFF;
   border-radius: 0 4px 4px 0;
-}
-
-.dock-bottom {
-  margin-top: auto;
 }
 
 /* MAIN CONTENT PANE */
@@ -1091,10 +1434,6 @@ const activeNav = ref('home')
   color: #FFFFFF;
   border-color: rgba(255, 255, 255, 0.25);
   background: #1F212D;
-}
-
-.linkedin-btn:hover {
-  color: #0A66C2;
 }
 
 .notification-indicator {
@@ -1385,6 +1724,10 @@ const activeNav = ref('home')
   margin: 0;
 }
 
+.filter-dropdown-wrap, .timeframe-dropdown-wrap {
+  position: relative;
+}
+
 .filter-dropdown-pill {
   display: inline-flex;
   align-items: center;
@@ -1394,12 +1737,386 @@ const activeNav = ref('home')
   cursor: pointer;
   padding: 0.35rem 0.75rem;
   border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   transition: all 0.2s ease;
+  user-select: none;
 }
 
-.filter-dropdown-pill:hover {
+.filter-dropdown-pill:hover, .filter-dropdown-pill.active {
   color: #FFFFFF;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(144, 107, 255, 0.4);
+}
+
+/* Concept & Module Navigator Popover */
+.filter-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 360px;
+  max-width: 90vw;
+  background: #181923;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  padding: 1.2rem;
+  z-index: 120;
+  box-sizing: border-box;
+}
+
+.filter-popover-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.filter-popover-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #A78BFA;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.filter-clear-btn {
+  background: transparent;
+  border: none;
+  color: #EF4444;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.filter-clear-btn:hover {
+  text-decoration: underline;
+}
+
+.filter-input-box {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #12131A;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 0.85rem;
+  color: #8E92A4;
+}
+
+.filter-input-box:focus-within {
+  border-color: #906BFF;
+  box-shadow: 0 0 0 2px rgba(144, 107, 255, 0.2);
+}
+
+.filter-kw-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #FFFFFF;
+  font-size: 0.85rem;
+  width: 100%;
+  font-family: var(--vp-font-family-base) !important;
+}
+
+.filter-kw-input::placeholder {
+  color: #6E7387;
+  font-size: 0.82rem;
+}
+
+.filter-match-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  background: rgba(144, 107, 255, 0.1);
+  border: 1px solid rgba(144, 107, 255, 0.25);
+  border-radius: 10px;
+  margin-bottom: 0.85rem;
+}
+
+.match-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  background: #906BFF;
+  color: #FFFFFF;
+  border-radius: 6px;
+}
+
+.match-link {
+  font-size: 0.82rem;
+  color: #C084FC;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.match-link:hover {
+  text-decoration: underline;
+}
+
+.filter-suggestions-title {
+  font-size: 0.74rem;
+  color: #8E92A4;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.filter-chip {
+  background: #232533;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.74rem;
+  color: #D1D5DB;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-chip:hover {
+  background: #2D3042;
+  color: #FFFFFF;
+  border-color: rgba(144, 107, 255, 0.3);
+}
+
+.filter-chip.selected {
+  background: #906BFF;
+  color: #FFFFFF;
+  border-color: #906BFF;
+}
+
+.filter-empty-state {
+  padding: 2rem;
+  background: #15161E;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  text-align: center;
+}
+
+.filter-empty-text {
+  color: #8E92A4;
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+}
+
+.filter-reset-action {
+  background: #232533;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #FFFFFF;
+  padding: 0.4rem 1rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Timeframe Dropdown Menu */
+.timeframe-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 170px;
+  background: #181923;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  padding: 0.4rem;
+  z-index: 120;
+}
+
+.timeframe-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.55rem 0.85rem;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #9CA3AF;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.timeframe-option:hover {
+  background: #232534;
+  color: #FFFFFF;
+}
+
+.timeframe-option.selected {
+  color: #906BFF;
+  background: rgba(144, 107, 255, 0.1);
+}
+
+/* Local Storage Consent Banner */
+.storage-consent-banner {
+  margin-top: 3rem;
+  background: linear-gradient(135deg, rgba(144, 107, 255, 0.08) 0%, rgba(21, 22, 30, 0.95) 100%);
+  border: 1px solid rgba(144, 107, 255, 0.25);
+  border-radius: 20px;
+  padding: 1.25rem 1.75rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.consent-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.consent-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  min-width: 280px;
+}
+
+.consent-icon {
+  font-size: 1.5rem;
+}
+
+.consent-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.consent-title {
+  font-family: var(--vp-font-family-headings) !important;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #FFFFFF;
+}
+
+.consent-desc {
+  font-size: 0.82rem;
+  color: #9CA3AF;
+  line-height: 1.45;
+}
+
+.consent-accept-btn {
+  background: #906BFF;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 20px;
+  padding: 0.55rem 1.4rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.consent-accept-btn:hover {
+  background: #7C3AED;
+  transform: translateY(-1px);
+}
+
+/* Integrated Dashboard Footer */
+.dashboard-footer-integrated {
+  margin-top: 4.5rem;
+  padding-top: 3.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dash-footer-inner {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 900px) {
+  .dash-footer-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .dash-footer-inner {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dash-footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--vp-font-family-headings) !important;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #FFFFFF;
+}
+
+.dash-footer-brand-text {
+  font-weight: 700;
+}
+
+.dash-footer-desc {
+  font-size: 0.84rem;
+  color: #8E92A4;
+  line-height: 1.55;
+  margin: 0.8rem 0 1rem;
+  max-width: 380px;
+}
+
+.dash-author-tag {
+  font-size: 0.8rem;
+  color: #6B7280;
+}
+
+.dash-footer-col h4 {
+  font-family: var(--vp-font-family-headings) !important;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0 0 1.1rem;
+}
+
+.dash-footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.dash-footer-col a {
+  color: #8E92A4;
+  text-decoration: none;
+  font-size: 0.84rem;
+  transition: color 0.15s ease;
+}
+
+.dash-footer-col a:hover {
+  color: #906BFF;
+}
+
+.dash-footer-bottom {
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  color: #6B7280;
+  flex-wrap: wrap;
+  gap: 0.8rem;
 }
 
 /* MODULES LIST (LEFT) */

@@ -915,14 +915,14 @@ export default defineConfig({
     ],
     sidebar,
     socialLinks: [
+      { icon: 'github', link: 'https://github.com/Balasubramanian-pg/DP-750' },
       {
         icon: {
-          svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.45a1.6 1.6 0 1 0 1.6 1.6c0-.88-.72-1.6-1.6-1.6Z"/></svg>'
+          svg: '<svg viewBox="0 0 106 78"><path fill="currentColor" d="M52.96.1C23.71.1,0,23.61,0,52.62v25.15h9.76v-2.51c0-11.77,9.61-21.31,21.48-21.31s21.48,9.54,21.48,21.31v2.51h9.76v-2.51c0-17.11-13.99-30.98-31.24-30.98-6.72,0-12.94,2.1-18.03,5.69,5.33-10.51,16.31-17.73,28.99-17.73,17.91,0,32.43,14.41,32.43,32.16v13.36h9.76v-13.36c0-23.11-18.89-41.85-42.19-41.85-10.48,0-20.06,3.79-27.44,10.06,7.25-13.59,21.63-22.84,38.21-22.84,23.86,0,43.2,19.18,43.2,42.84v25.15h9.76v-25.15C105.92,23.61,82.21.1,52.96.1Z"/></svg>'
         },
-        link: 'https://www.linkedin.com/in/balasubramanianpg2022/?isSelfProfile=true',
-        ariaLabel: 'LinkedIn Profile'
-      },
-      { icon: 'github', link: 'https://github.com/Balasubramanian-pg/DP-750' }
+        link: 'https://notebook.google.com/notebook/939d1225-31a8-4583-a0f3-c0002b0a5557/preview',
+        ariaLabel: 'NotebookLM'
+      }
     ],
     search: {
       provider: 'local'

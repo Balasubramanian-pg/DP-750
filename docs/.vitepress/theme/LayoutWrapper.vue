@@ -1,8 +1,61 @@
 <script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import DefaultTheme from 'vitepress/theme'
-import { withBase } from 'vitepress'
+import { withBase, useRoute } from 'vitepress'
 import LessonCompletion from './LessonCompletion.vue'
+
 const { Layout } = DefaultTheme
+const route = useRoute()
+
+// Global Floating Pomodoro Focus Pill
+const POMO_ACTIVE_KEY = 'dp750_pomodoro_active'
+const pomoRunning = ref(false)
+const pomoRemainingSeconds = ref(0)
+const pomoMode = ref('25')
+let pomoWatcherTimer = null
+
+const pomoFormattedTime = computed(() => {
+  const m = Math.floor(pomoRemainingSeconds.value / 60)
+  const s = pomoRemainingSeconds.value % 60
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+})
+
+function checkPomoGlobal() {
+  if (typeof window === 'undefined') return
+  try {
+    const raw = localStorage.getItem(POMO_ACTIVE_KEY)
+    if (!raw) {
+      pomoRunning.value = false
+      return
+    }
+    const data = JSON.parse(raw)
+    pomoMode.value = data.mode || '25'
+    if (data.status === 'running') {
+      const now = Date.now()
+      const rem = Math.max(0, Math.round((data.targetEndTime - now) / 1000))
+      pomoRemainingSeconds.value = rem
+      pomoRunning.value = rem > 0
+    } else if (data.status === 'paused') {
+      pomoRemainingSeconds.value = data.remaining || 0
+      pomoRunning.value = false
+    } else {
+      pomoRunning.value = false
+    }
+  } catch (e) {
+    pomoRunning.value = false
+  }
+}
+
+onMounted(() => {
+  checkPomoGlobal()
+  pomoWatcherTimer = setInterval(checkPomoGlobal, 1000)
+  window.addEventListener('storage', checkPomoGlobal)
+})
+
+onUnmounted(() => {
+  if (pomoWatcherTimer) clearInterval(pomoWatcherTimer)
+  window.removeEventListener('storage', checkPomoGlobal)
+})
 </script>
 
 <template>
@@ -11,8 +64,22 @@ const { Layout } = DefaultTheme
       <LessonCompletion />
     </template>
 
+    <!-- Global Floating Focus Pill (visible across lessons / labs when timer is ticking) -->
+    <template #layout-top>
+      <a 
+        v-if="pomoRunning && route.path !== '/' && route.path !== '/index.html'" 
+        href="/DP-750/" 
+        class="global-floating-focus-pill"
+        title="Pomodoro Session Active &middot; Click to return to dashboard"
+      >
+        <span class="focus-flame">🔥</span>
+        <span class="focus-time">{{ pomoFormattedTime }}</span>
+        <span class="focus-pulse-dot"></span>
+      </a>
+    </template>
+
     <template #layout-bottom>
-      <footer class="site-footer-custom">
+      <footer v-if="route.path !== '/' && route.path !== '/index.html'" class="site-footer-custom">
         <div class="site-footer-inner">
           <div class="footer-col brand-col">
             <div class="footer-logo">
@@ -23,7 +90,7 @@ const { Layout } = DefaultTheme
               Structured preparation portal for the Microsoft DP-750 Azure Databricks Data Engineer certification. Includes deep architectural modules, hands-on enterprise labs, and interactive practice quizzes.
             </p>
             <div class="author-tag">
-              <span>Maintained by <a href="https://www.linkedin.com/in/balasubramanianpg2022/?isSelfProfile=true" target="_blank" rel="noopener">Balasubramanian PG</a></span>
+              <span>Maintained by Balasubramanian PG</span>
             </div>
           </div>
 
@@ -43,8 +110,6 @@ const { Layout } = DefaultTheme
               <li><a href="/DP-750/labs/">Hands-on Labs (12 Labs)</a></li>
               <li><a href="/DP-750/question-bank/">Practice Quizzes</a></li>
               <li><a href="https://notebook.google.com/notebook/939d1225-31a8-4583-a0f3-c0002b0a5557/preview" target="_blank" rel="noopener">NotebookLM Study Companion</a></li>
-              <li><a href="https://github.com/Balasubramanian-pg/DP-750" target="_blank" rel="noopener">GitHub Repository</a></li>
-              <li><a href="https://www.linkedin.com/in/balasubramanianpg2022/?isSelfProfile=true" target="_blank" rel="noopener">Connect on LinkedIn</a></li>
             </ul>
           </div>
 
@@ -96,5 +161,58 @@ const { Layout } = DefaultTheme
   color: #906BFF;
   text-decoration: underline;
   font-weight: 600;
+}
+
+/* Global Floating Pomodoro Focus Pill */
+.global-floating-focus-pill {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: #181923;
+  border: 1px solid rgba(144, 107, 255, 0.45);
+  box-shadow: 0 8px 24px rgba(144, 107, 255, 0.35), 0 2px 8px rgba(0, 0, 0, 0.5);
+  border-radius: 9999px;
+  padding: 0.55rem 1.1rem;
+  color: #FFFFFF;
+  text-decoration: none;
+  font-family: var(--vp-font-family-headings) !important;
+  font-weight: 700;
+  font-size: 0.92rem;
+  z-index: 999;
+  backdrop-filter: blur(12px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.global-floating-focus-pill:hover {
+  transform: translateY(-2px) scale(1.03);
+  border-color: #906BFF;
+  box-shadow: 0 12px 28px rgba(144, 107, 255, 0.5);
+  background: #202230;
+}
+
+.focus-flame {
+  font-size: 1rem;
+}
+
+.focus-time {
+  letter-spacing: 0.02em;
+  color: #FFFFFF;
+}
+
+.focus-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: #34D399;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #34D399;
+  animation: focusDotPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes focusDotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
 }
 </style>
