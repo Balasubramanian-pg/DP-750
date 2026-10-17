@@ -879,7 +879,7 @@ const sidebar = {
       "text": "Exam Preparation",
       "items": [
         {
-          "text": "Interactive 181-Question Simulator",
+          "text": "Interactive Practice Quizzes",
           "link": "/question-bank/"
         }
       ]
@@ -911,7 +911,7 @@ export default defineConfig({
         ]
       },
       { text: 'Hands-on Labs', link: '/labs/' },
-      { text: '181-Question Simulator', link: '/question-bank/' }
+      { text: 'Practice Quizzes', link: '/question-bank/' }
     ],
     sidebar,
     socialLinks: [

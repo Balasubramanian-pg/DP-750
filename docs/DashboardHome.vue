@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 // Interactive metrics & state
 const selectedFilter = ref('all')
@@ -8,6 +8,62 @@ const completedLessons = ref(36)
 const totalLessons = 163
 const progressPercentage = Math.round((completedLessons.value / totalLessons) * 100)
 const readinessScore = ref(86)
+
+const searchQuery = ref('')
+const searchIndex = ref([])
+const isSearching = ref(false)
+const showNotifications = ref(false)
+
+const notifications = ref([
+  { id: 1, title: 'Exam Readiness Milestone Reached', time: '10m ago', text: 'You scored 86% on Lakeflow Streaming Ingestion questions.', read: false },
+  { id: 2, title: 'New Lab 07 Walkthrough Available', time: '2h ago', text: 'Auto Loader directory schema inference guide updated.', read: false },
+  { id: 3, title: 'Practice Quizzes Refreshed', time: '1d ago', text: 'Added 15 new scenarios on Unity Catalog system tables.', read: true }
+])
+
+const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
+
+onMounted(async () => {
+  try {
+    const res = await fetch('/DP-750/search-index.json')
+    if (res.ok) {
+      searchIndex.value = await res.json()
+    } else {
+      const fallback = await fetch('/search-index.json')
+      searchIndex.value = await fallback.json()
+    }
+  } catch (e) {
+    console.error('Failed to load search index', e)
+  }
+
+  window.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
+})
+
+function handleKeydown(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault()
+    document.querySelector('.search-input')?.focus()
+  }
+}
+
+const searchResults = computed(() => {
+  if (!searchQuery.value.trim()) return []
+  const q = searchQuery.value.toLowerCase()
+  return searchIndex.value
+    .filter(item => item.title.toLowerCase().includes(q) || item.link.toLowerCase().includes(q))
+    .slice(0, 8)
+})
+
+function toggleNotifications() {
+  showNotifications.value = !showNotifications.value
+}
+
+function markAllRead() {
+  notifications.value.forEach(n => (n.read = true))
+}
 
 const modules = ref([
   {
@@ -65,11 +121,11 @@ const activeNav = ref('home')
     <aside class="left-dock">
       <div class="dock-brand">
         <!-- Diamond star icon from Dribbble shot -->
-        <div class="brand-sparkle-box">
+        <a href="/DP-750/" class="brand-sparkle-box" title="DP-750 Home">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
             <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" fill="#906BFF"/>
           </svg>
-        </div>
+        </a>
       </div>
 
       <nav class="dock-menu">
@@ -95,7 +151,7 @@ const activeNav = ref('home')
           </svg>
         </a>
 
-        <a href="/DP-750/question-bank/" class="dock-item" title="181-Question Simulator">
+        <a href="/DP-750/question-bank/" class="dock-item" title="Practice Quizzes">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
             <line x1="16" y1="2" x2="16" y2="6"/>
@@ -130,23 +186,75 @@ const activeNav = ref('home')
         </div>
 
         <div class="header-right">
-          <!-- Command search pill -->
-          <div class="search-pill">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"/>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-            <input type="text" placeholder="Search modules, concepts, labs..." class="search-input" />
-            <kbd class="kbd-shortcut">Ctrl K</kbd>
+          <!-- Command search pill with LIVE searchable dropdown -->
+          <div class="search-pill-wrap">
+            <div class="search-pill">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input 
+                v-model="searchQuery" 
+                type="text" 
+                placeholder="Search modules, concepts, labs..." 
+                class="search-input" 
+                @focus="isSearching = true"
+              />
+              <kbd class="kbd-shortcut">Ctrl K</kbd>
+            </div>
+
+            <!-- Live Search Results Dropdown -->
+            <div v-if="searchQuery.trim()" class="search-results-dropdown">
+              <div v-if="searchResults.length === 0" class="search-no-results">
+                No matching topics found for "{{ searchQuery }}"
+              </div>
+              <a 
+                v-for="item in searchResults" 
+                :key="item.link" 
+                :href="`/DP-750${item.link}`" 
+                class="search-result-item"
+              >
+                <span class="res-title">{{ item.title }}</span>
+                <span class="res-path">{{ item.link }}</span>
+              </a>
+            </div>
           </div>
 
-          <!-- Notification bell -->
-          <div class="header-action-btn" title="Recent Updates">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-            </svg>
-            <span class="notification-indicator"></span>
+          <!-- Notification Bell with Interactive Dropdown Panel -->
+          <div class="notification-wrap">
+            <button class="header-action-btn" title="View Notifications" @click="toggleNotifications">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              <span v-if="unreadCount > 0" class="notification-indicator"></span>
+            </button>
+
+            <!-- Dropdown Notification Panel -->
+            <div v-if="showNotifications" class="notifications-panel">
+              <div class="notif-header">
+                <div class="notif-title-row">
+                  <span class="notif-title">Activity Feed</span>
+                  <span class="notif-pill">{{ unreadCount }} new</span>
+                </div>
+                <button class="mark-read-btn" @click="markAllRead">Mark all read</button>
+              </div>
+
+              <div class="notif-list">
+                <div 
+                  v-for="notif in notifications" 
+                  :key="notif.id" 
+                  class="notif-item" 
+                  :class="{ unread: !notif.read }"
+                >
+                  <div class="notif-lead">
+                    <span class="notif-item-title">{{ notif.title }}</span>
+                    <span class="notif-time">{{ notif.time }}</span>
+                  </div>
+                  <p class="notif-desc">{{ notif.text }}</p>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- LinkedIn Profile Icon -->
@@ -192,7 +300,7 @@ const activeNav = ref('home')
             </a>
 
             <a href="/DP-750/question-bank/" class="btn-ghost-course">
-              <span>EXAM SIMULATOR</span>
+              <span>PRACTICE QUIZZES</span>
             </a>
           </div>
         </div>
@@ -336,7 +444,7 @@ const activeNav = ref('home')
             <!-- Widget 3: Complete tests (Interactive Simulator Trigger) -->
             <a href="/DP-750/question-bank/" class="widget-card widget-tests-card">
               <div class="tests-inner">
-                <span class="tests-title">Complete tests</span>
+                <span class="tests-title">Practice Quizzes</span>
                 <span class="widget-idx-bubble light-bubble">3</span>
               </div>
               <div class="tests-sub">
@@ -391,6 +499,8 @@ const activeNav = ref('home')
   width: 100%;
   color: #FFFFFF;
   box-sizing: border-box;
+  font-family: var(--vp-font-family-base) !important;
+  font-weight: 600 !important;
 }
 
 /* LEFT NAVIGATION DOCK */
@@ -424,6 +534,13 @@ const activeNav = ref('home')
   display: flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.brand-sparkle-box:hover {
+  background: rgba(144, 107, 255, 0.22);
+  border-color: rgba(144, 107, 255, 0.4);
 }
 
 .dock-menu {
@@ -471,8 +588,8 @@ const activeNav = ref('home')
 /* MAIN CONTENT PANE */
 .dashboard-main {
   flex: 1;
-  padding: 2rem 3rem 5rem;
-  max-width: 1740px;
+  padding: 2.5rem 3.5rem 5rem;
+  max-width: 1840px;
   box-sizing: border-box;
 }
 
@@ -487,39 +604,53 @@ const activeNav = ref('home')
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.2rem;
   flex-wrap: wrap;
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
 
 .header-title {
   font-family: var(--vp-font-family-headings) !important;
-  font-size: 1.85rem;
-  font-weight: 700;
-  margin: 0 0 0.2rem;
+  font-size: 2.1rem;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.25rem;
   color: #FFFFFF;
 }
 
 .header-subtitle {
-  font-size: 0.88rem;
+  font-size: 0.92rem;
   color: #6B7280;
+  font-weight: 600;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.9rem;
+}
+
+/* SEARCH PILL & DROPDOWN */
+.search-pill-wrap {
+  position: relative;
 }
 
 .search-pill {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.7rem;
   background-color: #161720;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 30px;
-  padding: 0.55rem 1.1rem;
-  min-width: 280px;
+  padding: 0.65rem 1.25rem;
+  min-width: 320px;
+  transition: all 0.2s ease;
+}
+
+.search-pill:focus-within {
+  border-color: #906BFF;
+  background-color: #1A1C28;
+  box-shadow: 0 0 0 3px rgba(144, 107, 255, 0.2);
 }
 
 .search-input {
@@ -527,26 +658,87 @@ const activeNav = ref('home')
   border: none;
   outline: none;
   color: #FFFFFF;
-  font-size: 0.85rem;
-  font-weight: 500;
+  font-size: 0.9rem;
+  font-weight: 600;
   width: 100%;
+}
+
+.search-input::placeholder {
+  color: #6B7280;
 }
 
 .kbd-shortcut {
   background: #232532;
   border-radius: 6px;
   padding: 2px 7px;
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   color: #9CA3AF;
   font-family: var(--vp-font-family-mono);
 }
 
+.search-results-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: #181923;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  overflow: hidden;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.search-no-results {
+  padding: 1.25rem;
+  font-size: 0.88rem;
+  color: #9CA3AF;
+  text-align: center;
+}
+
+.search-result-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background: #232535;
+}
+
+.res-title {
+  color: #FFFFFF;
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.res-path {
+  color: #906BFF;
+  font-size: 0.75rem;
+  font-family: var(--vp-font-family-mono);
+}
+
+/* NOTIFICATIONS POPUP */
+.notification-wrap {
+  position: relative;
+}
+
 .header-action-btn, .header-social-btn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: #161720;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -557,9 +749,10 @@ const activeNav = ref('home')
   transition: all 0.2s ease;
 }
 
-.header-social-btn:hover {
+.header-action-btn:hover, .header-social-btn:hover {
   color: #FFFFFF;
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.25);
+  background: #1F212D;
 }
 
 .linkedin-btn:hover {
@@ -568,12 +761,114 @@ const activeNav = ref('home')
 
 .notification-indicator {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 6px;
-  height: 6px;
+  top: 11px;
+  right: 11px;
+  width: 7px;
+  height: 7px;
   background: #FF3621;
   border-radius: 50%;
+  box-shadow: 0 0 6px #FF3621;
+}
+
+.notifications-panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 360px;
+  background: #181923;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 1.3rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #14151D;
+}
+
+.notif-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.notif-title {
+  font-family: var(--vp-font-family-headings) !important;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #FFFFFF;
+}
+
+.notif-pill {
+  font-size: 0.72rem;
+  padding: 2px 7px;
+  background: rgba(144, 107, 255, 0.2);
+  color: #A78BFA;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.mark-read-btn {
+  background: transparent;
+  border: none;
+  color: #9CA3AF;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mark-read-btn:hover {
+  color: #FFFFFF;
+}
+
+.notif-list {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.notif-item {
+  padding: 1rem 1.3rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.15s ease;
+}
+
+.notif-item:last-child {
+  border-bottom: none;
+}
+
+.notif-item.unread {
+  background: rgba(144, 107, 255, 0.05);
+}
+
+.notif-lead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.3rem;
+}
+
+.notif-item-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.notif-time {
+  font-size: 0.72rem;
+  color: #6B7280;
+}
+
+.notif-desc {
+  font-size: 0.82rem;
+  color: #9CA3AF;
+  line-height: 1.45;
+  margin: 0;
 }
 
 /* HERO SPOTLIGHT CARD */
@@ -582,12 +877,12 @@ const activeNav = ref('home')
   background-color: #13141C;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
-  padding: 2.75rem 3.25rem;
+  padding: 3rem 3.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   overflow: hidden;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2.75rem;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
 }
 
@@ -599,7 +894,7 @@ const activeNav = ref('home')
 }
 
 .hero-left-content {
-  max-width: 620px;
+  max-width: 680px;
   z-index: 2;
 }
 
@@ -607,14 +902,14 @@ const activeNav = ref('home')
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.35rem 0.85rem;
+  padding: 0.4rem 0.95rem;
   background: rgba(144, 107, 255, 0.14);
   border-radius: 20px;
-  font-size: 0.74rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   color: #A78BFA;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.35rem;
 }
 
 .tag-accent-dot {
@@ -626,47 +921,47 @@ const activeNav = ref('home')
 
 .spotlight-title {
   font-family: var(--vp-font-family-headings) !important;
-  font-size: 2.85rem;
-  font-weight: 800;
-  line-height: 1.15;
+  font-size: 3.1rem;
+  font-weight: 800 !important;
+  line-height: 1.14;
   color: #FFFFFF;
-  margin: 0 0 1rem;
-  letter-spacing: -0.03em;
+  margin: 0 0 1.1rem;
+  letter-spacing: -0.025em;
 }
 
 @media (max-width: 768px) {
   .spotlight-title {
-    font-size: 2.1rem;
+    font-size: 2.2rem;
   }
 }
 
 .spotlight-caption {
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 1.05rem;
+  line-height: 1.65;
   color: #9CA3AF;
-  margin: 0 0 2rem;
+  margin: 0 0 2.2rem;
 }
 
 .spotlight-actions {
   display: flex;
-  gap: 1rem;
+  gap: 1.1rem;
   flex-wrap: wrap;
 }
 
 .btn-continue-course {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.8rem;
   background: #906BFF;
   color: #FFFFFF;
-  padding: 0.75rem 1.6rem;
+  padding: 0.85rem 1.8rem;
   border-radius: 30px;
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   letter-spacing: 0.05em;
   text-decoration: none;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 18px rgba(144, 107, 255, 0.35);
+  box-shadow: 0 4px 20px rgba(144, 107, 255, 0.35);
 }
 
 .btn-continue-course:hover {
@@ -675,8 +970,8 @@ const activeNav = ref('home')
 }
 
 .play-circle {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   background: rgba(255, 255, 255, 0.22);
   border-radius: 50%;
   display: flex;
@@ -689,18 +984,18 @@ const activeNav = ref('home')
   align-items: center;
   background: rgba(255, 255, 255, 0.06);
   color: #D1D5DB;
-  padding: 0.75rem 1.6rem;
+  padding: 0.85rem 1.8rem;
   border-radius: 30px;
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: 700;
+  font-size: 0.88rem;
   letter-spacing: 0.05em;
   text-decoration: none;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   transition: all 0.2s ease;
 }
 
 .btn-ghost-course:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   color: #FFFFFF;
 }
 
@@ -712,7 +1007,7 @@ const activeNav = ref('home')
 }
 
 .hero-3d-render {
-  max-width: 480px;
+  max-width: 520px;
   width: 100%;
   object-fit: contain;
   filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.5));
@@ -728,7 +1023,7 @@ const activeNav = ref('home')
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2.25rem;
+  gap: 2.5rem;
 }
 
 @media (max-width: 1100px) {
@@ -741,13 +1036,13 @@ const activeNav = ref('home')
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.35rem;
 }
 
 .column-title {
   font-family: var(--vp-font-family-headings) !important;
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.35rem;
+  font-weight: 700 !important;
   color: #FFFFFF;
   margin: 0;
 }
@@ -756,10 +1051,10 @@ const activeNav = ref('home')
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   color: #9CA3AF;
   cursor: pointer;
-  padding: 0.3rem 0.6rem;
+  padding: 0.35rem 0.75rem;
   border-radius: 8px;
   transition: all 0.2s ease;
 }
@@ -773,17 +1068,17 @@ const activeNav = ref('home')
 .modules-card-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.15rem;
 }
 
 .module-card-item {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1.35rem;
   background-color: #15161E;
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 18px;
-  padding: 1.25rem 1.5rem;
+  border-radius: 20px;
+  padding: 1.35rem 1.6rem;
   text-decoration: none;
   transition: all 0.2s ease;
 }
@@ -795,9 +1090,9 @@ const activeNav = ref('home')
 }
 
 .module-icon-box {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
   background: #1C1D27;
   display: flex;
   align-items: center;
@@ -832,10 +1127,10 @@ const activeNav = ref('home')
 
 .mod-title {
   font-family: var(--vp-font-family-headings) !important;
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: 1.1rem;
+  font-weight: 700 !important;
   color: #FFFFFF;
-  margin: 0 0 0.35rem;
+  margin: 0 0 0.4rem;
   line-height: 1.35;
 }
 
@@ -843,12 +1138,12 @@ const activeNav = ref('home')
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   color: #9CA3AF;
 }
 
 .metric-highlight {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .metric-sub {
@@ -864,9 +1159,9 @@ const activeNav = ref('home')
 }
 
 .progress-num {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: #9CA3AF;
-  min-width: 30px;
+  min-width: 32px;
 }
 
 .progress-bar-bg {
@@ -889,10 +1184,10 @@ const activeNav = ref('home')
 
 .status-pill {
   display: inline-block;
-  padding: 0.35rem 0.85rem;
+  padding: 0.4rem 0.95rem;
   border-radius: 20px;
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-size: 0.82rem;
+  font-weight: 700;
 }
 
 .status-completed {
@@ -910,7 +1205,7 @@ const activeNav = ref('home')
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto auto;
-  gap: 1rem;
+  gap: 1.15rem;
 }
 
 @media (max-width: 640px) {
@@ -922,8 +1217,8 @@ const activeNav = ref('home')
 .widget-card {
   background-color: #15161E;
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 20px;
-  padding: 1.4rem;
+  border-radius: 22px;
+  padding: 1.6rem;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -933,26 +1228,26 @@ const activeNav = ref('home')
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.85rem;
 }
 
 .widget-title {
   font-family: var(--vp-font-family-headings) !important;
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700 !important;
   color: #D1D5DB;
 }
 
 .widget-idx-bubble {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   background: #232532;
   color: #9CA3AF;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 700;
 }
 
@@ -963,7 +1258,7 @@ const activeNav = ref('home')
 
 /* Widget 1: Study Time */
 .study-chart-area {
-  margin: 0.5rem 0;
+  margin: 0.6rem 0;
 }
 
 .study-time-footer {
@@ -974,14 +1269,14 @@ const activeNav = ref('home')
 }
 
 .sub-unit {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   color: #6B7280;
 }
 
 .huge-metric-num {
   font-family: var(--vp-font-family-headings) !important;
-  font-size: 2.75rem;
-  font-weight: 800;
+  font-size: 3rem;
+  font-weight: 800 !important;
   color: #FFFFFF;
   line-height: 1;
 }
@@ -1001,13 +1296,13 @@ const activeNav = ref('home')
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-top: 2rem;
+  margin-top: 2.2rem;
 }
 
 .purple-sub-label {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .light-num {
@@ -1033,20 +1328,20 @@ const activeNav = ref('home')
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.35rem;
 }
 
 .tests-title {
   font-family: var(--vp-font-family-headings) !important;
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 1.2rem;
+  font-weight: 700 !important;
   color: #FFFFFF;
 }
 
 .tests-sub {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.85);
-  font-weight: 600;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 700;
 }
 
 /* Widget 4: Performance Wave */
@@ -1056,7 +1351,7 @@ const activeNav = ref('home')
 
 .performance-chart-wrap {
   position: relative;
-  margin-top: 0.5rem;
+  margin-top: 0.6rem;
 }
 
 .performance-score-pill {
@@ -1065,9 +1360,9 @@ const activeNav = ref('home')
   right: 42px;
   background: #7C3AED;
   color: #FFFFFF;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  padding: 2px 7px;
+  padding: 2px 8px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(124, 58, 237, 0.4);
 }

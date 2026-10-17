@@ -1,0 +1,770 @@
+[
+  {
+    "title": "Cookie Policy",
+    "link": "/cookie-policy"
+  },
+  {
+    "title": "Index",
+    "link": "/"
+  },
+  {
+    "title": "Privacy Policy",
+    "link": "/privacy-policy"
+  },
+  {
+    "title": "Set up and configure an Azure Databricks environment",
+    "link": "/01-setup-and-configure/"
+  },
+  {
+    "title": "Apply naming conventions",
+    "link": "/01-setup-and-configure/create-and-organize-objects-in-unity-catalog/apply-naming-conventions"
+  },
+  {
+    "title": "Configure AI-BI Genie instructions",
+    "link": "/01-setup-and-configure/create-and-organize-objects-in-unity-catalog/configure-ai-bi-genie-instructions"
+  },
+  {
+    "title": "Create a catalog",
+    "link": "/01-setup-and-configure/create-and-organize-objects-in-unity-catalog/create-a-catalog"
+  },
+  {
+    "title": "Create a schema",
+    "link": "/01-setup-and-configure/create-and-organize-objects-in-unity-catalog/create-a-schema"
+  },
+  {
+    "title": "Create tables views and materialized views",
+    "link": "/01-setup-and-configure/create-and-organize-objects-in-unity-catalog/create-tables-views-and-materialized-views"
+  },
+  {
+    "title": "Create volumes",
+    "link": "/01-setup-and-configure/create-and-organize-objects-in-unity-catalog/create-volumes"
+  },
+  {
+    "title": "Exercise",
+    "link": "/01-setup-and-configure/create-and-organize-objects-in-unity-catalog/exercise"
+  },
+  {
+    "title": "Implement a foreign catalog",
+    "link": "/01-setup-and-configure/create-and-organize-objects-in-unity-catalog/implement-a-foreign-catalog"
+  },
+  {
+    "title": "Implement DDL operations",
+    "link": "/01-setup-and-configure/create-and-organize-objects-in-unity-catalog/implement-ddl-operations"
+  },
+  {
+    "title": "Introduction",
+    "link": "/01-setup-and-configure/create-and-organize-objects-in-unity-catalog/introduction"
+  },
+  {
+    "title": "Knowledge Check",
+    "link": "/01-setup-and-configure/create-and-organize-objects-in-unity-catalog/knowledge-check"
+  },
+  {
+    "title": "Create and organize objects in Unity Catalog",
+    "link": "/01-setup-and-configure/create-and-organize-objects-in-unity-catalog/module-overview"
+  },
+  {
+    "title": "Summary",
+    "link": "/01-setup-and-configure/create-and-organize-objects-in-unity-catalog/summary"
+  },
+  {
+    "title": "Data governance using Unity Catalog and Microsoft Purview",
+    "link": "/01-setup-and-configure/explore-azure-databricks/data-governance"
+  },
+  {
+    "title": "Exercise",
+    "link": "/01-setup-and-configure/explore-azure-databricks/exercise"
+  },
+  {
+    "title": "Get started with Azure Databricks",
+    "link": "/01-setup-and-configure/explore-azure-databricks/get-started"
+  },
+  {
+    "title": "Introduction",
+    "link": "/01-setup-and-configure/explore-azure-databricks/introduction"
+  },
+  {
+    "title": "Knowledge check",
+    "link": "/01-setup-and-configure/explore-azure-databricks/knowledge-check"
+  },
+  {
+    "title": "Module 1: Explore Azure Databricks",
+    "link": "/01-setup-and-configure/explore-azure-databricks/module-overview"
+  },
+  {
+    "title": "Summary",
+    "link": "/01-setup-and-configure/explore-azure-databricks/summary"
+  },
+  {
+    "title": "Understand key concepts",
+    "link": "/01-setup-and-configure/explore-azure-databricks/understand-key-concepts"
+  },
+  {
+    "title": "Identify Azure Databricks workloads",
+    "link": "/01-setup-and-configure/explore-azure-databricks/workloads"
+  },
+  {
+    "title": "Choose appropriate compute type",
+    "link": "/01-setup-and-configure/select-and-configure-compute-in-azure-databricks/choose-appropriate-compute-type"
+  },
+  {
+    "title": "Configure compute access permissions",
+    "link": "/01-setup-and-configure/select-and-configure-compute-in-azure-databricks/configure-compute-access-permissions"
+  },
+  {
+    "title": "Configure compute feature settings",
+    "link": "/01-setup-and-configure/select-and-configure-compute-in-azure-databricks/configure-compute-feature-settings"
+  },
+  {
+    "title": "Configure compute performance",
+    "link": "/01-setup-and-configure/select-and-configure-compute-in-azure-databricks/configure-compute-performance"
+  },
+  {
+    "title": "Exercise",
+    "link": "/01-setup-and-configure/select-and-configure-compute-in-azure-databricks/exercise"
+  },
+  {
+    "title": "Install libraries for compute",
+    "link": "/01-setup-and-configure/select-and-configure-compute-in-azure-databricks/install-libraries-for-compute"
+  },
+  {
+    "title": "Introduction",
+    "link": "/01-setup-and-configure/select-and-configure-compute-in-azure-databricks/introduction"
+  },
+  {
+    "title": "Knowledge Check",
+    "link": "/01-setup-and-configure/select-and-configure-compute-in-azure-databricks/knowledge-check"
+  },
+  {
+    "title": "Select and Configure Compute in Azure Databricks",
+    "link": "/01-setup-and-configure/select-and-configure-compute-in-azure-databricks/module-overview"
+  },
+  {
+    "title": "Summary",
+    "link": "/01-setup-and-configure/select-and-configure-compute-in-azure-databricks/summary"
+  },
+  {
+    "title": "Introduction",
+    "link": "/01-setup-and-configure/understand-architecture/introduction"
+  },
+  {
+    "title": "Knowledge Check",
+    "link": "/01-setup-and-configure/understand-architecture/knowledge-check"
+  },
+  {
+    "title": "Understand Azure Databricks architecture",
+    "link": "/01-setup-and-configure/understand-architecture/module-overview"
+  },
+  {
+    "title": "Summary",
+    "link": "/01-setup-and-configure/understand-architecture/summary"
+  },
+  {
+    "title": "Understand Azure Databricks architecture",
+    "link": "/01-setup-and-configure/understand-architecture/understand-azure-databricks-architecture"
+  },
+  {
+    "title": "Understand default storage",
+    "link": "/01-setup-and-configure/understand-architecture/understand-default-storage"
+  },
+  {
+    "title": "Understand external storage",
+    "link": "/01-setup-and-configure/understand-architecture/understand-external-storage"
+  },
+  {
+    "title": "Understand Unity Catalog managed storage",
+    "link": "/01-setup-and-configure/understand-architecture/understand-unity-catalog-managed-storage"
+  },
+  {
+    "title": "Integration with Copilot Studio",
+    "link": "/01-setup-and-configure/understand-azure-databricks-integrations/integration-with-copilot-studio"
+  },
+  {
+    "title": "Integration with Microsoft Fabric",
+    "link": "/01-setup-and-configure/understand-azure-databricks-integrations/integration-with-microsoft-fabric"
+  },
+  {
+    "title": "Integration with Microsoft Foundry",
+    "link": "/01-setup-and-configure/understand-azure-databricks-integrations/integration-with-microsoft-foundry"
+  },
+  {
+    "title": "Integration with Microsoft Purview",
+    "link": "/01-setup-and-configure/understand-azure-databricks-integrations/integration-with-microsoft-purview"
+  },
+  {
+    "title": "Integration with Power BI",
+    "link": "/01-setup-and-configure/understand-azure-databricks-integrations/integration-with-power-bi"
+  },
+  {
+    "title": "Integration with Power Platform",
+    "link": "/01-setup-and-configure/understand-azure-databricks-integrations/integration-with-power-platform"
+  },
+  {
+    "title": "Integration with VS Code",
+    "link": "/01-setup-and-configure/understand-azure-databricks-integrations/integration-with-vs-code"
+  },
+  {
+    "title": "Introduction",
+    "link": "/01-setup-and-configure/understand-azure-databricks-integrations/introduction"
+  },
+  {
+    "title": "Knowledge Check",
+    "link": "/01-setup-and-configure/understand-azure-databricks-integrations/knowledge-check"
+  },
+  {
+    "title": "Understand Azure Databricks Integrations",
+    "link": "/01-setup-and-configure/understand-azure-databricks-integrations/module-overview"
+  },
+  {
+    "title": "Summary",
+    "link": "/01-setup-and-configure/understand-azure-databricks-integrations/summary"
+  },
+  {
+    "title": "Secure and govern Unity Catalog objects in Azure Databricks",
+    "link": "/02-secure-and-govern/"
+  },
+  {
+    "title": "Apply data retention policies",
+    "link": "/02-secure-and-govern/govern-unity-catalog-objects/apply-data-retention-policies"
+  },
+  {
+    "title": "Configure ABAC tags and policies",
+    "link": "/02-secure-and-govern/govern-unity-catalog-objects/configure-abac-tags-and-policies"
+  },
+  {
+    "title": "Configure audit logging",
+    "link": "/02-secure-and-govern/govern-unity-catalog-objects/configure-audit-logging"
+  },
+  {
+    "title": "Design a secure Delta Sharing strategy",
+    "link": "/02-secure-and-govern/govern-unity-catalog-objects/design-a-secure-delta-sharing-strategy"
+  },
+  {
+    "title": "Exercise",
+    "link": "/02-secure-and-govern/govern-unity-catalog-objects/exercise"
+  },
+  {
+    "title": "Introduction",
+    "link": "/02-secure-and-govern/govern-unity-catalog-objects/introduction"
+  },
+  {
+    "title": "Knowledge check",
+    "link": "/02-secure-and-govern/govern-unity-catalog-objects/knowledge-check"
+  },
+  {
+    "title": "Manage data lineage tracking",
+    "link": "/02-secure-and-govern/govern-unity-catalog-objects/manage-data-lineage-tracking"
+  },
+  {
+    "title": "Govern Unity Catalog objects",
+    "link": "/02-secure-and-govern/govern-unity-catalog-objects/module-overview"
+  },
+  {
+    "title": "Preserve table and column definitions",
+    "link": "/02-secure-and-govern/govern-unity-catalog-objects/preserve-table-and-column-definitions"
+  },
+  {
+    "title": "Summary",
+    "link": "/02-secure-and-govern/govern-unity-catalog-objects/summary"
+  },
+  {
+    "title": "Access Azure Key Vault secrets",
+    "link": "/02-secure-and-govern/secure-unity-catalog-objects/access-azure-key-vault-secrets"
+  },
+  {
+    "title": "Authenticate data access with service principals",
+    "link": "/02-secure-and-govern/secure-unity-catalog-objects/authenticate-data-access-with-service-principals"
+  },
+  {
+    "title": "Authenticate resource access with managed identities",
+    "link": "/02-secure-and-govern/secure-unity-catalog-objects/authenticate-resource-access-with-managed-identities"
+  },
+  {
+    "title": "Exercise",
+    "link": "/02-secure-and-govern/secure-unity-catalog-objects/exercise"
+  },
+  {
+    "title": "Implement access control strategies",
+    "link": "/02-secure-and-govern/secure-unity-catalog-objects/implement-access-control-strategies"
+  },
+  {
+    "title": "Implement row filtering and column masking",
+    "link": "/02-secure-and-govern/secure-unity-catalog-objects/implement-row-filtering-and-column-masking"
+  },
+  {
+    "title": "Introduction",
+    "link": "/02-secure-and-govern/secure-unity-catalog-objects/introduction"
+  },
+  {
+    "title": "Knowledge check",
+    "link": "/02-secure-and-govern/secure-unity-catalog-objects/knowledge-check"
+  },
+  {
+    "title": "Secure Unity Catalog objects",
+    "link": "/02-secure-and-govern/secure-unity-catalog-objects/module-overview"
+  },
+  {
+    "title": "Summary",
+    "link": "/02-secure-and-govern/secure-unity-catalog-objects/summary"
+  },
+  {
+    "title": "Understand fine-grained access control",
+    "link": "/02-secure-and-govern/secure-unity-catalog-objects/understand-fine-grained-access-control"
+  },
+  {
+    "title": "Understand the query lifecycle",
+    "link": "/02-secure-and-govern/secure-unity-catalog-objects/understand-the-query-lifecycle"
+  },
+  {
+    "title": "Prepare and process data with Azure Databricks",
+    "link": "/03-prepare-and-process/"
+  },
+  {
+    "title": "Choose column data types",
+    "link": "/03-prepare-and-process/cleanse-transform-and-load-data-into-unity-catalog/choose-appropriate-column-data-types"
+  },
+  {
+    "title": "Exercise",
+    "link": "/03-prepare-and-process/cleanse-transform-and-load-data-into-unity-catalog/exercise"
+  },
+  {
+    "title": "Data Transformation and Quality Assurance in Azure Databricks",
+    "link": "/03-prepare-and-process/cleanse-transform-and-load-data-into-unity-catalog/"
+  },
+  {
+    "title": "Introduction",
+    "link": "/03-prepare-and-process/cleanse-transform-and-load-data-into-unity-catalog/introduction"
+  },
+  {
+    "title": "Module assessment",
+    "link": "/03-prepare-and-process/cleanse-transform-and-load-data-into-unity-catalog/knowledge-check"
+  },
+  {
+    "title": "Load data with merge, insert, and append",
+    "link": "/03-prepare-and-process/cleanse-transform-and-load-data-into-unity-catalog/load-data-with-merge-insert-and-append"
+  },
+  {
+    "title": "Cleanse, transform, and load data into Unity Catalog",
+    "link": "/03-prepare-and-process/cleanse-transform-and-load-data-into-unity-catalog/module-overview"
+  },
+  {
+    "title": "Profile data",
+    "link": "/03-prepare-and-process/cleanse-transform-and-load-data-into-unity-catalog/profile-data-with-summary-statistics"
+  },
+  {
+    "title": "Resolve duplicates and nulls",
+    "link": "/03-prepare-and-process/cleanse-transform-and-load-data-into-unity-catalog/resolve-duplicate-missing-and-null-values"
+  },
+  {
+    "title": "Summary",
+    "link": "/03-prepare-and-process/cleanse-transform-and-load-data-into-unity-catalog/summary"
+  },
+  {
+    "title": "Transform data with denormalization pivot and unpivot",
+    "link": "/03-prepare-and-process/cleanse-transform-and-load-data-into-unity-catalog/transform-data-with-denormalization-pivot-and-unpivot"
+  },
+  {
+    "title": "Transform data with filters and aggregations",
+    "link": "/03-prepare-and-process/cleanse-transform-and-load-data-into-unity-catalog/transform-data-with-filtering-grouping-and-aggregation"
+  },
+  {
+    "title": "Transform data with joins and set operators",
+    "link": "/03-prepare-and-process/cleanse-transform-and-load-data-into-unity-catalog/transform-data-with-joins-and-set-operators"
+  },
+  {
+    "title": "Choose a data ingestion tool",
+    "link": "/03-prepare-and-process/design-data-modeling/choose-data-ingestion-tool"
+  },
+  {
+    "title": "Choose a data table format",
+    "link": "/03-prepare-and-process/design-data-modeling/choose-data-table-format"
+  },
+  {
+    "title": "Choose granularity on a column or table based on requirements",
+    "link": "/03-prepare-and-process/design-data-modeling/choose-granularity"
+  },
+  {
+    "title": "Choose managed vs external tables",
+    "link": "/03-prepare-and-process/design-data-modeling/choose-managed-vs-unmanaged-tables"
+  },
+  {
+    "title": "Choose SCD type",
+    "link": "/03-prepare-and-process/design-data-modeling/choose-scd-type"
+  },
+  {
+    "title": "Design and implement a clustering strategy",
+    "link": "/03-prepare-and-process/design-data-modeling/design-clustering-strategy"
+  },
+  {
+    "title": "Design ingestion logic and data source configuration",
+    "link": "/03-prepare-and-process/design-data-modeling/design-data-ingestion-logic"
+  },
+  {
+    "title": "Design and implement a data partitioning scheme",
+    "link": "/03-prepare-and-process/design-data-modeling/design-data-partitioning-scheme"
+  },
+  {
+    "title": "Design and implement a temporal (history) table to record changes over time",
+    "link": "/03-prepare-and-process/design-data-modeling/design-temporal-history-table"
+  },
+  {
+    "title": "Exercise",
+    "link": "/03-prepare-and-process/design-data-modeling/exercise"
+  },
+  {
+    "title": "Implement a slowly changing dimension (SCD) type 2",
+    "link": "/03-prepare-and-process/design-data-modeling/implement-scd-type-2"
+  },
+  {
+    "title": "Data Modeling and Storage Architecture in Azure Databricks",
+    "link": "/03-prepare-and-process/design-data-modeling/"
+  },
+  {
+    "title": "Introduction",
+    "link": "/03-prepare-and-process/design-data-modeling/introduction"
+  },
+  {
+    "title": "Knowledge check",
+    "link": "/03-prepare-and-process/design-data-modeling/knowledge-check"
+  },
+  {
+    "title": "Design and implement data modeling with Azure Databricks",
+    "link": "/03-prepare-and-process/design-data-modeling/module-overview"
+  },
+  {
+    "title": "Summary",
+    "link": "/03-prepare-and-process/design-data-modeling/summary"
+  },
+  {
+    "title": "Detect and manage schema drift",
+    "link": "/03-prepare-and-process/implement-and-manage-data-quality-constraints-with-azure-databricks/detect-and-manage-schema-drift"
+  },
+  {
+    "title": "Exercise",
+    "link": "/03-prepare-and-process/implement-and-manage-data-quality-constraints-with-azure-databricks/exercise"
+  },
+  {
+    "title": "Implement data type checks",
+    "link": "/03-prepare-and-process/implement-and-manage-data-quality-constraints-with-azure-databricks/implement-data-type-checks"
+  },
+  {
+    "title": "Implement validation checks",
+    "link": "/03-prepare-and-process/implement-and-manage-data-quality-constraints-with-azure-databricks/implement-validation-checks"
+  },
+  {
+    "title": "Data Quality Assurance and Schema Governance in Azure Databricks",
+    "link": "/03-prepare-and-process/implement-and-manage-data-quality-constraints-with-azure-databricks/"
+  },
+  {
+    "title": "Introduction",
+    "link": "/03-prepare-and-process/implement-and-manage-data-quality-constraints-with-azure-databricks/introduction"
+  },
+  {
+    "title": "Module assessment",
+    "link": "/03-prepare-and-process/implement-and-manage-data-quality-constraints-with-azure-databricks/knowledge-check"
+  },
+  {
+    "title": "Manage data quality with pipeline expectations",
+    "link": "/03-prepare-and-process/implement-and-manage-data-quality-constraints-with-azure-databricks/manage-data-quality-with-pipeline-expectations"
+  },
+  {
+    "title": "Implement and manage data quality constraints",
+    "link": "/03-prepare-and-process/implement-and-manage-data-quality-constraints-with-azure-databricks/module-overview"
+  },
+  {
+    "title": "Summary",
+    "link": "/03-prepare-and-process/implement-and-manage-data-quality-constraints-with-azure-databricks/summary"
+  },
+  {
+    "title": "Exercise",
+    "link": "/03-prepare-and-process/ingest-data-into-unity-catalog/exercise"
+  },
+  {
+    "title": "Data Ingestion Architectures and Mechanisms in Azure Databricks",
+    "link": "/03-prepare-and-process/ingest-data-into-unity-catalog/"
+  },
+  {
+    "title": "Ingest data from CDC feed",
+    "link": "/03-prepare-and-process/ingest-data-into-unity-catalog/ingest-data-from-cdc-feed"
+  },
+  {
+    "title": "Ingest data with Auto Loader",
+    "link": "/03-prepare-and-process/ingest-data-into-unity-catalog/ingest-data-with-auto-loader"
+  },
+  {
+    "title": "Ingest data with Lakeflow Connect",
+    "link": "/03-prepare-and-process/ingest-data-into-unity-catalog/ingest-data-with-lakeflow-connect"
+  },
+  {
+    "title": "Ingest data with Lakeflow Spark Declarative Pipelines",
+    "link": "/03-prepare-and-process/ingest-data-into-unity-catalog/ingest-data-with-lakeflow-declarative-pipelines"
+  },
+  {
+    "title": "Ingest data with notebooks",
+    "link": "/03-prepare-and-process/ingest-data-into-unity-catalog/ingest-data-with-notebooks"
+  },
+  {
+    "title": "Ingest data with Spark Structured Streaming",
+    "link": "/03-prepare-and-process/ingest-data-into-unity-catalog/ingest-data-with-spark-structured-streaming"
+  },
+  {
+    "title": "Ingest data with SQL methods",
+    "link": "/03-prepare-and-process/ingest-data-into-unity-catalog/ingest-data-with-sql-methods"
+  },
+  {
+    "title": "Introduction",
+    "link": "/03-prepare-and-process/ingest-data-into-unity-catalog/introduction"
+  },
+  {
+    "title": "Module assessment",
+    "link": "/03-prepare-and-process/ingest-data-into-unity-catalog/knowledge-check"
+  },
+  {
+    "title": "Ingest data into Unity Catalog",
+    "link": "/03-prepare-and-process/ingest-data-into-unity-catalog/module-overview"
+  },
+  {
+    "title": "Summary",
+    "link": "/03-prepare-and-process/ingest-data-into-unity-catalog/summary"
+  },
+  {
+    "title": "Deploy and maintain data pipelines and workloads with Azure Databricks",
+    "link": "/04-deploy-and-maintain/"
+  },
+  {
+    "title": "Choose notebook vs Lakeflow Pipelines",
+    "link": "/04-deploy-and-maintain/design-implement-pipelines/choose-notebook-vs-lakeflow-pipelines"
+  },
+  {
+    "title": "Create a pipeline with Lakeflow Declarative Pipelines",
+    "link": "/04-deploy-and-maintain/design-implement-pipelines/create-a-pipeline-with-lakeflow-declarative-pipelines"
+  },
+  {
+    "title": "Create a pipeline with notebook precedence",
+    "link": "/04-deploy-and-maintain/design-implement-pipelines/create-a-pipeline-with-notebook-precedence"
+  },
+  {
+    "title": "Design error handling for pipelines",
+    "link": "/04-deploy-and-maintain/design-implement-pipelines/design-error-handling-for-pipelines"
+  },
+  {
+    "title": "Design order of operations for a pipeline",
+    "link": "/04-deploy-and-maintain/design-implement-pipelines/design-order-of-operations-for-a-pipeline"
+  },
+  {
+    "title": "Design task logic for Lakeflow Jobs",
+    "link": "/04-deploy-and-maintain/design-implement-pipelines/design-task-logic-for-lakeflow-jobs"
+  },
+  {
+    "title": "Exercise",
+    "link": "/04-deploy-and-maintain/design-implement-pipelines/exercise"
+  },
+  {
+    "title": "Pipeline Architecture and Execution Frameworks in Azure Databricks",
+    "link": "/04-deploy-and-maintain/design-implement-pipelines/"
+  },
+  {
+    "title": "Introduction",
+    "link": "/04-deploy-and-maintain/design-implement-pipelines/introduction"
+  },
+  {
+    "title": "Knowledge check",
+    "link": "/04-deploy-and-maintain/design-implement-pipelines/knowledge-check"
+  },
+  {
+    "title": "Design and implement data pipelines with Azure Databricks",
+    "link": "/04-deploy-and-maintain/design-implement-pipelines/module-overview"
+  },
+  {
+    "title": "Summary",
+    "link": "/04-deploy-and-maintain/design-implement-pipelines/summary"
+  },
+  {
+    "title": "Apply version control with Git",
+    "link": "/04-deploy-and-maintain/implement-development-lifecycle-processes-in-azure-databricks/apply-version-control-with-git"
+  },
+  {
+    "title": "Configure and package Databricks Asset Bundles",
+    "link": "/04-deploy-and-maintain/implement-development-lifecycle-processes-in-azure-databricks/configure-and-package-databricks-asset-bundles"
+  },
+  {
+    "title": "Deploy bundles with the Databricks CLI",
+    "link": "/04-deploy-and-maintain/implement-development-lifecycle-processes-in-azure-databricks/deploy-bundles-with-the-databricks-cli"
+  },
+  {
+    "title": "Exercise",
+    "link": "/04-deploy-and-maintain/implement-development-lifecycle-processes-in-azure-databricks/exercise"
+  },
+  {
+    "title": "Implement a testing strategy",
+    "link": "/04-deploy-and-maintain/implement-development-lifecycle-processes-in-azure-databricks/implement-a-testing-strategy"
+  },
+  {
+    "title": "Version Control and Automated Deployment in Azure Databricks",
+    "link": "/04-deploy-and-maintain/implement-development-lifecycle-processes-in-azure-databricks/"
+  },
+  {
+    "title": "Introduction",
+    "link": "/04-deploy-and-maintain/implement-development-lifecycle-processes-in-azure-databricks/introduction"
+  },
+  {
+    "title": "Knowledge check",
+    "link": "/04-deploy-and-maintain/implement-development-lifecycle-processes-in-azure-databricks/knowledge-check"
+  },
+  {
+    "title": "Manage branching pull requests and conflicts",
+    "link": "/04-deploy-and-maintain/implement-development-lifecycle-processes-in-azure-databricks/manage-branching-pull-requests-and-conflicts"
+  },
+  {
+    "title": "Implement development lifecycle processes in Azure Databricks",
+    "link": "/04-deploy-and-maintain/implement-development-lifecycle-processes-in-azure-databricks/module-overview"
+  },
+  {
+    "title": "Summary",
+    "link": "/04-deploy-and-maintain/implement-development-lifecycle-processes-in-azure-databricks/summary"
+  },
+  {
+    "title": "Configure automatic restarts",
+    "link": "/04-deploy-and-maintain/implement-lakeflow-jobs-with-azure-databricks/configure-automatic-restarts"
+  },
+  {
+    "title": "Configure job alerts",
+    "link": "/04-deploy-and-maintain/implement-lakeflow-jobs-with-azure-databricks/configure-job-alerts"
+  },
+  {
+    "title": "Configure job triggers",
+    "link": "/04-deploy-and-maintain/implement-lakeflow-jobs-with-azure-databricks/configure-job-triggers"
+  },
+  {
+    "title": "Create a Lakeflow Job",
+    "link": "/04-deploy-and-maintain/implement-lakeflow-jobs-with-azure-databricks/create-a-lakeflow-job"
+  },
+  {
+    "title": "Exercise",
+    "link": "/04-deploy-and-maintain/implement-lakeflow-jobs-with-azure-databricks/exercise"
+  },
+  {
+    "title": "Operational Orchestration: Implementing Lakeflow Jobs in Azure Databricks",
+    "link": "/04-deploy-and-maintain/implement-lakeflow-jobs-with-azure-databricks/"
+  },
+  {
+    "title": "Introduction",
+    "link": "/04-deploy-and-maintain/implement-lakeflow-jobs-with-azure-databricks/introduction"
+  },
+  {
+    "title": "Knowledge check",
+    "link": "/04-deploy-and-maintain/implement-lakeflow-jobs-with-azure-databricks/knowledge-check"
+  },
+  {
+    "title": "Implement Lakeflow Jobs with Azure Databricks",
+    "link": "/04-deploy-and-maintain/implement-lakeflow-jobs-with-azure-databricks/module-overview"
+  },
+  {
+    "title": "Schedule a job",
+    "link": "/04-deploy-and-maintain/implement-lakeflow-jobs-with-azure-databricks/schedule-a-job"
+  },
+  {
+    "title": "Summary",
+    "link": "/04-deploy-and-maintain/implement-lakeflow-jobs-with-azure-databricks/summary"
+  },
+  {
+    "title": "Exercise",
+    "link": "/04-deploy-and-maintain/monitor-troubleshoot-and-optimize-workloads-in-azure-databricks/exercise"
+  },
+  {
+    "title": "Implement log streaming with Azure Log Analytics",
+    "link": "/04-deploy-and-maintain/monitor-troubleshoot-and-optimize-workloads-in-azure-databricks/implement-log-streaming-with-azure-log-analytics"
+  },
+  {
+    "title": "Operational Observability and Performance Optimization in Azure Databricks",
+    "link": "/04-deploy-and-maintain/monitor-troubleshoot-and-optimize-workloads-in-azure-databricks/"
+  },
+  {
+    "title": "Introduction",
+    "link": "/04-deploy-and-maintain/monitor-troubleshoot-and-optimize-workloads-in-azure-databricks/introduction"
+  },
+  {
+    "title": "Knowledge check",
+    "link": "/04-deploy-and-maintain/monitor-troubleshoot-and-optimize-workloads-in-azure-databricks/knowledge-check"
+  },
+  {
+    "title": "Monitor, troubleshoot and optimize workloads in Azure Databricks",
+    "link": "/04-deploy-and-maintain/monitor-troubleshoot-and-optimize-workloads-in-azure-databricks/module-overview"
+  },
+  {
+    "title": "Monitor and manage cluster consumption",
+    "link": "/04-deploy-and-maintain/monitor-troubleshoot-and-optimize-workloads-in-azure-databricks/monitor-and-manage-cluster-consumption"
+  },
+  {
+    "title": "Resolve caching skewing spilling and shuffle issues",
+    "link": "/04-deploy-and-maintain/monitor-troubleshoot-and-optimize-workloads-in-azure-databricks/resolve-caching-skewing-spilling-and-shuffle-issues"
+  },
+  {
+    "title": "Summary",
+    "link": "/04-deploy-and-maintain/monitor-troubleshoot-and-optimize-workloads-in-azure-databricks/summary"
+  },
+  {
+    "title": "Troubleshoot and repair Lakeflow Jobs",
+    "link": "/04-deploy-and-maintain/monitor-troubleshoot-and-optimize-workloads-in-azure-databricks/troubleshoot-and-repair-lakeflow-jobs"
+  },
+  {
+    "title": "Troubleshoot and repair Spark jobs and notebooks",
+    "link": "/04-deploy-and-maintain/monitor-troubleshoot-and-optimize-workloads-in-azure-databricks/troubleshoot-and-repair-spark-jobs-and-notebooks"
+  },
+  {
+    "title": "Cleanse Transform Load Data Into Unity Catalog",
+    "link": "/labs/cleanse-transform-load-data-into-unity-catalog"
+  },
+  {
+    "title": "Clean up your Azure Databricks environment",
+    "link": "/labs/cleanup"
+  },
+  {
+    "title": "Create And Organize Objects In Unity Catalog",
+    "link": "/labs/create-and-organize-objects-in-unity-catalog"
+  },
+  {
+    "title": "Design Implement Data Modeling Unity Catalog",
+    "link": "/labs/design-implement-data-modeling-unity-catalog"
+  },
+  {
+    "title": "Design Implement Data Pipelines",
+    "link": "/labs/design-implement-data-pipelines"
+  },
+  {
+    "title": "Explore Azure Databricks",
+    "link": "/labs/explore-azure-databricks"
+  },
+  {
+    "title": "Govern Unity Catalog Objects",
+    "link": "/labs/govern-unity-catalog-objects"
+  },
+  {
+    "title": "Implement Lakeflow Jobs",
+    "link": "/labs/implement-lakeflow-jobs"
+  },
+  {
+    "title": "Set up your Azure Databricks environment",
+    "link": "/labs/"
+  },
+  {
+    "title": "Ingest Data Into Unity Catalog",
+    "link": "/labs/ingest-data-into-unity-catalog"
+  },
+  {
+    "title": "Secure Unity Catalog Objects",
+    "link": "/labs/secure-unity-catalog-objects"
+  },
+  {
+    "title": "Select And Configure Compute",
+    "link": "/labs/select-and-configure-compute"
+  },
+  {
+    "title": "Set up your Azure Databricks environment",
+    "link": "/labs/setup"
+  },
+  {
+    "title": "Interactive Question Bank",
+    "link": "/question-bank/"
+  }
+]

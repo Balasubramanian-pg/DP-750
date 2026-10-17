@@ -35,7 +35,7 @@ const { Layout } = DefaultTheme
             <h4>Practice & Execution</h4>
             <ul>
               <li><a href="/DP-750/labs/">Hands-on Labs (12 Labs)</a></li>
-              <li><a href="/DP-750/question-bank/">181-Question Simulator</a></li>
+              <li><a href="/DP-750/question-bank/">Practice Quizzes</a></li>
               <li><a href="https://github.com/Balasubramanian-pg/DP-750" target="_blank" rel="noopener">GitHub Repository</a></li>
               <li><a href="https://www.linkedin.com/in/balasubramanianpg2022/?isSelfProfile=true" target="_blank" rel="noopener">Connect on LinkedIn</a></li>
             </ul>
