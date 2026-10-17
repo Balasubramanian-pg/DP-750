@@ -2,8 +2,9 @@
 @import url('https://db.onlinewebfonts.com/c/11d164da9b46e6f7955e396757e5ca70?family=AvenirNextCyr-Regular');
 
 :root {
-  /* Full Wide Canvas */
-  --vp-layout-max-width: 1920px;
+  /* Layout variables */
+  --vp-layout-max-width: 1440px;
+  --vp-sidebar-width: 260px;
 
   /* Distinct Typography: Plus Jakarta Sans Semibold for Headings 1, 2, 3 */
   --vp-font-family-headings: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
@@ -32,6 +33,18 @@
   --vp-c-brand-1: #906BFF;
   --vp-c-brand-2: #A78BFA;
   --vp-c-brand-3: #7C3AED;
+
+  /* Force VitePress theme dark tokens to blend seamlessly with #0D0E12 */
+  --vp-c-bg: #0D0E12 !important;
+  --vp-c-bg-alt: #0D0E12 !important;
+  --vp-c-bg-soft: #15161E !important;
+  --vp-c-bg-elv: #15161E !important;
+  --vp-nav-bg-color: #0D0E12 !important;
+  --vp-nav-screen-bg-color: #0D0E12 !important;
+  --vp-sidebar-bg-color: #0D0E12 !important;
+  --vp-local-nav-bg-color: #0D0E12 !important;
+  --vp-c-gutter: rgba(255, 255, 255, 0.06) !important;
+  --vp-c-divider: rgba(255, 255, 255, 0.06) !important;
 }
 
 /* Force dark theme default across entire portal matching the Dribbble video */
@@ -71,15 +84,30 @@ h4, h5, h6, .vp-doc h4, .vp-doc h5, .vp-doc h6, .widget-title {
   display: none !important;
 }
 
-/* Top Navigation Bar: Seamless blend with dark cockpit canvas */
+/* Top Navigation Bar: Seamless blend with dark cockpit canvas - NO separate color block */
+.VPNav,
+.VPNavBar,
+.VPNavBar .wrapper,
+.VPNavBar .container,
+.VPNavBar .content,
+.VPNavBar .content-body,
+.VPNavBar .title,
+.VPNavBar:not(.home),
+.VPNavBar:not(.home) .content-body,
+.VPNavBar:not(.home.top) .content-body,
+.VPNavBar.has-sidebar .content-body {
+  background-color: var(--portal-bg) !important;
+  background: var(--portal-bg) !important;
+  box-shadow: none !important;
+}
+
 .VPNavBar {
-  background-color: rgba(13, 14, 18, 0.85) !important;
-  border-bottom: 1px solid var(--portal-border) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
   backdrop-filter: blur(16px) !important;
 }
 
 .VPNavBar .container {
-  max-width: 1840px !important;
+  max-width: 100% !important;
 }
 
 /* Footer styling for reading section (inside doc-bottom, clears left sidebar completely) */
@@ -224,26 +252,100 @@ h4, h5, h6, .vp-doc h4, .vp-doc h5, .vp-doc h6, .widget-title {
   font-family: var(--vp-font-family-mono) !important;
 }
 
-/* Social links in top navbar - ensure visible across all viewport sizes */
-.VPNavBarSocialLinks, .VPNavBar .social-links {
-  display: flex !important;
-  align-items: center !important;
-  gap: 4px;
+/* In wiki notes / reading view top navbar: ONLY search bar, NO social icons or dividers */
+.VPNavBarSocialLinks,
+.VPNavBar .social-links,
+.VPNavBar .divider,
+.VPNavBar .divider-line,
+.VPNavBarExtra,
+.VPNavBar .extra,
+.VPNavBar .menu + .social-links::before,
+.VPNavBar .appearance + .social-links::before,
+.VPNavBar .translations + .appearance::before {
+  display: none !important;
 }
 
-.VPSocialLink {
-  width: 34px !important;
-  height: 34px !important;
-  border-radius: 8px !important;
-  transition: all 0.2s ease !important;
+/* Compact, clean left sidebar & layout alignment */
+.VPSidebar {
+  padding-top: var(--vp-nav-height) !important;
+  padding-left: 20px !important;
+  padding-right: 16px !important;
+  padding-bottom: 80px !important;
+  width: var(--vp-sidebar-width) !important;
+  max-width: var(--vp-sidebar-width) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+  background-color: #0D0E12 !important;
 }
 
-.VPSocialLink:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: #FFFFFF !important;
+@media (min-width: 960px) {
+  .VPSidebar {
+    width: var(--vp-sidebar-width) !important;
+    max-width: var(--vp-sidebar-width) !important;
+    padding-left: 20px !important;
+    padding-right: 16px !important;
+  }
+  .VPNavBar.has-sidebar .title {
+    padding-left: 20px !important;
+    padding-right: 16px !important;
+    width: var(--vp-sidebar-width) !important;
+  }
+  .VPNavBar.has-sidebar .content {
+    padding-left: var(--vp-sidebar-width) !important;
+    padding-right: 24px !important;
+  }
+  .VPContent.has-sidebar {
+    padding-left: var(--vp-sidebar-width) !important;
+  }
 }
 
-.VPSocialLink svg {
-  width: 18px !important;
-  height: 18px !important;
+@media (min-width: 1440px) {
+  .VPSidebar {
+    padding-left: 20px !important;
+    width: var(--vp-sidebar-width) !important;
+  }
+  .VPNavBar.has-sidebar .title {
+    padding-left: 20px !important;
+    width: var(--vp-sidebar-width) !important;
+  }
+  .VPNavBar.has-sidebar .content {
+    padding-left: var(--vp-sidebar-width) !important;
+    padding-right: 32px !important;
+  }
+  .VPContent.has-sidebar {
+    padding-left: var(--vp-sidebar-width) !important;
+    padding-right: 32px !important;
+  }
+}
+
+/* Right Side "On this page" TOC text wrapping & width */
+.aside {
+  max-width: 280px !important;
+  padding-left: 24px !important;
+}
+
+.aside-container {
+  width: 260px !important;
+}
+
+.VPDocAsideOutline .content {
+  padding-left: 14px !important;
+}
+
+.VPDocAsideOutline .outline-link,
+.VPDocOutlineItem .outline-link,
+.outline-link {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  line-height: 1.45 !important;
+  padding: 4px 0 !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  display: block !important;
+  font-size: 13.5px !important;
+  transition: color 0.2s ease !important;
+}
+
+.VPDocOutlineItem li {
+  margin-bottom: 4px !important;
 }
