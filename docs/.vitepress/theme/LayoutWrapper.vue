@@ -1,10 +1,15 @@
 <script setup>
 import DefaultTheme from 'vitepress/theme'
+import LessonCompletion from './LessonCompletion.vue'
 const { Layout } = DefaultTheme
 </script>
 
 <template>
   <Layout>
+    <template #doc-after>
+      <LessonCompletion />
+    </template>
+
     <template #layout-bottom>
       <footer class="site-footer-custom">
         <div class="site-footer-inner">
@@ -14,7 +19,7 @@ const { Layout } = DefaultTheme
               <span class="brand-text">DP-750 Study Portal</span>
             </div>
             <p class="brand-desc">
-              Structured preparation portal for the Microsoft DP-750 Azure Databricks Data Engineer certification. Includes deep architectural modules, hands-on enterprise labs, and an interactive 181-question practice simulator.
+              Structured preparation portal for the Microsoft DP-750 Azure Databricks Data Engineer certification. Includes deep architectural modules, hands-on enterprise labs, and interactive practice quizzes.
             </p>
             <div class="author-tag">
               <span>Maintained by <a href="https://www.linkedin.com/in/balasubramanianpg2022/?isSelfProfile=true" target="_blank" rel="noopener">Balasubramanian PG</a></span>
@@ -86,8 +91,8 @@ const { Layout } = DefaultTheme
   color: var(--vp-c-text-2);
 }
 .author-tag a {
-  color: #0078d4;
+  color: #906BFF;
   text-decoration: underline;
-  font-weight: 500;
+  font-weight: 600;
 }
 </style>

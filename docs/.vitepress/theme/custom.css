@@ -1,12 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://db.onlinewebfonts.com/c/11d164da9b46e6f7955e396757e5ca70?family=AvenirNextCyr-Regular');
 
 :root {
   /* Full Wide Canvas */
   --vp-layout-max-width: 1920px;
 
-  /* Typography: Plus Jakarta Sans Semibold strictly across ALL headings, body, and micro-labels */
-  --vp-font-family-base: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
-  --vp-font-family-headings: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+  /* Distinct Typography: Plus Jakarta Sans Semibold for Headings 1, 2, 3 */
+  --vp-font-family-headings: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  
+  /* Distinct Typography: Avenir Next Cyr for ALL normal body text, paragraphs, spans, lists, buttons, inputs */
+  --vp-font-family-base: 'Avenir Next Cyr', 'Avenir Next', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
   --vp-font-family-mono: 'JetBrains Mono', monospace;
 
   /* Dribbble SaaS OS Color Palette */
@@ -36,19 +39,30 @@ html, body, html.dark {
   background-color: var(--portal-bg) !important;
   color: #F3F4F6 !important;
   font-family: var(--vp-font-family-base) !important;
+}
+
+/* Strict distinction: Headings 1, 2, 3 use Plus Jakarta Sans Semibold */
+h1, h2, h3, 
+.vp-doc h1, .vp-doc h2, .vp-doc h3, 
+.spotlight-title, .header-title, .column-title, .mod-title, .tests-title,
+.hero-left-content h1, .hero-left-content h2, .hero-left-content h3 {
+  font-family: var(--vp-font-family-headings) !important;
+  letter-spacing: -0.025em !important;
   font-weight: 600 !important;
 }
 
-/* Strictly enforce Plus Jakarta Sans Semibold for all headings */
-h1, h2, h3, h4, h5, h6, .vp-doc h1, .vp-doc h2, .vp-doc h3, .vp-doc h4, .spotlight-title, .header-title, .column-title, .mod-title {
-  font-family: var(--vp-font-family-headings) !important;
-  letter-spacing: -0.02em !important;
-  font-weight: 700 !important;
+/* ALL normal body text, paragraphs, spans, links, lists, buttons, inputs, tables use Avenir Next Cyr */
+body, p, span, a, li, input, select, button, td, th, div, label, 
+.vp-doc p, .vp-doc li, .vp-doc span, .vp-doc a, .vp-doc table, .vp-doc td, .vp-doc th,
+.spotlight-caption, .header-subtitle, .notif-desc, .status-sub, .search-input,
+.mod-metrics-row, .status-pill, .pill-tag, .btn-continue-course, .btn-ghost-course,
+.metric-highlight, .metric-sub, .progress-num {
+  font-family: var(--vp-font-family-base) !important;
 }
 
-/* Strictly enforce Plus Jakarta Sans Semibold for all body, links, inputs, and components */
-body, p, span, a, li, input, select, button, td, th, div, label {
-  font-family: var(--vp-font-family-base) !important;
+/* Headings 4, 5, 6 follow clear readable hierarchy */
+h4, h5, h6, .vp-doc h4, .vp-doc h5, .vp-doc h6, .widget-title {
+  font-family: var(--vp-font-family-headings) !important;
   font-weight: 600 !important;
 }
 

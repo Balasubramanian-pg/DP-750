@@ -4,23 +4,228 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 // Interactive metrics & state
 const selectedFilter = ref('all')
 const hoursSpent = ref(124)
-const completedLessons = ref(36)
+const completedLessons = ref(0)
 const totalLessons = 163
-const progressPercentage = Math.round((completedLessons.value / totalLessons) * 100)
-const readinessScore = ref(86)
 
+const progressPercentage = computed(() => {
+  return Math.min(100, Math.round((completedLessons.value / totalLessons) * 100))
+})
+
+const readinessScore = computed(() => {
+  if (completedLessons.value === 0) return 18
+  return Math.min(100, Math.round(18 + (completedLessons.value / totalLessons) * 82))
+})
+
+const readinessVerdict = computed(() => {
+  const score = readinessScore.value
+  if (score >= 85) return 'Exam Ready'
+  if (score >= 65) return 'High Readiness'
+  if (score >= 40) return 'Advancing'
+  return 'Foundations'
+})
+
+// Dynamic Spline Wave Chart coordinates for Widget 4
+const waveData = computed(() => {
+  const score = readinessScore.value
+  const t = Math.max(0.12, Math.min(1.0, score / 100))
+  const peakX = Math.round(25 + t * 185)
+  const peakY = Math.round(68 - t * 48)
+
+  const cp1x = Math.round(10 + (peakX - 10) * 0.45)
+  const cp1y = Math.round(72 - (72 - peakY) * 0.25)
+  const cp2x = Math.round(peakX - (peakX - 10) * 0.25)
+  const cp2y = peakY
+
+  const cp3x = Math.round(peakX + (230 - peakX) * 0.25)
+  const cp3y = peakY
+  const cp4x = Math.round(230 - (230 - peakX) * 0.45)
+  const cp4y = 72
+
+  const linePath = `M 10 72 C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${peakX} ${peakY} C ${cp3x} ${cp3y}, ${cp4x} ${cp4y}, 230 72`
+  const fillPath = `${linePath} L 230 90 L 10 90 Z`
+
+  return { peakX, peakY, linePath, fillPath }
+})
+
+// Pomodoro Focus Clock State
+const pomoMode = ref('25')
+const pomoTotalSeconds = ref(25 * 60)
+const pomoRemainingSeconds = ref(25 * 60)
+const pomoRunning = ref(false)
+let pomoTimer = null
+const completedBlocks = ref(0)
+const totalFocusMinutes = ref(0)
+
+function loadPomodoroStats() {
+  if (typeof window === 'undefined') return
+  try {
+    const raw = localStorage.getItem('dp750_pomodoro_stats')
+    if (raw) {
+      const data = JSON.parse(raw)
+      completedBlocks.value = data.completedBlocks || 0
+      totalFocusMinutes.value = data.totalFocusMinutes || 0
+    }
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+function savePomodoroStats() {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem('dp750_pomodoro_stats', JSON.stringify({
+      completedBlocks: completedBlocks.value,
+      totalFocusMinutes: totalFocusMinutes.value
+    }))
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+function playChime() {
+  if (typeof window === 'undefined') return
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext
+    if (!AudioCtx) return
+    const ctx = new AudioCtx()
+    const now = ctx.currentTime
+    const notes = [523.25, 659.25, 783.99] // C5 -> E5 -> G5
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = 'sine'
+      osc.frequency.setValueAtTime(freq, now + i * 0.14)
+      gain.gain.setValueAtTime(0.2, now + i * 0.14)
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.14 + 0.6)
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start(now + i * 0.14)
+      osc.stop(now + i * 0.14 + 0.6)
+    })
+  } catch (e) {
+    // Audio context may be restricted
+  }
+}
+
+function setPomodoroMode(mode) {
+  pomoMode.value = mode
+  if (pomoRunning.value) {
+    clearInterval(pomoTimer)
+    pomoRunning.value = false
+  }
+  const mins = mode === '25' ? 25 : (mode === '50' ? 50 : 5)
+  pomoTotalSeconds.value = mins * 60
+  pomoRemainingSeconds.value = mins * 60
+}
+
+function togglePomodoro() {
+  if (pomoRunning.value) {
+    clearInterval(pomoTimer)
+    pomoRunning.value = false
+  } else {
+    pomoRunning.value = true
+    pomoTimer = setInterval(() => {
+      if (pomoRemainingSeconds.value > 0) {
+        pomoRemainingSeconds.value--
+      } else {
+        clearInterval(pomoTimer)
+        pomoRunning.value = false
+        playChime()
+        if (pomoMode.value !== '5') {
+          completedBlocks.value++
+          totalFocusMinutes.value += pomoMode.value === '25' ? 25 : 50
+          savePomodoroStats()
+        }
+        const mins = pomoMode.value === '25' ? 25 : (pomoMode.value === '50' ? 50 : 5)
+        pomoRemainingSeconds.value = mins * 60
+      }
+    }, 1000)
+  }
+}
+
+function resetPomodoro() {
+  if (pomoRunning.value) {
+    clearInterval(pomoTimer)
+    pomoRunning.value = false
+  }
+  const mins = pomoMode.value === '25' ? 25 : (pomoMode.value === '50' ? 50 : 5)
+  pomoRemainingSeconds.value = mins * 60
+}
+
+const pomoFormattedTime = computed(() => {
+  const m = Math.floor(pomoRemainingSeconds.value / 60)
+  const s = pomoRemainingSeconds.value % 60
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+})
+
+const pomoStatusText = computed(() => {
+  if (!pomoRunning.value) {
+    return pomoRemainingSeconds.value === pomoTotalSeconds.value ? 'READY TO FOCUS' : 'PAUSED'
+  }
+  return pomoMode.value === '5' ? 'BREAK TIME' : 'DEEP FOCUSING'
+})
+
+// Circumference for r=54: 2 * PI * 54 = 339.29
+const pomoCircumference = 339.29
+const pomoStrokeOffset = computed(() => {
+  const elapsed = pomoTotalSeconds.value - pomoRemainingSeconds.value
+  const fraction = elapsed / pomoTotalSeconds.value
+  return pomoCircumference * (1 - fraction)
+})
+
+// Search State
 const searchQuery = ref('')
 const searchIndex = ref([])
 const isSearching = ref(false)
-const showNotifications = ref(false)
+const searchInputRef = ref(null)
 
+function focusSearch() {
+  searchInputRef.value?.focus()
+}
+
+// Notifications State
+const showNotifications = ref(false)
 const notifications = ref([
   { id: 1, title: 'Exam Readiness Milestone Reached', time: '10m ago', text: 'You scored 86% on Lakeflow Streaming Ingestion questions.', read: false },
   { id: 2, title: 'New Lab 07 Walkthrough Available', time: '2h ago', text: 'Auto Loader directory schema inference guide updated.', read: false },
   { id: 3, title: 'Practice Quizzes Refreshed', time: '1d ago', text: 'Added 15 new scenarios on Unity Catalog system tables.', read: true }
 ])
-
 const unreadCount = computed(() => notifications.value.filter(n => !n.read).length)
+
+// Progress Loading
+function loadProgress() {
+  if (typeof window === 'undefined') return
+  try {
+    const raw = localStorage.getItem('dp750_completed_lessons')
+    const list = raw ? JSON.parse(raw) : []
+    completedLessons.value = list.length
+
+    // Update curriculum cards dynamically
+    const m1Count = list.filter(p => p.includes('01-setup-and-configure')).length
+    const m2Count = list.filter(p => p.includes('02-secure-and-govern')).length
+    const m3Count = list.filter(p => p.includes('03-prepare-and-process')).length
+    const m4Count = list.filter(p => p.includes('04-deploy-and-maintain')).length
+
+    if (m1Count > 0 && modules.value[0]) {
+      modules.value[0].progress = Math.min(100, Math.round((m1Count / 15) * 100))
+      modules.value[0].status = modules.value[0].progress === 100 ? 'Completed' : 'In progress'
+    }
+    if (m2Count > 0 && modules.value[1]) {
+      modules.value[1].progress = Math.min(100, Math.round((m2Count / 18) * 100))
+      modules.value[1].status = modules.value[1].progress === 100 ? 'Completed' : 'In progress'
+    }
+    if (m3Count > 0 && modules.value[2]) {
+      modules.value[2].progress = Math.min(100, Math.round((m3Count / 40) * 100))
+      modules.value[2].status = modules.value[2].progress === 100 ? 'Completed' : 'In progress'
+    }
+    if (m4Count > 0 && modules.value[3]) {
+      modules.value[3].progress = Math.min(100, Math.round((m4Count / 25) * 100))
+      modules.value[3].status = modules.value[3].progress === 100 ? 'Completed' : 'In progress'
+    }
+  } catch (e) {
+    console.error(e)
+  }
+}
 
 onMounted(async () => {
   try {
@@ -35,17 +240,24 @@ onMounted(async () => {
     console.error('Failed to load search index', e)
   }
 
+  loadProgress()
+  loadPomodoroStats()
   window.addEventListener('keydown', handleKeydown)
+  window.addEventListener('dp750-progress-updated', loadProgress)
+  window.addEventListener('storage', loadProgress)
 })
 
 onUnmounted(() => {
+  if (pomoTimer) clearInterval(pomoTimer)
   window.removeEventListener('keydown', handleKeydown)
+  window.removeEventListener('dp750-progress-updated', loadProgress)
+  window.removeEventListener('storage', loadProgress)
 })
 
 function handleKeydown(e) {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
     e.preventDefault()
-    document.querySelector('.search-input')?.focus()
+    searchInputRef.value?.focus()
   }
 }
 
@@ -188,12 +400,13 @@ const activeNav = ref('home')
         <div class="header-right">
           <!-- Command search pill with LIVE searchable dropdown -->
           <div class="search-pill-wrap">
-            <div class="search-pill">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <div class="search-pill" @click="focusSearch">
+              <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <circle cx="11" cy="11" r="8"/>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
               <input 
+                ref="searchInputRef"
                 v-model="searchQuery" 
                 type="text" 
                 placeholder="Search modules, concepts, labs..." 
@@ -397,34 +610,108 @@ const activeNav = ref('home')
           </div>
 
           <div class="analytics-quad-grid">
-            <!-- Widget 1: Track your study time (Bar Chart) -->
-            <div class="widget-card widget-study-time">
+            <!-- Widget 1: Pomodoro Focus Clock -->
+            <div class="widget-card widget-pomodoro">
               <div class="widget-header">
-                <span class="widget-title">Track your study time</span>
+                <div class="pomodoro-header-title">
+                  <span class="widget-title">Focus Clock</span>
+                  <span v-if="pomoRunning" class="live-pulse-badge">LIVE</span>
+                </div>
                 <span class="widget-idx-bubble">1</span>
               </div>
 
-              <div class="study-chart-area">
-                <!-- SVG minimalist bar chart replicating the Dribbble design -->
-                <svg width="100%" height="110" viewBox="0 0 200 110" class="bar-chart-svg">
-                  <!-- Bar 1 -->
-                  <rect x="25" y="45" width="6" height="65" rx="3" fill="#2E303D"/>
-                  <!-- Bar 2 -->
-                  <rect x="55" y="70" width="6" height="40" rx="3" fill="#2E303D"/>
-                  <!-- Bar 3 -->
-                  <rect x="85" y="50" width="6" height="60" rx="3" fill="#2E303D"/>
-                  <!-- Bar 4 (Highlighted) -->
-                  <rect x="115" y="25" width="6" height="85" rx="3" fill="#906BFF"/>
-                  <!-- Bar 5 -->
-                  <rect x="145" y="35" width="6" height="75" rx="3" fill="#2E303D"/>
-                  <!-- Bar 6 -->
-                  <rect x="175" y="55" width="6" height="55" rx="3" fill="#2E303D"/>
-                </svg>
+              <!-- Study Block Selector Tabs -->
+              <div class="pomodoro-tabs">
+                <button 
+                  class="pomo-tab" 
+                  :class="{ active: pomoMode === '25' }" 
+                  @click="setPomodoroMode('25')"
+                >
+                  25m Focus
+                </button>
+                <button 
+                  class="pomo-tab" 
+                  :class="{ active: pomoMode === '50' }" 
+                  @click="setPomodoroMode('50')"
+                >
+                  50m Deep
+                </button>
+                <button 
+                  class="pomo-tab" 
+                  :class="{ active: pomoMode === '5' }" 
+                  @click="setPomodoroMode('5')"
+                >
+                  5m Break
+                </button>
               </div>
 
-              <div class="study-time-footer">
-                <span class="sub-unit">Hours</span>
-                <span class="huge-metric-num">{{ hoursSpent }}</span>
+              <!-- Circular Animated Progress Clock -->
+              <div class="pomodoro-clock-wrap">
+                <div class="pomo-ring-container">
+                  <svg class="pomo-ring-svg" width="124" height="124" viewBox="0 0 124 124">
+                    <defs>
+                      <linearGradient id="pomoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#C084FC" />
+                        <stop offset="100%" stop-color="#906BFF" />
+                      </linearGradient>
+                    </defs>
+                    <circle 
+                      class="pomo-ring-track" 
+                      cx="62" 
+                      cy="62" 
+                      r="54" 
+                    />
+                    <circle 
+                      class="pomo-ring-progress" 
+                      :class="{ 'pomo-ring-active': pomoRunning }"
+                      cx="62" 
+                      cy="62" 
+                      r="54" 
+                      :style="{ strokeDashoffset: pomoStrokeOffset }"
+                    />
+                  </svg>
+                  <div class="pomo-time-center">
+                    <span class="pomo-digits">{{ pomoFormattedTime }}</span>
+                    <span class="pomo-status-tag">{{ pomoStatusText }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pomodoro Actions: Play/Pause, Reset & Session Stats -->
+              <div class="pomodoro-footer">
+                <div class="pomodoro-controls">
+                  <button 
+                    class="pomo-btn-main" 
+                    :class="{ 'pomo-btn-running': pomoRunning }"
+                    @click="togglePomodoro"
+                    :title="pomoRunning ? 'Pause Study Block' : 'Start Study Block'"
+                  >
+                    <svg v-if="pomoRunning" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <rect x="6" y="4" width="4" height="16" rx="1"/>
+                      <rect x="14" y="4" width="4" height="16" rx="1"/>
+                    </svg>
+                    <svg v-else width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <span>{{ pomoRunning ? 'Pause' : 'Start Focus' }}</span>
+                  </button>
+
+                  <button 
+                    class="pomo-btn-reset" 
+                    @click="resetPomodoro" 
+                    title="Reset Clock"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                      <path d="M3 3v5h5"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="pomo-counter">
+                  <span class="pomo-fire-icon">🔥</span>
+                  <span class="pomo-streak-text">{{ completedBlocks }} Done</span>
+                </div>
               </div>
             </div>
 
@@ -436,7 +723,7 @@ const activeNav = ref('home')
               </div>
 
               <div class="purple-card-content">
-                <span class="purple-sub-label">{{ progressPercentage }}%</span>
+                <span class="purple-sub-label">{{ progressPercentage }}% Completed</span>
                 <span class="huge-metric-num light-num">{{ completedLessons }}</span>
               </div>
             </div>
@@ -452,35 +739,45 @@ const activeNav = ref('home')
               </div>
             </a>
 
-            <!-- Widget 4: Performance (Glowing Spline Wave) -->
+            <!-- Widget 4: Performance & Readiness (Dynamic Glowing Spline Wave) -->
             <div class="widget-card widget-performance">
               <div class="widget-header">
-                <span class="widget-title">Performance</span>
+                <div class="perf-title-row">
+                  <span class="widget-title">Performance</span>
+                  <span class="perf-sub-badge">{{ readinessVerdict }}</span>
+                </div>
                 <span class="widget-idx-bubble">4</span>
               </div>
 
               <div class="performance-chart-wrap">
-                <!-- Score badge tag floating on top of wave peak -->
-                <div class="performance-score-pill">
+                <!-- Score badge tag floating on top of dynamic wave peak -->
+                <div 
+                  class="performance-score-pill" 
+                  :style="{ left: `${waveData.peakX - 22}px`, top: `${Math.max(2, waveData.peakY - 26)}px` }"
+                >
                   <span>{{ readinessScore }}%</span>
                 </div>
 
                 <!-- SVG Spline Wave Chart -->
                 <svg width="100%" height="90" viewBox="0 0 240 90" fill="none" class="wave-svg">
-                  <!-- Gradient definition -->
                   <defs>
                     <linearGradient id="waveGlow" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stop-color="#906BFF" stop-opacity="0.25"/>
+                      <stop offset="0%" stop-color="#906BFF" stop-opacity="0.3"/>
                       <stop offset="100%" stop-color="#906BFF" stop-opacity="0"/>
                     </linearGradient>
                   </defs>
-                  <!-- Gradient fill under spline -->
-                  <path d="M 10 70 Q 40 75, 70 60 T 130 50 T 180 15 T 230 75 L 230 90 L 10 90 Z" fill="url(#waveGlow)"/>
+                  <!-- Dynamic Gradient fill under spline -->
+                  <path :d="waveData.fillPath" fill="url(#waveGlow)"/>
                   <!-- Vibrant line stroke -->
-                  <path d="M 10 70 Q 40 75, 70 60 T 130 50 T 180 15 T 230 75" stroke="#906BFF" stroke-width="3" stroke-linecap="round" fill="none"/>
-                  <!-- Glowing circle on peak -->
-                  <circle cx="180" cy="15" r="4.5" fill="#FFFFFF" stroke="#906BFF" stroke-width="2.5"/>
+                  <path :d="waveData.linePath" stroke="#906BFF" stroke-width="3" stroke-linecap="round" fill="none"/>
+                  <!-- Dynamic Glowing circle on peak -->
+                  <circle :cx="waveData.peakX" :cy="waveData.peakY" r="5" fill="#FFFFFF" stroke="#906BFF" stroke-width="3"/>
                 </svg>
+              </div>
+
+              <div class="perf-meta-row">
+                <span class="perf-meta-note">{{ completedLessons }} of {{ totalLessons }} lessons</span>
+                <span class="perf-meta-ready">{{ readinessScore >= 80 ? 'Exam Ready' : 'In Progress' }}</span>
               </div>
             </div>
           </div>
@@ -638,42 +935,71 @@ const activeNav = ref('home')
 .search-pill {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.75rem;
   background-color: #161720;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 30px;
-  padding: 0.65rem 1.25rem;
-  min-width: 320px;
-  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  padding: 0.55rem 1rem;
+  width: 340px;
+  max-width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: text;
+}
+
+.search-pill:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  background-color: #1A1C26;
 }
 
 .search-pill:focus-within {
   border-color: #906BFF;
-  background-color: #1A1C28;
-  box-shadow: 0 0 0 3px rgba(144, 107, 255, 0.2);
+  background-color: #1B1D2A;
+  box-shadow: 0 0 0 3px rgba(144, 107, 255, 0.25);
+}
+
+.search-icon {
+  color: #8E92A4;
+  flex-shrink: 0;
 }
 
 .search-input {
+  flex: 1 1 0%;
+  min-width: 0;
   background: transparent;
   border: none;
   outline: none;
   color: #FFFFFF;
-  font-size: 0.9rem;
-  font-weight: 600;
-  width: 100%;
+  font-size: 0.88rem;
+  font-weight: 500;
+  font-family: var(--vp-font-family-base) !important;
 }
 
 .search-input::placeholder {
-  color: #6B7280;
+  color: #6E7387;
+  font-weight: 400;
 }
 
 .kbd-shortcut {
-  background: #232532;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #232533;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.22);
   border-radius: 6px;
-  padding: 2px 7px;
+  padding: 0 0.55rem;
+  height: 22px;
   font-size: 0.72rem;
-  color: #9CA3AF;
+  font-weight: 600;
+  color: #A3A8BD;
   font-family: var(--vp-font-family-mono);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  user-select: none;
+  pointer-events: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
 .search-results-dropdown {
@@ -1256,29 +1582,225 @@ const activeNav = ref('home')
   color: #FFFFFF;
 }
 
-/* Widget 1: Study Time */
-.study-chart-area {
-  margin: 0.6rem 0;
-}
-
-.study-time-footer {
+/* Widget 1: Pomodoro Focus Clock */
+.widget-pomodoro {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: flex-end;
-  margin-top: auto;
+  position: relative;
+  overflow: hidden;
+  min-height: 236px;
 }
 
-.sub-unit {
-  font-size: 0.88rem;
-  color: #6B7280;
+.pomodoro-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
-.huge-metric-num {
+.live-pulse-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(52, 211, 153, 0.15);
+  color: #34D399;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  border-radius: 20px;
+  padding: 1px 7px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  animation: liveBadgePulse 2s infinite ease-in-out;
+}
+
+@keyframes liveBadgePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.96); }
+}
+
+.pomodoro-tabs {
+  display: flex;
+  background: #101117;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 24px;
+  padding: 3px;
+  gap: 3px;
+  margin-bottom: 0.85rem;
+}
+
+.pomo-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-radius: 20px;
+  padding: 0.32rem 0;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #8E92A4;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+}
+
+.pomo-tab:hover {
+  color: #FFFFFF;
+}
+
+.pomo-tab.active {
+  background: #232534;
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.pomodoro-clock-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0;
+}
+
+.pomo-ring-container {
+  position: relative;
+  width: 124px;
+  height: 124px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pomo-ring-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotate(-90deg);
+}
+
+.pomo-ring-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-width: 7;
+}
+
+.pomo-ring-progress {
+  fill: none;
+  stroke: #906BFF;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 339.29;
+  transition: stroke-dashoffset 0.85s linear, stroke 0.3s ease;
+}
+
+.pomo-ring-progress.pomo-ring-active {
+  stroke: url(#pomoGrad);
+  filter: drop-shadow(0 0 6px rgba(144, 107, 255, 0.5));
+}
+
+.pomo-time-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 2;
+}
+
+.pomo-digits {
   font-family: var(--vp-font-family-headings) !important;
-  font-size: 3rem;
+  font-size: 1.55rem;
   font-weight: 800 !important;
   color: #FFFFFF;
-  line-height: 1;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.pomo-status-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #9CA3AF;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+.pomodoro-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pomodoro-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pomo-btn-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #906BFF;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 20px;
+  padding: 0.42rem 0.95rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(144, 107, 255, 0.35);
+}
+
+.pomo-btn-main:hover {
+  background: #7C3AED;
+  transform: translateY(-1px);
+}
+
+.pomo-btn-main.pomo-btn-running {
+  background: #272A3A;
+  color: #F87171;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  box-shadow: none;
+}
+
+.pomo-btn-main.pomo-btn-running:hover {
+  background: #32364A;
+}
+
+.pomo-btn-reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #9CA3AF;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pomo-btn-reset:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.pomo-counter {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.pomo-fire-icon {
+  font-size: 0.85rem;
+}
+
+.pomo-streak-text {
+  font-size: 0.75rem;
+  color: #9CA3AF;
+  font-weight: 600;
 }
 
 /* Widget 2: Purple Card */
@@ -1347,27 +1869,70 @@ const activeNav = ref('home')
 /* Widget 4: Performance Wave */
 .widget-performance {
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.perf-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.perf-sub-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 12px;
+  background: rgba(144, 107, 255, 0.15);
+  color: #A78BFA;
+  border: 1px solid rgba(144, 107, 255, 0.25);
 }
 
 .performance-chart-wrap {
   position: relative;
-  margin-top: 0.6rem;
+  margin-top: 0.5rem;
+  width: 100%;
 }
 
 .performance-score-pill {
   position: absolute;
-  top: -8px;
-  right: 42px;
   background: #7C3AED;
   color: #FFFFFF;
   font-size: 0.78rem;
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.5);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 5;
 }
 
 .wave-svg {
   display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.perf-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.78rem;
+}
+
+.perf-meta-note {
+  color: #8E92A4;
+}
+
+.perf-meta-ready {
+  font-weight: 700;
+  color: #34D399;
 }
 </style>

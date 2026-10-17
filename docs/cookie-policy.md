@@ -6,17 +6,23 @@ title: Cookie Policy
 
 **Last Updated:** October 2026
 
-### 1. What Are Cookies
-Cookies and local storage mechanisms are small data fragments saved directly within your browser. This portal utilizes lightweight client-side storage solely to maintain your study session state, user interface preferences, and local mock exam progression.
+### 1. What Are Cookies and Client-Side Storage
+Cookies and HTML5 Local Storage (`localStorage`) are client-side mechanisms that allow web applications to retain state directly within your web browser. This study portal uses zero server-side tracking cookies and relies solely on lightweight, privacy-preserving browser local storage to maintain your interactive study tools.
 
 ### 2. How We Use Client Storage
-We operate on a zero-tracking, privacy-first architecture:
-- **UI Theme Configuration:** Stores your dark/light appearance setting so your preference persists across page loads.
-- **Simulator Progression:** Keeps track of answered questions, flag states, and custom filter selections in the DP-750 question simulator locally in your browser cache.
-- **Navigation State:** Preserves collapsed or expanded sidebar tree views while you move through course lessons.
+All state is stored exclusively on your device and is never synchronized with or dispatched to external servers:
 
-### 3. Third-Party Analytics & Tracking
-This portal carries **no advertising beacons, no behavioral profiling cookies, and no third-party tracking scripts**. We do not monetize, profile, or sell study data.
+- **Lesson & Lab Completion (`dp750_completed_lessons`):** Remembers which curriculum modules and hands-on labs you have marked as complete so that your personalized exam readiness score and performance spline curve reflect your real progress upon returning to the portal.
+- **Pomodoro Study Timer (`dp750_pomodoro_stats`):** Preserves your active focus interval preferences and logs completed study blocks so you can measure cumulative focus hours.
+- **Practice Quizzes (`dp750_exam_answers`):** Retains your question answers and review flags in the scenario question bank for your current study session.
 
-### 4. Managing Your Data
-Because all study telemetry and simulator answers are stored locally on your machine, you can reset or flush all saved state at any time either using the in-app **Reset Progress** control or by clearing your browser's site data.
+### 3. Zero Third-Party Analytics & Tracking
+This portal carries **no advertising cookies, no behavioral tracking cookies, no fingerprinting scripts, and no third-party telemetric analytics**. We do not monetize, profile, or sell study data.
+
+### 4. Managing and Clearing Your Data
+Because all study telemetry and progress markers are stored locally on your device, you have complete sovereignty over your data. You can inspect or purge all stored state at any time via your browser settings:
+- In Chrome / Edge: Navigate to `Settings` &gt; `Privacy and security` &gt; `Site settings` &gt; `View permissions and data stored across sites` &gt; search for the portal domain and select **Clear data**.
+- In Firefox: Navigate to `Settings` &gt; `Privacy & Security` &gt; `Cookies and Site Data` &gt; `Manage Data`.
+- In Safari: Navigate to `Settings` &gt; `Privacy` &gt; `Manage Website Data`.
+
+For questions, suggestions, or contributions, visit the [DP-750 GitHub Repository](https://github.com/Balasubramanian-pg/DP-750).
