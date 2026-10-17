@@ -31,12 +31,24 @@ function toggleCompletion() {
     const raw = localStorage.getItem('dp750_completed_lessons')
     let completedList = raw ? JSON.parse(raw) : []
     
+    // Store daily activity timestamps for weekly & monthly bar charts
+    const actRaw = localStorage.getItem('dp750_lesson_activity')
+    let activityLog = actRaw ? JSON.parse(actRaw) : {}
+    const todayStr = new Date().toISOString().split('T')[0]
+    if (!Array.isArray(activityLog[todayStr])) {
+      activityLog[todayStr] = []
+    }
+
     if (completedList.includes(route.path)) {
       completedList = completedList.filter(p => p !== route.path)
       isCompleted.value = false
+      activityLog[todayStr] = activityLog[todayStr].filter(p => p !== route.path)
     } else {
       completedList.push(route.path)
       isCompleted.value = true
+      if (!activityLog[todayStr].includes(route.path)) {
+        activityLog[todayStr].push(route.path)
+      }
       showCelebration.value = true
       setTimeout(() => {
         showCelebration.value = false
@@ -44,6 +56,7 @@ function toggleCompletion() {
     }
     
     localStorage.setItem('dp750_completed_lessons', JSON.stringify(completedList))
+    localStorage.setItem('dp750_lesson_activity', JSON.stringify(activityLog))
     window.dispatchEvent(new Event('dp750-progress-updated'))
   } catch (e) {
     console.error(e)

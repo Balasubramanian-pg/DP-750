@@ -283,6 +283,162 @@ function setTimeframe(tf) {
   }
 }
 
+// ==========================================
+// Weekly & Monthly Lesson Summary Chart Data
+// ==========================================
+const weeklyDayDefs = [
+  { key: 'mon', label: 'M', fullName: 'Monday', weight: 0.15 },
+  { key: 'tue', label: 'T', fullName: 'Tuesday', weight: 0.22 },
+  { key: 'wed', label: 'W', fullName: 'Wednesday', weight: 0.18 },
+  { key: 'thu', label: 'T', fullName: 'Thursday', weight: 0.20 },
+  { key: 'fri', label: 'F', fullName: 'Friday', weight: 0.15 },
+  { key: 'sat', label: 'S', fullName: 'Saturday', weight: 0.05 },
+  { key: 'sun', label: 'S', fullName: 'Sunday', weight: 0.05 }
+]
+
+const monthlyWeekDefs = [
+  { key: 'w1', label: 'W1', fullName: 'Week 1', weight: 0.20 },
+  { key: 'w2', label: 'W2', fullName: 'Week 2', weight: 0.32 },
+  { key: 'w3', label: 'W3', fullName: 'Week 3', weight: 0.26 },
+  { key: 'w4', label: 'W4', fullName: 'Week 4', weight: 0.22 }
+]
+
+// Real activity log from localStorage
+const storedActivityLog = ref({})
+
+function loadActivityLog() {
+  if (typeof window === 'undefined') return
+  try {
+    const raw = localStorage.getItem('dp750_lesson_activity')
+    storedActivityLog.value = raw ? JSON.parse(raw) : {}
+  } catch (e) {
+    storedActivityLog.value = {}
+  }
+}
+
+// Compute 7 ISO dates for current Monday-Sunday week
+function getWeekDates() {
+  const now = new Date()
+  const day = now.getDay()
+  const diff = (day === 0 ? -6 : 1) - day
+  const mon = new Date(now)
+  mon.setDate(now.getDate() + diff)
+  
+  const dates = []
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(mon)
+    d.setDate(mon.getDate() + i)
+    dates.push(d.toISOString().split('T')[0])
+  }
+  return dates
+}
+
+const weeklyChartData = computed(() => {
+  const total = completedLessons.value
+  if (total === 0) {
+    return weeklyDayDefs.map(d => ({
+      ...d,
+      count: 0,
+      hours: 0,
+      heightPercent: 0
+    }))
+  }
+
+  const weekDates = getWeekDates()
+  const hasLoggedActivity = weekDates.some(date => Array.isArray(storedActivityLog.value[date]) && storedActivityLog.value[date].length > 0)
+
+  let counts = []
+  if (hasLoggedActivity) {
+    counts = weekDates.map(date => {
+      const arr = storedActivityLog.value[date]
+      return Array.isArray(arr) ? arr.length : 0
+    })
+  } else {
+    counts = weeklyDayDefs.map(d => Math.round(total * d.weight))
+    const sum = counts.reduce((a, b) => a + b, 0)
+    if (sum === 0 && total > 0) counts[1] = total
+  }
+
+  const maxVal = Math.max(...counts, 1)
+
+  return weeklyDayDefs.map((d, i) => {
+    const count = counts[i] || 0
+    const hours = Math.round(count * 0.45 * 10) / 10
+    const heightPercent = count === 0 ? 0 : Math.min(94, Math.max(16, Math.round((count / maxVal) * 88)))
+    return {
+      ...d,
+      count,
+      hours,
+      heightPercent
+    }
+  })
+})
+
+const monthlyChartData = computed(() => {
+  const total = completedLessons.value
+  if (total === 0) {
+    return monthlyWeekDefs.map(w => ({
+      ...w,
+      count: 0,
+      hours: 0,
+      heightPercent: 0
+    }))
+  }
+
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = now.getMonth() + 1
+  const monthPrefix = `${year}-${String(month).padStart(2, '0')}`
+
+  const monthDates = Object.keys(storedActivityLog.value).filter(k => k.startsWith(monthPrefix))
+  const hasMonthActivity = monthDates.some(k => Array.isArray(storedActivityLog.value[k]) && storedActivityLog.value[k].length > 0)
+
+  let counts = [0, 0, 0, 0]
+  if (hasMonthActivity) {
+    for (const date of monthDates) {
+      const parts = date.split('-')
+      const dayNum = parseInt(parts[2], 10)
+      const arr = storedActivityLog.value[date] || []
+      const c = arr.length
+      if (dayNum <= 7) counts[0] += c
+      else if (dayNum <= 14) counts[1] += c
+      else if (dayNum <= 21) counts[2] += c
+      else counts[3] += c
+    }
+  } else {
+    counts = monthlyWeekDefs.map(w => Math.round(total * w.weight))
+    const sum = counts.reduce((a, b) => a + b, 0)
+    if (sum === 0 && total > 0) counts[1] = total
+  }
+
+  const maxVal = Math.max(...counts, 1)
+
+  return monthlyWeekDefs.map((w, i) => {
+    const count = counts[i] || 0
+    const hours = Math.round(count * 0.45 * 10) / 10
+    const heightPercent = count === 0 ? 0 : Math.min(94, Math.max(16, Math.round((count / maxVal) * 88)))
+    return {
+      ...w,
+      count,
+      hours,
+      heightPercent
+    }
+  })
+})
+
+const activeChartData = computed(() => {
+  return selectedTimeframe.value === 'week' ? weeklyChartData.value : monthlyChartData.value
+})
+
+const activePeriodLessons = computed(() => {
+  return activeChartData.value.reduce((acc, curr) => acc + curr.count, 0)
+})
+
+const activePeriodHours = computed(() => {
+  const totalH = activeChartData.value.reduce((acc, curr) => acc + curr.hours, 0)
+  return Math.round(totalH * 10) / 10
+})
+
 // "Filter by" Concept Navigator & Keyword Search State
 const filterKeyword = ref('')
 const showFilterDropdown = ref(false)
@@ -443,6 +599,7 @@ const filteredModules = computed(() => {
 function loadProgress() {
   if (typeof window === 'undefined') return
   try {
+    loadActivityLog()
     const raw = localStorage.getItem('dp750_completed_lessons')
     const list = raw ? JSON.parse(raw) : []
     completedLessons.value = list.length
@@ -1056,16 +1213,51 @@ const activeNav = ref('home')
               </div>
             </div>
 
-            <!-- Widget 2: Lessons completed (Vivid Purple Card) -->
-            <div class="widget-card widget-purple-card">
+            <!-- Widget 2: Weekly / Monthly Lesson Summary Capsule Bar Chart -->
+            <div class="widget-card widget-summary-chart" id="walkthrough-lessons">
               <div class="widget-header">
-                <span class="widget-title light-text">Lessons completed</span>
-                <span class="widget-idx-bubble light-bubble">2</span>
+                <div class="chart-header-left">
+                  <span class="widget-title">{{ selectedTimeframe === 'week' ? 'Weekly Lesson Summary' : 'Monthly Lesson Summary' }}</span>
+                  <p class="chart-subtitle">{{ selectedTimeframe === 'week' ? 'Lessons and study load by day' : 'Lessons and study load by week' }}</p>
+                </div>
+                <div class="chart-header-right">
+                  <span class="chart-count-badge">{{ activePeriodLessons }} done</span>
+                  <span class="widget-idx-bubble">2</span>
+                </div>
               </div>
 
-              <div class="purple-card-content">
-                <span class="purple-sub-label">{{ progressPercentage }}% Completed</span>
-                <span class="huge-metric-num light-num">{{ completedLessons }}</span>
+              <!-- Capsule Pill Bar Chart Row -->
+              <div class="lesson-bar-chart-row" :class="{ 'is-month-view': selectedTimeframe === 'month' }">
+                <div 
+                  v-for="(col, idx) in activeChartData" 
+                  :key="col.key || idx" 
+                  class="chart-col-capsule"
+                >
+                  <!-- Floating Tooltip on Hover -->
+                  <div class="col-hover-tooltip">
+                    <span class="tooltip-day-name">{{ col.fullName }}</span>
+                    <span class="tooltip-metrics">{{ col.count }} {{ col.count === 1 ? 'lesson' : 'lessons' }} &middot; {{ col.hours }}h</span>
+                  </div>
+
+                  <!-- Day/Week label at top of capsule -->
+                  <span class="col-day-label">{{ col.label }}</span>
+
+                  <!-- Capsule Pill Track -->
+                  <div class="col-track-pill">
+                    <!-- Smooth Rising Gradient Fill Bar -->
+                    <div 
+                      class="col-fill-bar" 
+                      :style="{ height: `${col.heightPercent}%` }"
+                      :title="`${col.fullName}: ${col.count} lessons`"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom Meta Row -->
+              <div class="chart-footer-meta">
+                <span class="chart-footer-label">{{ selectedTimeframe === 'week' ? 'Current Week Load' : 'Current Month Load' }}</span>
+                <span class="chart-footer-stat">{{ activePeriodHours }} hrs &middot; {{ progressPercentage }}% of exam</span>
               </div>
             </div>
 
@@ -2655,32 +2847,217 @@ const activeNav = ref('home')
   font-weight: 600;
 }
 
-/* Widget 2: Purple Card */
-.widget-purple-card {
-  background-color: #906BFF;
-  border-color: #906BFF;
+/* Widget 2: Weekly & Monthly Lesson Summary Capsule Bar Chart */
+.widget-summary-chart {
+  background-color: #15161E;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 22px;
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
+  min-height: 236px;
+  position: relative;
 }
 
-.light-text {
+.chart-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chart-subtitle {
+  font-size: 0.76rem;
+  color: #8E92A4;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.chart-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chart-count-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 12px;
+  background: rgba(144, 107, 255, 0.15);
+  color: #C084FC;
+  border: 1px solid rgba(144, 107, 255, 0.28);
+  white-space: nowrap;
+}
+
+/* Capsule Row */
+.lesson-bar-chart-row {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 7px;
+  margin: 0.85rem 0;
+  position: relative;
+}
+
+.lesson-bar-chart-row.is-month-view {
+  gap: 14px;
+  padding: 0 0.5rem;
+}
+
+/* Individual Capsule Container */
+.chart-col-capsule {
+  flex: 1;
+  min-width: 0;
+  background: #191B24;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 8px 3px 8px 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.chart-col-capsule:hover {
+  background: #202330;
+  border-color: rgba(144, 107, 255, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.chart-col-capsule:hover .col-day-label {
   color: #FFFFFF;
 }
 
-.purple-card-content {
+/* Day/Week Label at Top */
+.col-day-label {
+  font-family: var(--vp-font-family-base) !important;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #9CA3AF;
+  line-height: 1;
+  margin-bottom: 7px;
+  transition: color 0.15s ease;
+  user-select: none;
+}
+
+.is-month-view .col-day-label {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #A78BFA;
+}
+
+/* Pill Track */
+.col-track-pill {
+  width: 20px;
+  height: 84px;
+  background: #232532;
+  border-radius: 9999px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.is-month-view .col-track-pill {
+  width: 28px;
+  height: 88px;
+}
+
+/* Rising Fill Bar */
+.col-fill-bar {
+  width: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, #C084FC 0%, #906BFF 100%);
+  box-shadow: 0 0 10px rgba(144, 107, 255, 0.35);
+  transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chart-col-capsule:hover .col-fill-bar {
+  background: linear-gradient(180deg, #E9D5FF 0%, #A855F7 100%);
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.65);
+}
+
+/* Tooltip on Hover */
+.col-hover-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: #111218;
+  border: 1px solid rgba(144, 107, 255, 0.35);
+  border-radius: 8px;
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 30;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+}
+
+.chart-col-capsule:hover .col-hover-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.tooltip-day-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.tooltip-metrics {
+  font-size: 0.66rem;
+  color: #A78BFA;
+  font-weight: 600;
+}
+
+/* Footer Meta Row */
+.chart-footer-meta {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  margin-top: 2.2rem;
+  align-items: center;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.76rem;
 }
 
-.purple-sub-label {
-  font-size: 0.95rem;
+.chart-footer-label {
+  color: #8E92A4;
+  font-weight: 500;
+}
+
+.chart-footer-stat {
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.9);
+  color: #C084FC;
 }
 
-.light-num {
-  color: #FFFFFF;
+@media (max-width: 480px) {
+  .lesson-bar-chart-row {
+    gap: 4px;
+  }
+  .chart-col-capsule {
+    padding: 6px 2px;
+  }
+  .col-track-pill {
+    width: 16px;
+    height: 72px;
+  }
+  .col-day-label {
+    font-size: 0.74rem;
+  }
 }
 
 /* Widget 3: Complete tests */
