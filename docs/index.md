@@ -3,7 +3,7 @@ layout: page
 ---
 
 <script setup>
-import CryptoHome from './CryptoHome.vue'
+import DashboardHome from './DashboardHome.vue'
 </script>
 
-<CryptoHome />
+<DashboardHome />
