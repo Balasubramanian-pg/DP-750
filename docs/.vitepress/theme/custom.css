@@ -349,3 +349,10 @@ h4, h5, h6, .vp-doc h4, .vp-doc h5, .vp-doc h6, .widget-title {
 .VPDocOutlineItem li {
   margin-bottom: 4px !important;
 }
+
+/* Walkthrough Active Element Elevation */
+.walkthrough-highlighted-element {
+  position: relative !important;
+  z-index: 99992 !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}

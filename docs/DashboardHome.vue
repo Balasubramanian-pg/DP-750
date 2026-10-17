@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { withBase } from 'vitepress'
+import WalkthroughGuide from './.vitepress/theme/WalkthroughGuide.vue'
 
 // Interactive metrics & state - ALL DEFAULT TO 0 ON CLEAN SLATE
 const completedLessons = ref(0)
@@ -496,6 +497,13 @@ onMounted(async () => {
   if (typeof window !== 'undefined') {
     const tf = localStorage.getItem('dp750_timeframe')
     if (tf) selectedTimeframe.value = tf
+
+    const seen = localStorage.getItem('dp750_walkthrough_seen')
+    if (!seen) {
+      setTimeout(() => {
+        showWalkthrough.value = true
+      }, 700)
+    }
   }
 
   window.addEventListener('keydown', handleKeydown)
@@ -533,6 +541,16 @@ function toggleNotifications() {
 
 function markAllRead() {
   notifications.value.forEach(n => (n.read = true))
+}
+
+// Interactive Guided Tour / Walkthrough State
+const showWalkthrough = ref(false)
+function startWalkthrough() {
+  showNotifications.value = false
+  showWalkthrough.value = true
+}
+function closeWalkthrough() {
+  showWalkthrough.value = false
 }
 
 const activeNav = ref('home')
@@ -592,6 +610,14 @@ const activeNav = ref('home')
             <path d="M52.96.1C23.71.1,0,23.61,0,52.62v25.15h9.76v-2.51c0-11.77,9.61-21.31,21.48-21.31s21.48,9.54,21.48,21.31v2.51h9.76v-2.51c0-17.11-13.99-30.98-31.24-30.98-6.72,0-12.94,2.1-18.03,5.69,5.33-10.51,16.31-17.73,28.99-17.73,17.91,0,32.43,14.41,32.43,32.16v13.36h9.76v-13.36c0-23.11-18.89-41.85-42.19-41.85-10.48,0-20.06,3.79-27.44,10.06,7.25-13.59,21.63-22.84,38.21-22.84,23.86,0,43.2,19.18,43.2,42.84v25.15h9.76v-25.15C105.92,23.61,82.21.1,52.96.1Z"/>
           </svg>
         </a>
+
+        <!-- Guided Tour Trigger in Left Dock -->
+        <button class="dock-item dock-tour-btn" title="Start Interactive Tour" @click="startWalkthrough">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+          </svg>
+        </button>
       </nav>
     </aside>
 
@@ -604,7 +630,16 @@ const activeNav = ref('home')
           <span class="header-subtitle">Microsoft Certified: Azure Databricks Data Engineer (DP-750)</span>
         </div>
 
-        <div class="header-right">
+        <div class="header-right" id="walkthrough-top-right">
+          <!-- Guided Tour Trigger Button -->
+          <button class="header-tour-btn" @click="startWalkthrough" title="Start Interactive Portal Walkthrough">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="10"/>
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+            </svg>
+            <span>Tour</span>
+          </button>
+
           <!-- Command search pill with LIVE searchable dropdown -->
           <div class="search-pill-wrap">
             <div class="search-pill" @click="focusSearch">
@@ -658,6 +693,12 @@ const activeNav = ref('home')
                   <span class="notif-pill">{{ unreadCount }} new</span>
                 </div>
                 <button class="mark-read-btn" @click="markAllRead">Mark all read</button>
+              </div>
+
+              <!-- Interactive Walkthrough Prompt inside Notification Panel -->
+              <div class="notif-tour-prompt" @click="startWalkthrough">
+                <span class="tour-sparkle">✨</span>
+                <span>New here? Start interactive portal walkthrough</span>
               </div>
 
               <div class="notif-list">
@@ -717,7 +758,7 @@ const activeNav = ref('home')
           </p>
 
           <div class="spotlight-actions">
-            <a href="/DP-750/01-setup-and-configure/" class="btn-continue-course">
+            <a href="/DP-750/01-setup-and-configure/" class="btn-continue-course" id="walkthrough-continue-btn">
               <span class="play-circle">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M8 5v14l11-7z"/>
@@ -740,7 +781,7 @@ const activeNav = ref('home')
       <!-- 2-COLUMN LOWER SECTION (Left: Course List | Right: Analytics Grid) -->
       <div class="dashboard-grid">
         <!-- LEFT COLUMN: "Course you're taking" -->
-        <section class="courses-column">
+        <section class="courses-column" id="walkthrough-courses">
           <div class="section-top-bar">
             <h3 class="column-title">Course you're taking</h3>
             <div class="filter-dropdown-wrap">
@@ -867,7 +908,7 @@ const activeNav = ref('home')
         </section>
 
         <!-- RIGHT COLUMN: "My Progress" (4-Widget Analytics Bento) -->
-        <section class="progress-column">
+        <section class="progress-column" id="walkthrough-progress">
           <div class="section-top-bar">
             <h3 class="column-title">My Progress</h3>
             <div class="timeframe-dropdown-wrap">
@@ -910,7 +951,7 @@ const activeNav = ref('home')
 
           <div class="analytics-quad-grid">
             <!-- Widget 1: Pomodoro Focus Clock -->
-            <div class="widget-card widget-pomodoro">
+            <div class="widget-card widget-pomodoro" id="walkthrough-pomodoro">
               <div class="widget-header">
                 <div class="pomodoro-header-title">
                   <span class="widget-title">Focus Clock</span>
@@ -1149,6 +1190,13 @@ const activeNav = ref('home')
           <span>Open Educational Resource</span>
         </div>
       </footer>
+
+      <!-- Interactive Guided Walkthrough Overlay -->
+      <WalkthroughGuide 
+        :is-open="showWalkthrough" 
+        @close="closeWalkthrough" 
+        @complete="closeWalkthrough" 
+      />
     </main>
   </div>
 </template>
@@ -1456,6 +1504,56 @@ const activeNav = ref('home')
   background: #FF3621;
   border-radius: 50%;
   box-shadow: 0 0 6px #FF3621;
+}
+
+.header-tour-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  height: 42px;
+  border-radius: 9999px;
+  background: rgba(144, 107, 255, 0.12);
+  border: 1px solid rgba(144, 107, 255, 0.35);
+  color: #C4B5FD;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--vp-font-family-base) !important;
+}
+
+.header-tour-btn:hover {
+  background: rgba(144, 107, 255, 0.25);
+  border-color: #906BFF;
+  color: #FFFFFF;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(144, 107, 255, 0.35);
+}
+
+.notif-tour-prompt {
+  margin: 0.75rem 0.75rem 0.5rem;
+  padding: 0.65rem 0.85rem;
+  background: rgba(144, 107, 255, 0.1);
+  border: 1px dashed rgba(144, 107, 255, 0.4);
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: #C4B5FD;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.notif-tour-prompt:hover {
+  background: rgba(144, 107, 255, 0.2);
+  border-color: #906BFF;
+  color: #FFFFFF;
+}
+
+.tour-sparkle {
+  font-size: 1rem;
 }
 
 .notifications-panel {
