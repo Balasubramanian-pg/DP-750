@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import DefaultTheme from 'vitepress/theme'
 import { withBase, useRoute } from 'vitepress'
 import LessonCompletion from './LessonCompletion.vue'
+import NotFound from './NotFound.vue'
 
 const { Layout } = DefaultTheme
 const route = useRoute()
@@ -64,6 +65,10 @@ onUnmounted(() => {
       <LessonCompletion />
     </template>
 
+    <template #not-found>
+      <NotFound />
+    </template>
+
     <!-- Global Floating Focus Pill (visible across lessons / labs when timer is ticking) -->
     <template #layout-top>
       <a 
@@ -116,6 +121,7 @@ onUnmounted(() => {
           <div class="footer-col">
             <h4>Policies & Resources</h4>
             <ul>
+              <li><a href="/DP-750/faq">Frequently Asked Questions (FAQ)</a></li>
               <li><a href="https://www.linkedin.com/in/balasubramanianpg2022/?isSelfProfile=true" target="_blank" rel="noopener">Connect on LinkedIn</a></li>
               <li><a href="/DP-750/privacy-policy">Privacy Policy</a></li>
               <li><a href="/DP-750/cookie-policy">Cookie Policy</a></li>

@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { withBase } from 'vitepress'
 import WalkthroughGuide from './.vitepress/theme/WalkthroughGuide.vue'
+import FaqSection from './.vitepress/theme/FaqSection.vue'
 
 // Interactive metrics & state - ALL DEFAULT TO 0 ON CLEAN SLATE
 const completedLessons = ref(0)
@@ -1138,6 +1139,9 @@ const activeNav = ref('home')
         </div>
       </div>
 
+      <!-- Frequently Asked Questions Section -->
+      <FaqSection id="faq" />
+
       <!-- Integrated Dashboard Footer -->
       <footer class="dashboard-footer-integrated">
         <div class="dash-footer-inner">
@@ -1176,6 +1180,7 @@ const activeNav = ref('home')
           <div class="dash-footer-col">
             <h4>Policies & Resources</h4>
             <ul>
+              <li><a href="/DP-750/faq">Frequently Asked Questions (FAQ)</a></li>
               <li><a href="https://www.linkedin.com/in/balasubramanianpg2022/?isSelfProfile=true" target="_blank" rel="noopener">Connect on LinkedIn</a></li>
               <li><a href="/DP-750/privacy-policy">Privacy Policy</a></li>
               <li><a href="/DP-750/cookie-policy">Cookie Policy</a></li>
