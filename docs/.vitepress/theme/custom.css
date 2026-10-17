@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
   /* Full Wide Layout: Override default 1440px constraint to 1920px */
@@ -7,8 +7,8 @@
   /* Headings: Outfit */
   --vp-font-family-headings: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   
-  /* Body and all other elements: Avenir Next Cyr */
-  --vp-font-family-base: 'Avenir Next Cyr', 'Avenir Next', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* Body and all other elements: Plus Jakarta Sans with semibold weight */
+  --vp-font-family-base: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --vp-font-family-mono: 'JetBrains Mono', 'Fira Code', Menlo, Monaco, Consolas, monospace;
 
   /* Sharp crypto-minimalist palette */
@@ -32,6 +32,7 @@ h1, h2, h3, h4, h5, h6, .vp-doc h1, .vp-doc h2, .vp-doc h3, .vp-doc h4, .main-he
 
 body, p, span, a, li, input, select, button, td, th {
   font-family: var(--vp-font-family-base);
+  font-weight: 600;
 }
 
 /* Dark mode by default styling matching modern crypto dashboards */
